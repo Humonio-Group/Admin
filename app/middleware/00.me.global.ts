@@ -7,5 +7,5 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const { public: config } = useRuntimeConfig();
 
   await store.fetchUser();
-  if (user.value?.termsToApprove) return navigateTo(config.urls.auth.replace("{alias}", to.params.alias as string), { external: true });
+  if (user.value?.termsToApprove) return navigateTo(config.urls.auth.replaceAll("{alias}", to.params.alias as string), { external: true });
 });
