@@ -1,1 +1,106 @@
-{}
+{
+  "btn": {
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "dialogs": {
+    "image-crop": {
+      "title": "Recadrer l'image",
+      "description": "Ajustez le cadrage de votre image avant de valider.",
+      "confirm": "Valider"
+    }
+  },
+  "labels": {
+    "search": "Rechercher",
+    "languages": {
+      "french": "Français"
+    },
+    "miss-you": "Vous ne pouvez pas partir comme ça... 😓",
+    "plan": {
+      "free": "Gratuit"
+    },
+    "other-products": "Autres produits",
+    "other-workspaces": "Autres espaces de travail",
+    "time": {
+      "last-update": "Dernière mise à jour le {date}"
+    }
+  },
+  "navigation": {
+    "user-menu": {
+      "profile": "Mon profil",
+      "settings": "Paramètres",
+      "log-out": "Déconnexion"
+    },
+    "deployment": {
+      "label": "Déploiement",
+      "programs": "Programmes",
+      "courses": "Distributions",
+      "actions": "Actions"
+    },
+    "support": {
+      "label": "Support",
+      "tickets": "Tickets",
+      "abuses": "Abus"
+    },
+    "analytics": {
+      "label": "Analyse",
+      "usage": "Utilisation",
+      "ai": "Intelligence artificielle"
+    },
+    "administration": {
+      "label": "Administration",
+      "content-library": "Bibliothèque de contenus",
+      "settings": "Paramètres"
+    }
+  },
+
+  "profile": {
+    "details": {
+      "first-name": "Prénom",
+      "last-name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "linked-in": "LinkedIn",
+      "created-at": "Créé le {date}"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "account": {
+        "fields": {
+          "first-name": "Prénom",
+          "last-name": "Nom",
+          "email": "Email",
+          "phone": "Téléphone",
+          "linked-in": "LinkedIn",
+          "avatar": "Avatar"
+        },
+        "avatar": {
+          "change": "Changer"
+        }
+      },
+      "interface": {
+        "title": "Interface",
+        "main-language": {
+          "name": "Langue de l'interface",
+          "description": "Sélectionnez la langue dans laquelle vous souhaitez utiliser la plateforme. Celle-ci sera la langue sélectionnée par défaut pour la lecture des contenus."
+        },
+        "theme": {
+          "name": "Thème général",
+          "description": "Sélectionnez le thème d'affichage de l'interface. Celui-ci sera synchronisé sur tous les appareils connecté à ce compte.",
+          "options": {
+            "system": "Automatique",
+            "light": "Clair",
+            "dark": "Sombre"
+          }
+        }
+      },
+      "terms": {
+        "title": "Conditions",
+        "actions": {
+          "read": "Lire",
+          "revoke": "Révoquer"
+        }
+      }
+    }
+  }
+}
