@@ -17,6 +17,7 @@ export const useApi = () => {
   });
   const headers = (obj?: HttpObject) => ({
     "X-PLATFORM": config.platform,
+    "X-COMPANY": useRoute().params.alias as string,
     ...obj,
   });
 
@@ -45,7 +46,7 @@ export const useApi = () => {
 
             switch (status) {
               case 401: {
-                if (!useRoute().path.includes("/welcome")) if (!useRoute().path.includes("/welcome")) navigateTo(useLocalePath()("/auth/login"));
+                if (!useRoute().path.includes("/welcome")) if (!useRoute().path.includes("/welcome")) navigateTo(useRuntimeConfig().public.urls.auth.replaceAll("{alias}", to.params.alias as string), { external: true });
                 toast.error(t("toasts.error.expired-session"));
                 return resolve(null);
               }
