@@ -31,6 +31,8 @@ export default defineNuxtConfig({
       },
       urls: {
         auth: "",
+        product: "",
+        gps: "",
       },
       platform: "",
       brand: {
