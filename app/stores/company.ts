@@ -3,6 +3,10 @@ import type { Company } from "~/types/entities/company";
 
 interface CompanyState {
   company: Nullable<Company>;
+  loading: {
+    icon: boolean;
+    logo: boolean;
+  };
 }
 
 function buildCompanyEntity(data: any): Company {
@@ -55,9 +59,15 @@ function bindCompanyLogo(company: Company) {
 export const useCompanyStore = defineStore("company", {
   state: (): CompanyState => ({
     company: null,
+    loading: {
+      icon: false,
+      logo: false,
+    },
   }),
   getters: {
     api: () => useApi(),
+    logger: () => useLogger("[COMPANY]"),
+
     isLoaded: state => !!state.company,
   },
   actions: {
@@ -81,6 +91,43 @@ export const useCompanyStore = defineStore("company", {
       catch (e) {
         useLogger().error(e);
       }
+    },
+
+    async uploadIcon(blob: Blob): Promise<Nullable<string>> {
+      this.loading.icon = true;
+
+      let icon: Nullable<string> = null;
+
+      try {
+        const response = await useFileUpload().upload(blob, 4);
+        icon = response.data.attributes.file.thumbnail;
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.icon = false;
+      }
+
+      return icon;
+    },
+    async uploadLogo(): Promise<Nullable<string>> {
+      this.loading.logo = true;
+
+      let logo: Nullable<string> = null;
+
+      try {
+        const response = await useFileUpload().upload(blob, 4);
+        logo = response.data.attributes.file.thumbnail;
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.logo = false;
+      }
+
+      return logo;
     },
   },
 });
