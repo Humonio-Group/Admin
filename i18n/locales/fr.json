@@ -132,6 +132,39 @@
         "data-storage": "Stockage",
         "developer": "Développeur"
       }
+    },
+    "general": {
+      "title": "Paramètres généraux",
+      "fields": {
+        "tld": {
+          "label": "TLD",
+          "description": "Limiter l'ajout de participants aux noms de domaines inclus dans la liste."
+        },
+        "mentor-invite": {
+          "label": "Inviter le mentor",
+          "description": "Autoriser le participant à inviter son mentor sur la plateforme."
+        },
+        "force-mentor-invite": {
+          "label": "Forcer l'invitation du mentor",
+          "description": "Forcer le participant à inviter son mentor sur la plateforme."
+        },
+        "share-results": {
+          "label": "Partager les résultats",
+          "description": "Automatiquement partager les résultat du participant à son mentor."
+        },
+        "share-results-scope": {
+          "label": "Niveau de résultats",
+          "description": "Sélectionnez le niveau des résultats à partager au mentor."
+        },
+        "auto-assign-admin-to-tickets": {
+          "label": "Assignation automatique",
+          "description": "Affectez automatiquement l’administrateur de l’espace de travail aux tickets"
+        },
+        "videoconference-button": {
+          "label": "Visioconférence instantanée",
+          "description": "Autoriser le participant à lancer une visioconférence instantanée."
+        }
+      }
     }
   }
 }
