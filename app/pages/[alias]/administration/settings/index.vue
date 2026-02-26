@@ -25,9 +25,8 @@ const form = useForm({
   },
   keepValuesOnUnmount: true,
 });
-
 const submit = form.handleSubmit(async (values) => {
-  useLogger().log("[SETTINGS.GENERAL]", values);
+  useLogger().log("[SETTINGS.GENERAL] submit", values); // todo: bind backend - loic
 });
 </script>
 
