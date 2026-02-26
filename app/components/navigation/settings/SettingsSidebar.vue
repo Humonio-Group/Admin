@@ -3,9 +3,12 @@ import { ArrowLeft } from "lucide-vue-next";
 import { sidebarContent } from "~/components/navigation/settings/index";
 import GlobalSidebarLink from "~/components/navigation/default/composed/GlobalSidebarLink.vue";
 import UserMenu from "~/components/navigation/default/elements/UserMenu.vue";
+import { useSidebar } from "~/components/ui/sidebar";
 
 const { company } = storeToRefs(useCompanyStore());
 const alias = computed(() => company.value?.alias || "");
+
+const { open } = useSidebar();
 
 const groups = sidebarContent;
 </script>
@@ -15,16 +18,21 @@ const groups = sidebarContent;
     <UiSidebarHeader class="gap-0">
       <UiButton
         variant="ghost"
-        size="sm"
-        class="w-min"
+        :size="open ? 'sm' : 'icon-sm'"
+        :class="{ 'w-min': open }"
         as-child
       >
         <NuxtLinkLocale :to="`/${alias}`">
           <ArrowLeft />
-          {{ $t("btn.back") }}
+          <template v-if="open">
+            {{ $t("btn.back") }}
+          </template>
         </NuxtLinkLocale>
       </UiButton>
-      <h1 class="text-xl font-bold">
+      <h1
+        v-if="open"
+        class="text-xl font-bold"
+      >
         {{ $t("settings.title") }}
       </h1>
     </UiSidebarHeader>
