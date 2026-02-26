@@ -2,7 +2,8 @@
   "btn": {
     "cancel": "Annuler",
     "save": "Enregistrer",
-    "back": "Retour"
+    "back": "Retour",
+    "change": "Changer"
   },
   "dialogs": {
     "image-crop": {
@@ -164,6 +165,23 @@
           "label": "Visioconférence instantanée",
           "description": "Autoriser le participant à lancer une visioconférence instantanée."
         }
+      }
+    },
+    "branding": {
+      "title": "Identité de l'espace de travail",
+      "fields": {
+        "name": "Nom de l'espace",
+        "alias": {
+          "label": "Alias",
+          "description": "Seulement caractères alphanumériques et tiret (\"-\")"
+        },
+        "icon": {
+          "label": "Icône",
+          "description": "L’image ne doit pas dépasser 80 pixels de hauteur ni peser plus de 400 ko."
+        },
+        "logo": "Logo",
+        "light": "Thème clair",
+        "dark": "Thème sombre"
       }
     }
   }
