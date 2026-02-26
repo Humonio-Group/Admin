@@ -1,4 +1,4 @@
-export function useLogger() {
+export function useLogger(prefix?: string) {
   const env = useRuntimeConfig().public.env;
 
   const call = (cb: (...args: any) => void) => {
@@ -6,9 +6,9 @@ export function useLogger() {
     cb();
   };
 
-  const log = (...args: any) => call(() => console.log(...args));
-  const error = (...args: any) => call(() => console.error(...args));
-  const warn = (...args: any) => call(() => console.warn(...args));
+  const log = (...args: any) => call(() => console.log(prefix, ...args));
+  const error = (...args: any) => call(() => console.error(prefix, ...args));
+  const warn = (...args: any) => call(() => console.warn(prefix, ...args));
 
   return {
     log,
