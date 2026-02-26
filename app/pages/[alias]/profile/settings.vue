@@ -195,6 +195,7 @@ store.fetchTerms();
           v-model:open="avatarCrop.open.value"
           :src="avatarCrop.src.value"
           :mime-type="avatarCrop.mimeType.value"
+          :aspect-ratio="1"
           @crop="avatarCrop.onConfirm"
           @update:open="avatarCrop.onOpenChange"
         />

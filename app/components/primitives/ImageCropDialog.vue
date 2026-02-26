@@ -5,6 +5,7 @@ import "vue-advanced-cropper/dist/style.css";
 const props = defineProps<{
   src: string;
   mimeType?: string;
+  aspectRatio?: number;
 }>();
 
 const emit = defineEmits<{
@@ -20,6 +21,16 @@ const outputMimeType = computed(() => {
   if (props.mimeType === "image/gif") return "image/gif";
   return "image/png";
 });
+
+function defaultSize({ imageSize }: { imageSize: { width: number; height: number } }) {
+  if (!props.aspectRatio) {
+    return { width: imageSize.width, height: imageSize.height };
+  }
+  if (imageSize.width / imageSize.height > props.aspectRatio) {
+    return { width: imageSize.height * props.aspectRatio, height: imageSize.height };
+  }
+  return { width: imageSize.width, height: imageSize.width / props.aspectRatio };
+}
 
 function onConfirm() {
   const { canvas } = cropperRef.value.getResult();
@@ -49,7 +60,8 @@ function onConfirm() {
         <Cropper
           ref="cropperRef"
           :src="props.src"
-          :stencil-props="{ aspectRatio: 1 }"
+          :default-size="defaultSize"
+          :stencil-props="props.aspectRatio ? { aspectRatio: props.aspectRatio } : {}"
           background-class="!bg-background"
           class="max-h-96"
         />
