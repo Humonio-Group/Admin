@@ -8,8 +8,12 @@ import SettingsSidebar from "~/components/navigation/settings/SettingsSidebar.vu
     <UiSidebarProvider>
       <SettingsSidebar />
 
-      <UiSidebarInset>
-        <main>
+      <UiSidebarInset class="px-4 pb-2">
+        <header class="h-12 flex items-center justify-between gap-2">
+          <UiSidebarTrigger />
+        </header>
+
+        <main class="px-2">
           <NuxtPage />
         </main>
       </UiSidebarInset>
