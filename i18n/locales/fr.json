@@ -1,7 +1,8 @@
 {
   "btn": {
     "cancel": "Annuler",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "back": "Retour"
   },
   "dialogs": {
     "image-crop": {
@@ -100,6 +101,36 @@
           "read": "Lire",
           "revoke": "Révoquer"
         }
+      }
+    }
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "navigation": {
+      "general": "Général",
+      "brand": {
+        "label": "Marque",
+        "identity": "Identité",
+        "conditions": "Conditions"
+      },
+      "management": {
+        "label": "Gestion",
+        "locations": "Lieux",
+        "users": "Utilisateurs",
+        "companies": "Espaces de travail"
+      },
+      "public": {
+        "label": "Publique",
+        "invitation": "Page d'invitation",
+        "shop": "Boutique en ligne"
+      },
+      "advanced": {
+        "label": "Avancée",
+        "sso": "Authentification unique",
+        "mailing": "SMTP",
+        "data-storage": "Stockage",
+        "developer": "Développeur"
       }
     }
   }
