@@ -19,19 +19,24 @@ const modelValue = useVModel(props, "modelValue", emits, {
 });
 
 // --- HSV ↔ HEX utilities ---
-
 function hsvToHex(h: number, s: number, v: number): string {
   const c = v * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = v - c;
   let r = 0, g = 0, b = 0;
 
-  if (h < 60) { r = c; g = x; b = 0; }
-  else if (h < 120) { r = x; g = c; b = 0; }
-  else if (h < 180) { r = 0; g = c; b = x; }
-  else if (h < 240) { r = 0; g = x; b = c; }
-  else if (h < 300) { r = x; g = 0; b = c; }
-  else { r = c; g = 0; b = x; }
+  const setValues = (red: number, green: number, blue: number) => {
+    r = red;
+    g = green;
+    b = blue;
+  };
+
+  if (h < 60) setValues(c, x, 0);
+  else if (h < 120) setValues(x, c, 0);
+  else if (h < 180) setValues(0, c, x);
+  else if (h < 240) setValues(0, x, c);
+  else if (h < 300) setValues(x, 0, c);
+  else setValues(c, 0, x);
 
   const toHex = (n: number) => Math.round((n + m) * 255).toString(16).padStart(2, "0");
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
@@ -212,7 +217,10 @@ function onHueChange(e: Event) {
     >
       <div class="flex flex-col gap-3">
         <!-- Saturation / Brightness canvas -->
-        <div class="relative select-none" :style="{ width: `${canvasWidth}px`, height: `${canvasHeight}px` }">
+        <div
+          class="relative select-none"
+          :style="{ width: `${canvasWidth}px`, height: `${canvasHeight}px` }"
+        >
           <canvas
             ref="canvasRef"
             :width="canvasWidth"
