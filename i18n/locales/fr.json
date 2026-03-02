@@ -6,7 +6,8 @@
     "change": "Changer",
     "new": {
       "default": "Nouveau | Nouvelle",
-      "condition": "Nouvelle condition"
+      "condition": "Nouvelle condition",
+      "location": "Nouvelle adresse"
     }
   },
   "dialogs": {
@@ -115,13 +116,12 @@
     "navigation": {
       "general": "Général",
       "brand": {
-        "label": "Marque",
         "identity": "Identité",
         "conditions": "Conditions"
       },
       "management": {
         "label": "Gestion",
-        "locations": "Lieux",
+        "locations": "Adresses",
         "users": "Utilisateurs",
         "companies": "Espaces de travail"
       },
@@ -205,6 +205,27 @@
         "delete-confirm": {
           "title": "Supprimer la condition",
           "description": "Cette action est irréversible. Si vous supprimez cette condition, vous ne pourrez plus revenir en arrière. Êtes-vous sûr de vouloir continuer ?",
+          "action": "Supprimer"
+        }
+      }
+    },
+    "locations": {
+      "title": "Adresses",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "city": "Ville",
+          "country": "Pays"
+        },
+        "actions": {
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        }
+      },
+      "dialog": {
+        "delete-confirm": {
+          "title": "Supprimer l'adresse",
+          "description": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cette adresse ?",
           "action": "Supprimer"
         }
       }

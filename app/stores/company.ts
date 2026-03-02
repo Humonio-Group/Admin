@@ -3,15 +3,19 @@ import type { Company } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
 import type { Terms } from "~/types/entities/terms";
+import type { Locations } from "~/types/entities/location";
+import { buildLocationEntity } from "~/lib/location";
 
 interface CompanyState {
   company: Nullable<Company>;
   terms: Terms;
+  locations: Locations;
   loading: {
     icon: boolean;
     logo: boolean;
     settings: {
       terms: boolean;
+      locations: boolean;
     };
   };
 }
@@ -67,11 +71,13 @@ export const useCompanyStore = defineStore("company", {
   state: (): CompanyState => ({
     company: null,
     terms: [],
+    locations: [],
     loading: {
       icon: false,
       logo: false,
       settings: {
         terms: false,
+        locations: false,
       },
     },
   }),
@@ -168,5 +174,34 @@ export const useCompanyStore = defineStore("company", {
     // todo: async createTerm() {},
     // todo: async updateTerm(id: number) {},
     // todo: async deleteTerm(id: number) {},
+
+    async loadLocations() {
+      if (!this.company) return;
+
+      this.loading.settings.locations = true;
+
+      try {
+        const response = await this.api.get("/locations", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "country",
+            "fields[locations]": "name,city,stats.journeys",
+            "companies": this.company.id,
+            "limit": -1,
+          },
+        });
+
+        const { data, included } = response;
+        this.locations = data.map((loc: any) => buildLocationEntity(loc, included));
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.locations = false;
+      }
+    },
+    // todo: async createLocation() {},
+    // todo: async updateLocation(id: number) {},
+    // todo: async deleteLocation(id: number) {},
   },
 });

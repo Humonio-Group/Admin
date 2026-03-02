@@ -15,12 +15,6 @@ export const sidebarContent = computed<NavigationGroup[]>(() => {
           path: "/administration/settings",
           exact: true,
         },
-      ],
-    },
-    {
-      type: "group",
-      label: t("settings.navigation.brand.label"),
-      children: [
         {
           type: "item",
           label: t("settings.navigation.brand.identity"),
