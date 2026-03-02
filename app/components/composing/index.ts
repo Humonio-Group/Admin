@@ -1,8 +1,8 @@
 import type { HTMLAttributes } from "vue";
+import type { HumonioProps } from "~/types/components/default";
 
-export interface ComposingProps {
+export interface ComposingProps extends HumonioProps {
   name?: string;
-  class?: HTMLAttributes["class"];
 }
 export interface PageRootProps extends ComposingProps {
   wrapper?: boolean;

@@ -3,7 +3,11 @@
     "cancel": "Annuler",
     "save": "Enregistrer",
     "back": "Retour",
-    "change": "Changer"
+    "change": "Changer",
+    "new": {
+      "default": "Nouveau | Nouvelle",
+      "condition": "Nouvelle condition"
+    }
   },
   "dialogs": {
     "image-crop": {
@@ -182,6 +186,13 @@
         "logo": "Logo",
         "light": "Thème clair",
         "dark": "Thème sombre"
+      }
+    },
+    "conditions": {
+      "title": "Conditions",
+      "empty": {
+        "title": "Oups...",
+        "description": "Il semblerait qu'il n'y a encore aucune condition configurée."
       }
     }
   }

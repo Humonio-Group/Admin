@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Term } from "~/types/entities/terms";
 import { BookOpen, X } from "lucide-vue-next";
-import TermDialog from "~/components/settings/terms/TermDialog.vue";
-import TermRevokeConfirm from "~/components/settings/terms/TermRevokeConfirm.vue";
+import TermDialog from "~/components/user/settings/terms/TermDialog.vue";
+import TermRevokeConfirm from "~/components/user/settings/terms/TermRevokeConfirm.vue";
 
 const { locale } = useI18n();
 

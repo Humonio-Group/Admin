@@ -7,7 +7,7 @@ import { z } from "zod";
 import { type Theme, themeOptions } from "~/types/misc/theme";
 import { type AvailableLocale, availableLocales } from "~/types/misc/language";
 import FlagIcon from "~/components/icons/FlagIcon.vue";
-import TermCard from "~/components/settings/terms/TermCard.vue";
+import TermCard from "~/components/user/settings/terms/TermCard.vue";
 import ImageCropDialog from "~/components/primitives/ImageCropDialog.vue";
 
 const { t } = useI18n();

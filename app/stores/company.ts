@@ -1,11 +1,17 @@
 import type { Nullable } from "~/types/primitives/objects";
 import type { Company } from "~/types/entities/company";
+import { EntityType } from "~/types/entities";
+import { buildTermEntity } from "~/lib/terms";
 
 interface CompanyState {
   company: Nullable<Company>;
+  terms: any[];
   loading: {
     icon: boolean;
     logo: boolean;
+    settings: {
+      terms: boolean;
+    };
   };
 }
 
@@ -59,9 +65,13 @@ function bindCompanyLogo(company: Company) {
 export const useCompanyStore = defineStore("company", {
   state: (): CompanyState => ({
     company: null,
+    terms: [],
     loading: {
       icon: false,
       logo: false,
+      settings: {
+        terms: false,
+      },
     },
   }),
   getters: {
@@ -111,7 +121,7 @@ export const useCompanyStore = defineStore("company", {
 
       return icon;
     },
-    async uploadLogo(): Promise<Nullable<string>> {
+    async uploadLogo(blob: Blob): Promise<Nullable<string>> {
       this.loading.logo = true;
 
       let logo: Nullable<string> = null;
@@ -128,6 +138,31 @@ export const useCompanyStore = defineStore("company", {
       }
 
       return logo;
+    },
+
+    async loadTerms() {
+      if (!this.company) return;
+
+      this.loading.settings.terms = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[terms]": "display,dates,permissions",
+            "fields[companies]": "default",
+            "include": "terms",
+          },
+        });
+
+        const terms = response.included.filter((e: any) => e.type === EntityType.TERM);
+        this.terms = terms.map(buildTermEntity);
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.terms = false;
+      }
     },
   },
 });
