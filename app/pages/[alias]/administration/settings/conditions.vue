@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Plus } from "lucide-vue-next";
 import PageRoot from "~/components/composing/PageRoot.vue";
+import { columns } from "~/components/administration/settings/conditions";
+import ConditionEditDialog from "~/components/administration/settings/conditions/ConditionEditDialog.vue";
 
 const store = useCompanyStore();
 const { terms, loading } = storeToRefs(store);
@@ -9,15 +11,20 @@ store.loadTerms();
 </script>
 
 <template>
-  <PageRoot name="administration.settings.conditions">
+  <PageRoot
+    name="administration.settings.conditions"
+    class="grid gap-4"
+  >
     <header class="flex items-center justify-between">
       <h1 class="text-xl font-bold">
         {{ $t("settings.conditions.title") }}
       </h1>
-      <UiButton v-if="terms.length">
-        <Plus />
-        {{ $t("btn.new.condition") }}
-      </UiButton>
+      <ConditionEditDialog trigger>
+        <UiButton>
+          <Plus />
+          {{ $t("btn.new.condition") }}
+        </UiButton>
+      </ConditionEditDialog>
     </header>
 
     <main>
@@ -27,19 +34,11 @@ store.loadTerms();
       >
         <UiSpinner />
       </div>
-      <template v-else-if="terms.length">
-        terms display
-      </template>
-      <UiEmpty v-else>
-        <UiEmptyHeader>
-          <UiEmptyTitle>{{ $t("settings.conditions.empty.title") }}</UiEmptyTitle>
-          <UiEmptyDescription>{{ $t("settings.conditions.empty.description") }}</UiEmptyDescription>
-          <UiButton>
-            <Plus />
-            {{ $t("btn.new.condition") }}
-          </UiButton>
-        </UiEmptyHeader>
-      </UiEmpty>
+      <UiDataTable
+        v-else
+        :columns="columns()"
+        :data="terms"
+      />
     </main>
   </PageRoot>
 </template>

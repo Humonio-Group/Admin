@@ -190,9 +190,23 @@
     },
     "conditions": {
       "title": "Conditions",
-      "empty": {
-        "title": "Oups...",
-        "description": "Il semblerait qu'il n'y a encore aucune condition configurée."
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "last-update": "Dernière mise à jour"
+        },
+        "actions": {
+          "overview": "Aperçu",
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        }
+      },
+      "dialog": {
+        "delete-confirm": {
+          "title": "Supprimer la condition",
+          "description": "Cette action est irréversible. Si vous supprimez cette condition, vous ne pourrez plus revenir en arrière. Êtes-vous sûr de vouloir continuer ?",
+          "action": "Supprimer"
+        }
       }
     }
   }

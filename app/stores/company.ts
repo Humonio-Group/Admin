@@ -2,10 +2,11 @@ import type { Nullable } from "~/types/primitives/objects";
 import type { Company } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
+import type { Terms } from "~/types/entities/terms";
 
 interface CompanyState {
   company: Nullable<Company>;
-  terms: any[];
+  terms: Terms;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -164,5 +165,8 @@ export const useCompanyStore = defineStore("company", {
         this.loading.settings.terms = false;
       }
     },
+    // todo: async createTerm() {},
+    // todo: async updateTerm(id: number) {},
+    // todo: async deleteTerm(id: number) {},
   },
 });
