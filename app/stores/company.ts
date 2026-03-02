@@ -1,70 +1,26 @@
 import type { Nullable } from "~/types/primitives/objects";
-import type { Company } from "~/types/entities/company";
+import type { Company, CompanyUsers } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
 import type { Terms } from "~/types/entities/terms";
 import type { Locations } from "~/types/entities/location";
 import { buildLocationEntity } from "~/lib/location";
+import { buildCompanyEntity, bindCompanyColors, bindCompanyLogo, buildCompanyUserEntity } from "~/lib/company";
 
 interface CompanyState {
   company: Nullable<Company>;
   terms: Terms;
   locations: Locations;
+  users: CompanyUsers;
   loading: {
     icon: boolean;
     logo: boolean;
     settings: {
       terms: boolean;
       locations: boolean;
+      users: boolean;
     };
   };
-}
-
-function buildCompanyEntity(data: any): Company {
-  return {
-    id: data.id,
-    key: data.attributes.key,
-    alias: data.attributes.alias,
-    name: data.attributes.name,
-    drive: data.attributes.isDrive,
-    colors: {
-      first: data.attributes.colors.firstGradient,
-      second: data.attributes.colors.secondGradient,
-    },
-    icon: data.attributes.icon.thumbnail,
-    logo: data.attributes.logo.thumbnail,
-  };
-}
-
-function bindCompanyColors(company: Company) {
-  const style = document.createElement("style");
-  style.id = "company-theme";
-
-  let cssRules = "";
-
-  cssRules += `:root { --primary: #${company.colors.first}; }\n`;
-  cssRules += `.dark { --primary: #${company.colors.second}; }\n`;
-  cssRules += `:root { --sidebar-primary: #${company.colors.first}; }\n`;
-  cssRules += `.dark { --sidebar-primary: #${company.colors.second}; }\n`;
-
-  if (cssRules) {
-    const existingStyle = document.getElementById("company-theme");
-    if (existingStyle)
-      existingStyle.remove();
-
-    style.textContent = cssRules;
-    document.head.appendChild(style);
-  }
-}
-function bindCompanyLogo(company: Company) {
-  useHead({
-    link: [
-      {
-        rel: "icon",
-        href: company.icon,
-      },
-    ],
-  });
 }
 
 export const useCompanyStore = defineStore("company", {
@@ -72,12 +28,14 @@ export const useCompanyStore = defineStore("company", {
     company: null,
     terms: [],
     locations: [],
+    users: [],
     loading: {
       icon: false,
       logo: false,
       settings: {
         terms: false,
         locations: false,
+        users: false,
       },
     },
   }),
@@ -203,5 +161,35 @@ export const useCompanyStore = defineStore("company", {
     // todo: async createLocation() {},
     // todo: async updateLocation(id: number) {},
     // todo: async deleteLocation(id: number) {},
+
+    async loadUsers() {
+      if (!this.company) return;
+
+      this.loading.settings.users = true;
+
+      try {
+        const response = await this.api.get("/users", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "interfaceLanguage",
+            "sort": "firstname",
+            "fields[users]": "name,dates,active,recipient,email,picture",
+            "companies": this.company.id,
+            "limit": -1,
+          },
+        });
+
+        const { data, included } = response;
+        this.users = data.map((user: any) => buildCompanyUserEntity(user, included));
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.users = false;
+      }
+    },
+    // todo: async createUser() {},
+    // todo: async updateUser() {},
+    // todo: async deleteUser() {},
   },
 });

@@ -7,7 +7,12 @@
     "new": {
       "default": "Nouveau | Nouvelle",
       "condition": "Nouvelle condition",
-      "location": "Nouvelle adresse"
+      "location": "Nouvelle adresse",
+      "user": "Nouvel utilisateur"
+    },
+    "create": {
+      "default": "Créer",
+      "user": "Créer l'utilisateur"
     }
   },
   "dialogs": {
@@ -30,6 +35,16 @@
     "other-workspaces": "Autres espaces de travail",
     "time": {
       "last-update": "Dernière mise à jour le {date}"
+    },
+    "roles": {
+      "3": "Administrateur",
+      "4": "Analyste",
+      "5": "Facilitateur",
+      "6": "Participant",
+      "7": "Coach",
+      "8": "Support",
+      "9": "Mentor",
+      "10": "Créateur"
     }
   },
   "navigation": {
@@ -227,6 +242,36 @@
           "title": "Supprimer l'adresse",
           "description": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cette adresse ?",
           "action": "Supprimer"
+        }
+      }
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "email": "Email",
+          "roles": "Rôles"
+        },
+        "actions": {
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        }
+      },
+      "dialog": {
+        "new": {
+          "title": "Nouvel utilisateur",
+          "description": "Ajouter un utilisateur afin de lui donner accès à la plateforme."
+        },
+        "edit": {
+          "title": "Édition",
+          "description": "Modifier les informations de votre utilisateur."
+        },
+        "fields": {
+          "first-name": "Prénom",
+          "last-name": "Nom",
+          "email": "Email",
+          "roles": "Rôles"
         }
       }
     }
