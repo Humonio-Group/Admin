@@ -17,7 +17,7 @@ store.loadCompanies();
 
 <template>
   <PageRoot
-    name="settings.administration.branding"
+    name="settings.administration.companies"
     class="grid gap-4"
   >
     <header class="flex items-center justify-between">
