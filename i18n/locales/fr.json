@@ -4,6 +4,7 @@
     "save": "Enregistrer",
     "back": "Retour",
     "change": "Changer",
+    "close": "Fermer",
     "new": {
       "default": "Nouveau | Nouvelle",
       "condition": "Nouvelle condition",
@@ -14,6 +15,9 @@
     "create": {
       "default": "Créer",
       "user": "Créer l'utilisateur"
+    },
+    "add": {
+      "default": "Ajouter"
     }
   },
   "dialogs": {
@@ -23,10 +27,19 @@
       "confirm": "Valider"
     }
   },
+  "primitives": {
+    "image-dropzone": {
+      "label": "Ajouter"
+    }
+  },
   "labels": {
     "search": "Rechercher",
     "languages": {
       "french": "Français"
+    },
+    "state": {
+      "enabled": "Activé | Activée",
+      "disabled": "Désactivé | Désactivée"
     },
     "miss-you": "Vous ne pouvez pas partir comme ça... 😓",
     "plan": {
@@ -293,6 +306,42 @@
           "disable": "Désactiver",
           "enable": "Activer"
         }
+      }
+    },
+    "invitation": {
+      "title": "Page d'invitation",
+      "advanced-settings": "Paramètres avancés",
+      "state": {
+        "enable": "Activer la page d'invitation",
+        "disable": "Désactiver la page d'invitation"
+      },
+      "labels": {
+        "title": "Titre",
+        "description": "Description",
+        "banner": "Bannière",
+        "date": {
+          "label": "Affichage de la date",
+          "description": "Choisissez quelle date doit être visible dans la page d'invitation.",
+          "options": {
+            "no": "Ne pas afficher",
+            "event": "Date de début de la formation",
+            "workshop": "Date du prochain événement"
+          }
+        },
+        "show-journeys": "Afficher les distributions",
+        "show-teams": "Afficher les équipes",
+        "programs": "Programmes",
+        "add-program": "Ajouter un programme"
+      },
+      "remove-program": "Retirer le programme",
+      "dialog": {
+        "title": "Paramètres avancés",
+        "description": "Configurez votre page d'invitation."
+      },
+      "new-program": {
+        "title": "Ajouter un programme",
+        "description": "Ajoute un programme dans la liste de programmes disponible dans la page d'invitation.",
+        "placeholder": "Sélectionner un programme"
       }
     }
   }

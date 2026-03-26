@@ -1,11 +1,12 @@
 import type { Nullable } from "~/types/primitives/objects";
-import type { Companies, Company, CompanyUsers } from "~/types/entities/company";
+import type { Companies, Company, CompanyInvitationPageSettings, CompanyUsers } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
 import type { Terms } from "~/types/entities/terms";
 import type { Locations } from "~/types/entities/location";
 import { buildLocationEntity } from "~/lib/location";
 import { buildCompanyEntity, bindCompanyColors, bindCompanyLogo, buildCompanyUserEntity } from "~/lib/company";
+import { buildInvitationPageSettings } from "~/lib/invitiation";
 
 interface CompanyState {
   company: Nullable<Company>;
@@ -13,6 +14,7 @@ interface CompanyState {
   locations: Locations;
   users: CompanyUsers;
   companies: Companies;
+  invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -21,6 +23,7 @@ interface CompanyState {
       locations: boolean;
       users: boolean;
       companies: boolean;
+      invitation: boolean;
     };
   };
 }
@@ -32,6 +35,7 @@ export const useCompanyStore = defineStore("company", {
     locations: [],
     users: [],
     companies: [],
+    invitationPageSettings: null,
     loading: {
       icon: false,
       logo: false,
@@ -40,6 +44,7 @@ export const useCompanyStore = defineStore("company", {
         locations: false,
         users: false,
         companies: false,
+        invitation: false,
       },
     },
   }),
@@ -48,6 +53,9 @@ export const useCompanyStore = defineStore("company", {
     logger: () => useLogger("[COMPANY]"),
 
     isLoaded: state => !!state.company,
+
+    invpSelectedPrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => state.invitationPageSettings?.programs.includes(p.id)) ?? [],
+    invpAvailablePrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => !state.invitationPageSettings?.programs.includes(p.id)) ?? [],
   },
   actions: {
     async fetchCompany(alias: string) {
@@ -228,5 +236,30 @@ export const useCompanyStore = defineStore("company", {
     // todo: async createCompany() {}
     // todo: async updateCompany() {}
     // todo: async deleteCompany() {}
+
+    async loadInvitationPageSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.invitation = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "invitationPage",
+            "include": "programs",
+          },
+        });
+
+        const { data, included } = response;
+
+        this.invitationPageSettings = buildInvitationPageSettings(data, included);
+      }
+      catch (e) {
+        useLogger().error(e);
+      }
+      finally {
+        this.loading.settings.invitation = false;
+      }
+    },
   },
 });

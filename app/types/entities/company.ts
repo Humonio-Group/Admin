@@ -1,5 +1,5 @@
 import type { UserRole } from "~/types/entities/user";
-import type { Nullable } from "~/types/primitives/objects";
+import type { Listed, Nullable } from "~/types/primitives/objects";
 
 export interface Company {
   id: number;
@@ -28,7 +28,7 @@ export interface Company {
     email: string;
   };
 }
-export type Companies = Company[];
+export type Companies = Listed<Company>;
 
 export interface CompanyUser {
   id: number;
@@ -46,4 +46,24 @@ export interface CompanyUser {
     roles: UserRole[];
   }[];
 }
-export type CompanyUsers = CompanyUser[];
+export type CompanyUsers = Listed<CompanyUser>;
+
+export interface CompanyInvitationPageProgram {
+  id: number;
+  key: string;
+  name: string;
+  picture: Nullable<string>;
+}
+export interface CompanyInvitationPageSettings {
+  active: boolean;
+  title: string;
+  description: string;
+  banner: Nullable<string>;
+  programs: Listed<number>;
+  availablePrograms: Listed<CompanyInvitationPageProgram>;
+  dateMode: number;
+  display: {
+    journeys: boolean;
+    teams: boolean;
+  };
+}
