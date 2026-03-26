@@ -1,5 +1,5 @@
 import type { Nullable } from "~/types/primitives/objects";
-import type { Company, CompanyUsers } from "~/types/entities/company";
+import type { Companies, Company, CompanyUsers } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
 import type { Terms } from "~/types/entities/terms";
@@ -12,6 +12,7 @@ interface CompanyState {
   terms: Terms;
   locations: Locations;
   users: CompanyUsers;
+  companies: Companies;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -19,6 +20,7 @@ interface CompanyState {
       terms: boolean;
       locations: boolean;
       users: boolean;
+      companies: boolean;
     };
   };
 }
@@ -29,6 +31,7 @@ export const useCompanyStore = defineStore("company", {
     terms: [],
     locations: [],
     users: [],
+    companies: [],
     loading: {
       icon: false,
       logo: false,
@@ -36,6 +39,7 @@ export const useCompanyStore = defineStore("company", {
         terms: false,
         locations: false,
         users: false,
+        companies: false,
       },
     },
   }),
@@ -191,5 +195,38 @@ export const useCompanyStore = defineStore("company", {
     // todo: async createUser() {},
     // todo: async updateUser() {},
     // todo: async deleteUser() {},
+
+    async loadCompanies() {
+      if (!this.company) return;
+
+      this.loading.settings.companies = true;
+
+      try {
+        const response = await this.api.get("/companies", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "clientPrimary",
+            "sort": "name",
+            "fields[companies]": "default,name,stats.participants,key,active,logo",
+            "fields[users]": "name,email,picture",
+            "offset": 0,
+            "limit": -1,
+            "active": 1,
+          },
+        });
+
+        const { data, included } = response;
+
+        this.companies = data.map((c: any) => buildCompanyEntity(c, included));
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.companies = false;
+      }
+    },
+    // todo: async createCompany() {}
+    // todo: async updateCompany() {}
+    // todo: async deleteCompany() {}
   },
 });
