@@ -7,6 +7,7 @@
     "new": {
       "default": "Nouveau | Nouvelle",
       "condition": "Nouvelle condition",
+      "company": "Nouvel espace de travail",
       "location": "Nouvelle adresse",
       "user": "Nouvel utilisateur"
     },
@@ -34,6 +35,7 @@
     "other-products": "Autres produits",
     "other-workspaces": "Autres espaces de travail",
     "time": {
+      "created-at": "Créé le {date} | Créée le {date}",
       "last-update": "Dernière mise à jour le {date}"
     },
     "roles": {
@@ -45,7 +47,8 @@
       "8": "Support",
       "9": "Mentor",
       "10": "Créateur"
-    }
+    },
+    "archives": "Archives"
   },
   "navigation": {
     "user-menu": {
@@ -272,6 +275,23 @@
           "last-name": "Nom",
           "email": "Email",
           "roles": "Rôles"
+        }
+      }
+    },
+    "companies": {
+      "title": "Espaces de travail",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "main-contact": "Contact principal",
+          "next-participants": "Prochains participants actifs (estimés)",
+          "created-at": "Créé le"
+        },
+        "actions": {
+          "edit": "Modifier",
+          "detach": "Détacher",
+          "disable": "Désactiver",
+          "enable": "Activer"
         }
       }
     }
