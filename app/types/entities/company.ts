@@ -7,13 +7,28 @@ export interface Company {
   alias: string;
   name: string;
   drive: boolean;
+  active: boolean;
   colors: {
     first: string;
     second: string;
   };
+  dates?: {
+    createdAt: Date;
+  };
   icon: string;
   logo: string;
+
+  mainContact?: {
+    avatar: string;
+    name: {
+      first: string;
+      last: string;
+      full: string;
+    };
+    email: string;
+  };
 }
+export type Companies = Company[];
 
 export interface CompanyUser {
   id: number;
