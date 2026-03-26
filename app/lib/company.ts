@@ -1,20 +1,44 @@
 import type { Company, CompanyUser } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 
-export function buildCompanyEntity(data: any): Company {
+export function buildCompanyEntity(data: any, included?: any): Company {
+  const mainContact = included?.find((e: any) => e.type === EntityType.USER && e.id === data.relationships.clientPrimary.data[0]!.id);
+
   return {
     id: data.id,
     key: data.attributes.key,
     alias: data.attributes.alias,
     name: data.attributes.name,
     drive: data.attributes.isDrive,
+    active: data.attributes.active,
     colors: {
       first: data.attributes.colors.firstGradient,
       second: data.attributes.colors.secondGradient,
     },
+    dates: data.attributes.dates
+      ? {
+          createdAt: new Date(data.attributes.dates.creation),
+        }
+      : undefined,
     icon: data.attributes.icon.thumbnail,
     logo: data.attributes.logo.thumbnail,
+
+    mainContact: buildMainContact(mainContact),
   };
+}
+
+function buildMainContact(data?: any): Company["mainContact"] | undefined {
+  return data
+    ? {
+        avatar: data.attributes.picture.thumbnail,
+        name: {
+          first: data.attributes.firstname,
+          last: data.attributes.lastname,
+          full: data.attributes.name,
+        },
+        email: data.attributes.email,
+      }
+    : undefined;
 }
 
 export function buildCompanyUserEntity(data: any, included: any): CompanyUser {
