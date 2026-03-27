@@ -53,9 +53,7 @@ async function removeProgram() {
         :disabled="loading"
       >
         <UiNumberFieldContent>
-          <UiNumberFieldDecrement />
           <UiNumberFieldInput />
-          <UiNumberFieldIncrement />
         </UiNumberFieldContent>
       </UiNumberField>
     </UiCardFooter>
