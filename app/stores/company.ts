@@ -2,7 +2,7 @@ import type { Listed, Nullable } from "~/types/primitives/objects";
 import type {
   Companies,
   Company, CompanyDeveloperSettings,
-  CompanyInvitationPageSettings, CompanyStoreProgram,
+  CompanyInvitationPageSettings, CompanySSOSettings, CompanyStoreProgram,
   CompanyStoreSettings,
   CompanyUsers,
 } from "~/types/entities/company";
@@ -16,6 +16,7 @@ import { buildInvitationPageSettings } from "~/lib/invitiation";
 import { buildStoreSettings } from "~/lib/store";
 import { buildDeveloperSettings } from "~/lib/developer";
 import { toast } from "vue-sonner";
+import { buildSSOSettings } from "~/lib/entities/settings/sso";
 
 interface CompanyState {
   company: Nullable<Company>;
@@ -26,6 +27,7 @@ interface CompanyState {
   invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
   storeSettings: Nullable<CompanyStoreSettings>;
   developerSettings: Nullable<CompanyDeveloperSettings>;
+  ssoSettings: Nullable<CompanySSOSettings>;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -38,11 +40,13 @@ interface CompanyState {
       shop: boolean;
       developer: boolean;
       refreshApiToken: boolean;
+      sso: boolean;
     };
     saving: {
       price: Listed<number>;
       storeSettings: boolean;
       developer: boolean;
+      sso: boolean;
     };
   };
 }
@@ -57,6 +61,7 @@ export const useCompanyStore = defineStore("company", {
     invitationPageSettings: null,
     storeSettings: null,
     developerSettings: null,
+    ssoSettings: null,
     loading: {
       icon: false,
       logo: false,
@@ -69,11 +74,13 @@ export const useCompanyStore = defineStore("company", {
         shop: false,
         developer: false,
         refreshApiToken: false,
+        sso: false,
       },
       saving: {
         price: [],
         storeSettings: false,
         developer: false,
+        sso: false,
       },
     },
   }),
@@ -399,6 +406,68 @@ export const useCompanyStore = defineStore("company", {
       }
       finally {
         this.loading.saving.price.splice(this.loading.saving.price.indexOf(program.id), 1);
+      }
+    },
+
+    async loadSSOSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.sso = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "sso",
+          },
+        });
+
+        this.ssoSettings = buildSSOSettings(response.data);
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.settings.sso = false;
+      }
+    },
+    async saveSSOSettings(settings: CompanySSOSettings) {
+      if (!this.company || !this.ssoSettings) return;
+
+      this.loading.saving.sso = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                sso: {
+                  active: settings.active,
+                  alias: settings.alias,
+                  certificate: settings.certificate,
+                  issuerUrl: settings.issuer,
+                  sloEndpoint: settings.slo.endpoint,
+                  samlEndpoint: settings.saml.endpoint,
+                  samlSignatureAlgorithm: settings.saml.signatureAlgorithm,
+                  mapping: settings.mapping,
+                },
+              },
+            },
+          },
+          query: {
+            "fields[companies]": "sso",
+          },
+        });
+        this.ssoSettings = { ...settings };
+
+        toast.success(this.translate("toasts.settings.sso.saved"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.saving.sso = false;
       }
     },
 

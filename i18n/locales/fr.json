@@ -18,7 +18,8 @@
       "user": "Créer l'utilisateur"
     },
     "add": {
-      "default": "Ajouter"
+      "default": "Ajouter",
+      "entry": "Ajouter une entrée"
     }
   },
   "dialogs": {
@@ -97,6 +98,9 @@
       "developer": {
         "save": "Paramètres de développement sauvegardés.",
         "token-refreshed": "Le jeton a été régénéré."
+      },
+      "sso": {
+        "saved": "Paramètres d'authentification unique enregistrés."
       }
     }
   },
@@ -397,6 +401,42 @@
           "description": "Ajouter un programme à votre boutique en ligne pour configurer son prix.",
           "placeholder": "Sélectionner un programme"
         }
+      }
+    },
+    "sso": {
+      "title": "Authentification unique (SSO)",
+      "labels": {
+        "alias": "Alias",
+        "issuer": "URL de l'émetteur du fournisseur d'accès",
+        "slo-endpoint": "URL de déconnexion",
+        "certificate": "Certificat public du fournisseur d'identité",
+        "saml": {
+          "endpoint": "URL de connexion",
+          "signature-algorithm": "Algorithme de signature SAML"
+        },
+        "mapping": {
+          "label": "Mapping des attributs SAML",
+          "attribute-name": "Nom de l'attribut",
+          "user-field": {
+            "default": "Champ utilisateur",
+            "email": "Adresse e-mail",
+            "mobile": "Téléphone",
+            "firstname": "Prénom",
+            "lastname": "Nom",
+            "username": "Nom d'utilisateur",
+            "info_year_of_birth": "Année de naissance",
+            "job_title": "Poste occupé",
+            "linkedin": "LinkedIn",
+            "skype": "Skype",
+            "department": "Service",
+            "biography": "Biographie",
+            "long_biography": "Biographie longue"
+          }
+        }
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer"
       }
     },
     "developer": {

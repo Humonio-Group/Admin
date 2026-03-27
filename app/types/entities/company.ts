@@ -93,6 +93,47 @@ export interface CompanyStoreSettings {
   programs: Listed<CompanyStoreProgram>;
 }
 
+export const SSOAlgorithms = [
+  "SHA-1",
+  "SHA-256",
+  "SHA-384",
+  "SHA-512",
+] as const;
+export type SSOAlgorithm = (typeof SSOAlgorithms[number]);
+export const SSOUserFields = [
+  "firstname",
+  "lastname",
+  "email",
+  "mobile",
+  "info_year_of_birth",
+  "job_title",
+  "linkedin",
+  "skype",
+  "department",
+  "biography",
+  "long_biography",
+  "username",
+] as const;
+export type SSOUserField = (typeof SSOUserFields[number]);
+export interface CompanySSOSettings {
+  active: boolean;
+  alias: string;
+  issuer: string;
+  certificate: string;
+  slo: {
+    endpoint: string;
+  };
+  saml: {
+    endpoint: string;
+    signatureAlgorithm: SSOAlgorithm;
+  };
+  mapping: Listed<{
+    key: string;
+    userField: SSOUserField;
+    attributeName: string;
+  }>;
+}
+
 export interface CompanyDeveloperSettings {
   id: number;
   token: string;
