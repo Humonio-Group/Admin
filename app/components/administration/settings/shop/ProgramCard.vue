@@ -30,7 +30,9 @@ async function removeProgram() {
     />
 
     <UiCardHeader>
-      <UiCardTitle>{{ program.name }}</UiCardTitle>
+      <UiCardTitle class="line-clamp-2">
+        {{ program.name }}
+      </UiCardTitle>
     </UiCardHeader>
 
     <UiCardFooter class="mt-auto">
