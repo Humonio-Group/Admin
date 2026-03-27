@@ -50,7 +50,7 @@ store.loadInvitationPageSettings();
               </UiDialogTrigger>
             </UiTooltipTrigger>
             <UiTooltipContent side="bottom">
-              <p>{{ $t("settings.invitation.advanced-settings") }}</p>
+              <p>{{ $t("btn.advanced-settings") }}</p>
             </UiTooltipContent>
           </UiTooltip>
           <UiDialogContent class="max-w-xl! gap-8">
@@ -244,13 +244,16 @@ store.loadInvitationPageSettings();
           </UiDialog>
         </header>
 
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4">
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
           <UiCard
             v-for="program in invpSelectedPrograms"
             :key="`selected-${program.id}`"
             class="group/card pt-0 overflow-hidden relative"
           >
-            <NuxtImg :src="program.picture" />
+            <NuxtImg
+              :src="program.picture"
+              class="aspect-video object-cover"
+            />
 
             <UiCardHeader>
               <UiCardTitle>{{ program.name }}</UiCardTitle>
