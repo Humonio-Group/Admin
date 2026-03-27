@@ -92,3 +92,9 @@ export interface CompanyStoreSettings {
   stripe: Nullable<string>;
   programs: Listed<CompanyStoreProgram>;
 }
+
+export interface CompanyDeveloperSettings {
+  id: number;
+  token: string;
+  webhook: Nullable<string>;
+}

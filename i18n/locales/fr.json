@@ -92,6 +92,14 @@
       "settings": "Paramètres"
     }
   },
+  "toasts": {
+    "settings": {
+      "developer": {
+        "save": "Paramètres de développement sauvegardés.",
+        "token-refreshed": "Le jeton a été régénéré."
+      }
+    }
+  },
 
   "profile": {
     "details": {
@@ -390,6 +398,19 @@
           "placeholder": "Sélectionner un programme"
         }
       }
+    },
+    "developer": {
+      "title": "Développeur",
+      "labels": {
+        "id": "Identifiant",
+        "auth-token": "Jeton d'authentification",
+        "webhook": "Webhook"
+      },
+      "placeholders": {
+        "webhook": "https://webhook.com/event"
+      },
+      "warning": "Vous pouvez consulter notre {documentation}.",
+      "documentation": "documentation"
     }
   }
 }

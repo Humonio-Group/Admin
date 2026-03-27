@@ -1,7 +1,7 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
 import type {
   Companies,
-  Company,
+  Company, CompanyDeveloperSettings,
   CompanyInvitationPageSettings, CompanyStoreProgram,
   CompanyStoreSettings,
   CompanyUsers,
@@ -14,6 +14,8 @@ import { buildLocationEntity } from "~/lib/location";
 import { buildCompanyEntity, bindCompanyColors, bindCompanyLogo, buildCompanyUserEntity } from "~/lib/company";
 import { buildInvitationPageSettings } from "~/lib/invitiation";
 import { buildStoreSettings } from "~/lib/store";
+import { buildDeveloperSettings } from "~/lib/developer";
+import { toast } from "vue-sonner";
 
 interface CompanyState {
   company: Nullable<Company>;
@@ -23,6 +25,7 @@ interface CompanyState {
   companies: Companies;
   invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
   storeSettings: Nullable<CompanyStoreSettings>;
+  developerSettings: Nullable<CompanyDeveloperSettings>;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -33,10 +36,13 @@ interface CompanyState {
       companies: boolean;
       invitation: boolean;
       shop: boolean;
+      developer: boolean;
+      refreshApiToken: boolean;
     };
     saving: {
       price: Listed<number>;
       storeSettings: boolean;
+      developer: boolean;
     };
   };
 }
@@ -50,6 +56,7 @@ export const useCompanyStore = defineStore("company", {
     companies: [],
     invitationPageSettings: null,
     storeSettings: null,
+    developerSettings: null,
     loading: {
       icon: false,
       logo: false,
@@ -60,16 +67,20 @@ export const useCompanyStore = defineStore("company", {
         companies: false,
         invitation: false,
         shop: false,
+        developer: false,
+        refreshApiToken: false,
       },
       saving: {
         price: [],
         storeSettings: false,
+        developer: false,
       },
     },
   }),
   getters: {
     api: () => useApi(),
     logger: () => useLogger("[COMPANY]"),
+    translate: () => useNuxtApp().$i18n.t,
 
     isLoaded: state => !!state.company,
 
@@ -388,6 +399,93 @@ export const useCompanyStore = defineStore("company", {
       }
       finally {
         this.loading.saving.price.splice(this.loading.saving.price.indexOf(program.id), 1);
+      }
+    },
+
+    async loadDeveloperSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.developer = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "api",
+          },
+        });
+        this.developerSettings = buildDeveloperSettings(response.data);
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.settings.developer = false;
+      }
+    },
+    async saveDeveloperSettings(webhook: string) {
+      if (!this.company || !this.developerSettings) return;
+
+      this.loading.saving.developer = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                api: {
+                  webhookUrl: webhook || null,
+                },
+              },
+            },
+          },
+          query: {
+            "fields[companies]": "api",
+          },
+        });
+        toast.success(this.translate("toasts.settings.developer.save"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.saving.developer = false;
+      }
+    },
+    async refreshToken() {
+      if (!this.company || !this.developerSettings) return;
+
+      this.loading.settings.refreshApiToken = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                api: {
+                  refreshAuthToken: true,
+                },
+              },
+            },
+          },
+          query: {
+            "fields[companies]": "api",
+          },
+        });
+        this.developerSettings = {
+          ...this.developerSettings,
+          token: response.data.attributes.api.authToken,
+        };
+        toast.success(this.translate("toasts.settings.developer.token-refreshed"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.settings.refreshApiToken = false;
       }
     },
   },
