@@ -1,5 +1,11 @@
-import type { Nullable } from "~/types/primitives/objects";
-import type { Companies, Company, CompanyInvitationPageSettings, CompanyUsers } from "~/types/entities/company";
+import type { Listed, Nullable } from "~/types/primitives/objects";
+import type {
+  Companies,
+  Company,
+  CompanyInvitationPageSettings, CompanyStoreProgram,
+  CompanyStoreSettings,
+  CompanyUsers,
+} from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
 import type { Terms } from "~/types/entities/terms";
@@ -7,6 +13,7 @@ import type { Locations } from "~/types/entities/location";
 import { buildLocationEntity } from "~/lib/location";
 import { buildCompanyEntity, bindCompanyColors, bindCompanyLogo, buildCompanyUserEntity } from "~/lib/company";
 import { buildInvitationPageSettings } from "~/lib/invitiation";
+import { buildStoreSettings } from "~/lib/store";
 
 interface CompanyState {
   company: Nullable<Company>;
@@ -15,6 +22,7 @@ interface CompanyState {
   users: CompanyUsers;
   companies: Companies;
   invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
+  storeSettings: Nullable<CompanyStoreSettings>;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -24,6 +32,11 @@ interface CompanyState {
       users: boolean;
       companies: boolean;
       invitation: boolean;
+      shop: boolean;
+    };
+    saving: {
+      price: Listed<number>;
+      storeSettings: boolean;
     };
   };
 }
@@ -36,6 +49,7 @@ export const useCompanyStore = defineStore("company", {
     users: [],
     companies: [],
     invitationPageSettings: null,
+    storeSettings: null,
     loading: {
       icon: false,
       logo: false,
@@ -45,6 +59,11 @@ export const useCompanyStore = defineStore("company", {
         users: false,
         companies: false,
         invitation: false,
+        shop: false,
+      },
+      saving: {
+        price: [],
+        storeSettings: false,
       },
     },
   }),
@@ -56,6 +75,9 @@ export const useCompanyStore = defineStore("company", {
 
     invpSelectedPrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => state.invitationPageSettings?.programs.includes(p.id)) ?? [],
     invpAvailablePrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => !state.invitationPageSettings?.programs.includes(p.id)) ?? [],
+
+    storeActivePrograms: state => state.storeSettings?.programs.filter(p => p.catalogue.active) ?? [],
+    storeAvailablePrograms: state => state.storeSettings?.programs.filter(p => !p.catalogue.active) ?? [],
   },
   actions: {
     async fetchCompany(alias: string) {
@@ -259,6 +281,113 @@ export const useCompanyStore = defineStore("company", {
       }
       finally {
         this.loading.settings.invitation = false;
+      }
+    },
+
+    async loadShopSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.shop = true;
+
+      try {
+        const [settings, programs] = await Promise.all([
+          this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+            query: {
+              "fields[companies]": "lmsCatalogue",
+            },
+          }),
+          this.api.get("/programs", { version: 2, endpointVersion: 1, vanilla: true }, {
+            query: {
+              "offset": 0,
+              "limit": -1,
+              "creator": 1,
+              "default": 0,
+              "active": 1,
+              "companies": this.company.id,
+              "fields[programs]": "name,description,design,lmsCatalogue",
+            },
+          }),
+        ]);
+
+        this.storeSettings = buildStoreSettings(settings.data, programs.data);
+        this.logger.log(this.storeSettings);
+      }
+      catch {
+        this.logger.error("Nope");
+      }
+      finally {
+        this.loading.settings.shop = false;
+      }
+    },
+    async saveShopSettings(settings: CompanyStoreSettings) {
+      if (!this.company) return;
+
+      this.loading.saving.storeSettings = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                lmsCatalogue: {
+                  legalForm: settings.legal.type,
+                  postalAddress: settings.legal.address,
+                  lmsCatalogueActivated: settings.active,
+                  lmsCataloguePassword: settings.access.password,
+                },
+              },
+            },
+          },
+        });
+        this.storeSettings = { ...settings };
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.saving.storeSettings = false;
+      }
+    },
+    async saveProgramPrice(program: CompanyStoreProgram) {
+      if (!this.company || this.loading.saving.price.includes(program.id)) return;
+
+      this.loading.saving.price.push(program.id);
+      const { public: config } = useRuntimeConfig();
+
+      try {
+        await Promise.all([
+          this.api.post("/stripe/price", { version: 2, endpointVersion: 1 }, {
+            body: {
+              company_id: this.company.id,
+              key: config.api.key,
+              program_id: program.id,
+              program_price: program.catalogue.price,
+              return_url: config.urls.stripePriceCallback.replaceAll("{alias}", this.company.alias),
+            },
+          }),
+          this.api.put(`/programs/${program.id}`, { version: 2, endpointVersion: 1 }, {
+            body: {
+              data: {
+                type: EntityType.PROGRAM,
+                attributes: {
+                  lmsCatalogue: {
+                    isActivatedForLmsCatalogue: program.catalogue.active,
+                    lmsCatalogueDescription: program.catalogue.description || null,
+                    price: program.catalogue.price || 0,
+                  },
+                },
+              },
+            },
+          }),
+        ]);
+      }
+      catch {
+        this.logger.error("Nope");
+      }
+      finally {
+        this.loading.saving.price.splice(this.loading.saving.price.indexOf(program.id), 1);
       }
     },
   },

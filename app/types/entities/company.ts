@@ -67,3 +67,28 @@ export interface CompanyInvitationPageSettings {
     teams: boolean;
   };
 }
+
+export interface CompanyStoreProgram {
+  id: number;
+  name: string;
+  description: string;
+  picture: Nullable<string>;
+  catalogue: {
+    active: boolean; // transfer to a number for api calls
+    description: Nullable<string>;
+    price: Nullable<number>;
+  };
+}
+export interface CompanyStoreSettings {
+  active: boolean; // transfer to a number for the API requests
+  access: {
+    password: Nullable<string>;
+    url: string;
+  };
+  legal: {
+    type: string;
+    address: string;
+  };
+  stripe: Nullable<string>;
+  programs: Listed<CompanyStoreProgram>;
+}

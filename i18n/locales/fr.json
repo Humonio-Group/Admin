@@ -5,6 +5,7 @@
     "back": "Retour",
     "change": "Changer",
     "close": "Fermer",
+    "advanced-settings": "Paramètres avancés",
     "new": {
       "default": "Nouveau | Nouvelle",
       "condition": "Nouvelle condition",
@@ -310,7 +311,6 @@
     },
     "invitation": {
       "title": "Page d'invitation",
-      "advanced-settings": "Paramètres avancés",
       "state": {
         "enable": "Activer la page d'invitation",
         "disable": "Désactiver la page d'invitation"
@@ -342,6 +342,53 @@
         "title": "Ajouter un programme",
         "description": "Ajoute un programme dans la liste de programmes disponible dans la page d'invitation.",
         "placeholder": "Sélectionner un programme"
+      }
+    },
+    "shop": {
+      "title": "Boutique en ligne",
+      "state": {
+        "enable": "Activer la boutique en ligne",
+        "disable": "Désactiver la boutique en ligne"
+      },
+      "labels": {
+        "catalogue": "Catalogue",
+        "add-program": "Ajouter un programme"
+      },
+      "dialogs": {
+        "advanced-settings": {
+          "title": "Paramètres avancées",
+          "description": "Configurer les données légales de votre entreprise et les informations de votre boutique en ligne.",
+          "store-access": "Votre boutique est accessible au :",
+          "actions": {
+            "link-account": "Lier votre compte Stripe",
+            "remove-password": "Supprimer le mot de passe"
+          },
+          "tooltips": {
+            "copy-url": "Copier le lien",
+            "open-store": "Ouvrir le catalogue",
+            "random-password": "Générer un mot de passe",
+            "copy-password": "Copier le mot de passe"
+          },
+          "fields": {
+            "legal-form": "Statut juridique",
+            "address": "Adresse postale"
+          },
+          "sections": {
+            "stripe": {
+              "title": "Votre compte vendeur",
+              "description": "Lier votre compte Stripe vous permettra de pércevoir un virement dès qu'un programme est acheté sur votre catalogue."
+            },
+            "access": {
+              "title": "Sécuriser l'accès",
+              "description": "Si aucun mot de passe n'est défini, votre catalogue sera accessible par tout le monde."
+            }
+          }
+        },
+        "new-program": {
+          "title": "Ajouter un programme",
+          "description": "Ajouter un programme à votre boutique en ligne pour configurer son prix.",
+          "placeholder": "Sélectionner un programme"
+        }
       }
     }
   }
