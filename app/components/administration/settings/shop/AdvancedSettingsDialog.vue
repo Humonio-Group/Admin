@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Settings, Copy, Check, SquareArrowOutUpRight, RefreshCw, Trash, Eye, EyeOff } from "lucide-vue-next";
+import { Settings, Copy, Check, SquareArrowOutUpRight, RefreshCw, Eye, EyeOff } from "lucide-vue-next";
 import { useClipboard } from "@vueuse/core";
 import { generatePassword } from "~/lib/generators/generate-password";
 
