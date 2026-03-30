@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
-import { Plus, Save } from "lucide-vue-next";
+import { Save } from "lucide-vue-next";
 import { watchOnce } from "@vueuse/core";
-import { type CompanySSOSettings, SSOAlgorithms, SSOUserFields } from "~/types/entities/company";
+import { type CompanySSOSettings, SSOAlgorithms, type SSOUserField } from "~/types/entities/company";
 import { columns } from "~/components/administration/settings/sso";
 import DataSection from "~/components/administration/settings/sso/DataSection.vue";
+import AddMappingEntryDialog from "~/components/administration/settings/sso/AddMappingEntryDialog.vue";
+import { v4 as uuid } from "uuid";
 
 const store = useCompanyStore();
 const { ssoSettings, loading: _loading } = storeToRefs(store);
 const loading = computed(() => _loading.value.settings.sso);
 const saving = computed(() => _loading.value.saving.sso);
-
-const ssoUrl = (path: string) => `${useRuntimeConfig().public.urls.sso.replace(/https?:\/\//g, "").replaceAll("{alias}", settings.value!.alias)}/${path.startsWith("/") ? path.substring(1) : path}`;
 
 const settings = ref<CompanySSOSettings>({
   active: false,
@@ -33,6 +33,31 @@ watchOnce(ssoSettings, (val) => {
   settings.value = { ...val };
 });
 
+function addMappingEntry(attributeName: string, userField: SSOUserField) {
+  settings.value = {
+    ...settings.value,
+    mapping: [
+      ...settings.value.mapping,
+      {
+        key: uuid(),
+        attributeName,
+        userField,
+      },
+    ],
+  };
+}
+function updateMappingEntry(key: string, attributeName: string, userField: SSOUserField) {
+  settings.value = {
+    ...settings.value,
+    mapping: settings.value.mapping.map(m => m.key === key
+      ? {
+          ...m,
+          attributeName,
+          userField,
+        }
+      : m),
+  };
+}
 function deleteMappingEntry(key: string) {
   settings.value = {
     ...settings.value,
@@ -185,14 +210,11 @@ store.loadSSOSettings();
               {{ $t("settings.sso.labels.mapping.label") }}
             </UiLabel>
 
-            <UiButton size="sm">
-              <Plus />
-              {{ $t("btn.add.entry") }}
-            </UiButton>
+            <AddMappingEntryDialog :add="addMappingEntry" />
           </div>
 
           <UiDataTable
-            :columns="columns(deleteMappingEntry)"
+            :columns="columns(deleteMappingEntry, updateMappingEntry)"
             :data="settings.mapping"
           />
         </div>

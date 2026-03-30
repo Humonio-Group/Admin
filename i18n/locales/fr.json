@@ -434,6 +434,10 @@
           }
         }
       },
+      "placeholders": {
+        "attribute-name": "Entrez le nom d'un attribut",
+        "user-field": "Choisissez un champ utilisateur"
+      },
       "actions": {
         "edit": "Modifier",
         "delete": "Supprimer"

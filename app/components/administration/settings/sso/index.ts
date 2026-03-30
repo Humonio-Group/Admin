@@ -1,6 +1,6 @@
 import type { Listed } from "~/types/primitives/objects";
 import type { ColumnDef } from "@tanstack/vue-table";
-import type { CompanySSOSettings } from "~/types/entities/company";
+import type { CompanySSOSettings, SSOUserField } from "~/types/entities/company";
 import SSOMappingActions from "~/components/administration/settings/sso/SSOMappingActions.vue";
 
 export type MappingEntry = CompanySSOSettings["mapping"][0];
@@ -8,9 +8,10 @@ export type MappingEntry = CompanySSOSettings["mapping"][0];
 export interface SSOMappingActionsProps {
   entry: MappingEntry;
   deleteEntry: (key: string) => void;
+  updateEntry: (key: string, attributeName: string, userField: SSOUserField) => void;
 }
 
-export const columns = (deleteEntry: (key: string) => void): Listed<ColumnDef<MappingEntry>> => {
+export const columns = (deleteEntry: SSOMappingActionsProps["deleteEntry"], updateEntry: SSOMappingActionsProps["updateEntry"]): Listed<ColumnDef<MappingEntry>> => {
   const t = useNuxtApp().$i18n.t;
 
   return [
@@ -26,7 +27,7 @@ export const columns = (deleteEntry: (key: string) => void): Listed<ColumnDef<Ma
     },
     {
       id: "actions",
-      cell: ({ row }) => h("div", { class: "flex justify-end" }, h(SSOMappingActions, { entry: row.original, deleteEntry })),
+      cell: ({ row }) => h("div", { class: "flex justify-end" }, h(SSOMappingActions, { entry: row.original, updateEntry, deleteEntry })),
     },
   ];
 };
