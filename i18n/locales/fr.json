@@ -101,6 +101,9 @@
       "general": {
         "saved": "Paramètres généraux enregistrés."
       },
+      "branding": {
+        "saved": "Paramètres de marque enregistrés."
+      },
       "shop": {
         "saved": "Paramètres de la boutique en ligne enregistrés.",
         "saved-price": "Nouveau prix enregistré."

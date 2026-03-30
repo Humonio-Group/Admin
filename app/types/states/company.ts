@@ -48,6 +48,7 @@ export interface CompanyState {
       smtp: boolean;
       lrs: boolean;
       invitation: boolean;
+      company: boolean;
     };
   };
 }
@@ -91,6 +92,7 @@ export const defaults: CompanyState = {
       smtp: false,
       lrs: false,
       invitation: false,
+      company: false,
     },
   },
 };

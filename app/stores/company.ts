@@ -59,6 +59,57 @@ export const useCompanyStore = defineStore("company", {
         useLogger().error(e);
       }
     },
+    async saveCompanyInfo(settings: {
+      name: string;
+      alias: string;
+      logo: string;
+      icon: string;
+      colors: {
+        primary: string;
+        secondary: string;
+      };
+    }) {
+      if (!this.company) return;
+      this.loading.saving.company = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                name: settings.name,
+                invitationPage: {
+                  alias: settings.alias,
+                },
+                logo: {
+                  filename: settings.logo.split("/").slice(-1)[0],
+                },
+                icon: {
+                  filename: settings.icon.split("/").slice(-1)[0],
+                },
+                colors: {
+                  firstGradient: settings.colors.primary.replaceAll("#", ""),
+                  secondGradient: settings.colors.secondary.replaceAll("#", ""),
+                },
+              },
+            },
+          },
+        });
+
+        this.company = buildCompanyEntity(response.data);
+        bindCompanyColors(this.company);
+        bindCompanyLogo(this.company);
+        toast.success(this.translate("toasts.settings.branding.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.company = false;
+      }
+    },
 
     async loadCompanySettings() {
       if (!this.company) return;
