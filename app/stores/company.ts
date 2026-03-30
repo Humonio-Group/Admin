@@ -55,6 +55,7 @@ interface CompanyState {
       sso: boolean;
       smtp: boolean;
       lrs: boolean;
+      invitation: boolean;
     };
   };
 }
@@ -95,6 +96,7 @@ export const useCompanyStore = defineStore("company", {
         sso: false,
         smtp: false,
         lrs: false,
+        invitation: false,
       },
     },
   }),
@@ -313,6 +315,113 @@ export const useCompanyStore = defineStore("company", {
       }
       finally {
         this.loading.settings.invitation = false;
+      }
+    },
+    async saveInvitationPageSettings(settings: CompanyInvitationPageSettings) {
+      if (!this.company || !this.invitationPageSettings) return;
+      this.loading.saving.invitation = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "invitationPage",
+            "include": "programs",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                invitationPage: {
+                  active: settings.active,
+                  alias: this.company.alias,
+                  title: settings.title,
+                  description: settings.description,
+                  programs: settings.programs,
+                  displayJourneys: settings.display.journeys,
+                  displayTeams: settings.display.teams,
+                  journeyDateMode: {
+                    value: settings.dateMode,
+                  },
+                },
+              },
+            },
+          },
+        });
+        this.invitationPageSettings = buildInvitationPageSettings(response.data, response.included);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.invitation = false;
+      }
+    },
+    async uploadBanner(blob: Blob) {
+      if (!this.company || !this.invitationPageSettings) return;
+      this.loading.saving.invitation = true;
+
+      try {
+        const fileResponse = await useFileUpload().upload(blob, 4);
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "invitationPage",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                invitationPage: {
+                  banner: fileResponse.data.attributes.file.filename,
+                },
+              },
+            },
+          },
+        });
+        this.invitationPageSettings = {
+          ...this.invitationPageSettings,
+          banner: fileResponse.data.attributes.file.thumbnail,
+        };
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.invitation = false;
+      }
+    },
+    async clearBanner() {
+      if (!this.company || !this.invitationPageSettings) return;
+      this.loading.saving.invitation = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "invitationPage",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                invitationPage: {
+                  banner: null,
+                },
+              },
+            },
+          },
+        });
+        this.invitationPageSettings = {
+          ...this.invitationPageSettings,
+          banner: null,
+        };
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.invitation = false;
       }
     },
 

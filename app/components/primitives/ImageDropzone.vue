@@ -18,6 +18,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   crop: [blob: Blob];
+  clear: [];
 }>();
 
 const preview = defineModel<string | undefined>("preview");
@@ -68,6 +69,7 @@ function cleanup() {
 function removePreview() {
   if (preview.value) URL.revokeObjectURL(preview.value);
   preview.value = undefined;
+  emit("clear");
 }
 </script>
 

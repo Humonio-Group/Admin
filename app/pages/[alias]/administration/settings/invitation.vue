@@ -2,22 +2,59 @@
 import { Plus, Settings, X } from "lucide-vue-next";
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ImageDropzone from "~/components/primitives/ImageDropzone.vue";
-import { watchOnce } from "@vueuse/core";
+import type { CompanyInvitationPageSettings } from "~/types/entities/company";
 
 const preview = ref<string>();
 
 const store = useCompanyStore();
 const { invitationPageSettings, invpAvailablePrograms, invpSelectedPrograms, loading: _loading } = storeToRefs(store);
 const loading = computed(() => _loading.value.settings.invitation);
-watchOnce(invitationPageSettings, val => preview.value = val?.banner ?? "");
+
+watch(invitationPageSettings, (val) => {
+  if (!val) return;
+  preview.value = val.banner || "";
+  settings.value = { ...val };
+  newProgram.value = invpAvailablePrograms.value[0]?.id;
+});
+watch(preview, (val) => {
+  settings.value.banner = val ?? null;
+});
+
+const settings = ref<CompanyInvitationPageSettings>({
+  active: false,
+  title: "",
+  description: "",
+  banner: null,
+  programs: [],
+  availablePrograms: [],
+  dateMode: 0,
+  display: {
+    journeys: false,
+    teams: false,
+  },
+});
+const newProgram = ref<number | undefined>();
+const newProgramOpen = ref<boolean>(false);
 
 async function onCrop(blob: Blob) {
-  // Upload ou traitement du blob
-  const { upload } = useFileUpload();
-  const response = await upload(blob, 1);
-
   if (!invitationPageSettings.value) return;
-  invitationPageSettings.value.banner = response.data.attributes.file.thumbnail;
+  await store.uploadBanner(blob);
+}
+
+async function addProgram() {
+  if (!newProgram.value) return;
+
+  settings.value.programs = [...settings.value.programs, newProgram.value];
+  await store.saveInvitationPageSettings(settings.value);
+  newProgramOpen.value = false;
+}
+async function removeProgram(id: number) {
+  settings.value.programs.splice(settings.value.programs.findIndex(p => p === id), 1);
+  await store.saveInvitationPageSettings(settings.value);
+}
+async function toggleState(state: boolean) {
+  settings.value.active = state;
+  await store.saveInvitationPageSettings(settings.value);
 }
 
 store.loadInvitationPageSettings();
@@ -34,7 +71,7 @@ store.loadInvitationPageSettings();
       </h1>
 
       <div
-        v-if="invitationPageSettings"
+        v-if="settings"
         class="flex items-center gap-1"
       >
         <UiDialog>
@@ -66,7 +103,7 @@ store.loadInvitationPageSettings();
                 </UiLabel>
                 <UiInput
                   id="title"
-                  v-model="invitationPageSettings.title"
+                  v-model="settings.title"
                 />
               </div>
               <div class="grid gap-2">
@@ -75,7 +112,7 @@ store.loadInvitationPageSettings();
                 </UiLabel>
                 <UiTextarea
                   id="description"
-                  v-model="invitationPageSettings.description"
+                  v-model="settings.description"
                   class="min-h-24 resize-none"
                 />
               </div>
@@ -90,7 +127,7 @@ store.loadInvitationPageSettings();
                   <span class="text-xs text-muted-foreground max-w-[30ch]">{{ $t("settings.invitation.labels.date.description") }}</span>
                 </div>
 
-                <UiSelect v-model="invitationPageSettings.dateMode">
+                <UiSelect v-model="settings.dateMode">
                   <UiSelectTrigger>
                     <UiSelectValue />
                   </UiSelectTrigger>
@@ -118,8 +155,8 @@ store.loadInvitationPageSettings();
 
                 <UiSwitch
                   id="display-journeys"
-                  :model-value="invitationPageSettings.display.journeys"
-                  @update:model-value="invitationPageSettings.display.journeys = $event"
+                  :model-value="settings.display.journeys"
+                  @update:model-value="settings.display.journeys = $event"
                 />
               </UiLabel>
               <UiLabel
@@ -130,8 +167,8 @@ store.loadInvitationPageSettings();
 
                 <UiSwitch
                   id="display-teams"
-                  :model-value="invitationPageSettings.display.teams"
-                  @update:model-value="invitationPageSettings.display.teams = $event"
+                  :model-value="settings.display.teams"
+                  @update:model-value="settings.display.teams = $event"
                 />
               </UiLabel>
             </section>
@@ -142,13 +179,16 @@ store.loadInvitationPageSettings();
                   {{ $t("btn.close") }}
                 </UiButton>
               </UiDialogClose>
+              <UiButton @click="store.saveInvitationPageSettings(settings)">
+                {{ $t("btn.save") }}
+              </UiButton>
             </UiDialogFooter>
           </UiDialogContent>
         </UiDialog>
 
-        <UiTooltip v-if="invitationPageSettings.active">
+        <UiTooltip v-if="settings.active">
           <UiTooltipTrigger as-child>
-            <UiButton @click="invitationPageSettings.active = false">
+            <UiButton @click="toggleState(false)">
               {{ $t("labels.state.enabled", 2) }}
             </UiButton>
           </UiTooltipTrigger>
@@ -160,7 +200,7 @@ store.loadInvitationPageSettings();
           <UiTooltipTrigger as-child>
             <UiButton
               variant="secondary"
-              @click="invitationPageSettings.active = true"
+              @click="toggleState(true)"
             >
               {{ $t("labels.state.disabled", 2) }}
             </UiButton>
@@ -179,7 +219,7 @@ store.loadInvitationPageSettings();
       <UiSpinner />
     </main>
     <main
-      v-else
+      v-else-if="settings"
       class="flex flex-col gap-8"
     >
       <section class="grid gap-2">
@@ -191,6 +231,7 @@ store.loadInvitationPageSettings();
           class="h-64"
           :aspect-ratio="16/9"
           @crop="onCrop"
+          @clear="store.clearBanner"
         />
       </section>
 
@@ -200,7 +241,7 @@ store.loadInvitationPageSettings();
             {{ $t("settings.invitation.labels.programs") }}
           </h2>
 
-          <UiDialog>
+          <UiDialog v-model:open="newProgramOpen">
             <UiDialogTrigger as-child>
               <UiButton size="sm">
                 <Plus />
@@ -214,7 +255,7 @@ store.loadInvitationPageSettings();
               </UiDialogHeader>
 
               <div class="grid gap-2">
-                <UiSelect>
+                <UiSelect v-model="newProgram">
                   <UiSelectTrigger class="w-full">
                     <UiSelectValue :placeholder="$t('settings.invitation.new-program.placeholder')" />
                   </UiSelectTrigger>
@@ -236,7 +277,7 @@ store.loadInvitationPageSettings();
                     {{ $t("btn.close") }}
                   </UiButton>
                 </UiDialogClose>
-                <UiButton>
+                <UiButton @click="addProgram">
                   {{ $t("btn.add.default") }}
                 </UiButton>
               </UiDialogFooter>
@@ -265,6 +306,7 @@ store.loadInvitationPageSettings();
                   class="absolute top-3 right-3 opacity-0 group-hover/card:opacity-100"
                   size="icon-sm"
                   variant="outline"
+                  @click="removeProgram(program.id)"
                 >
                   <X />
                 </UiButton>
