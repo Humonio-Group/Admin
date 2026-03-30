@@ -134,6 +134,28 @@ export interface CompanySSOSettings {
   }>;
 }
 
+export const SMTPProtocols = [
+  "TLS",
+  "SSL",
+  "STARTTLS",
+] as const;
+export type SMTPProtocol = (typeof SMTPProtocols[number]);
+export interface CompanySMTPSettings {
+  active: boolean;
+  valid: boolean;
+  encryption: SMTPProtocol;
+  from: {
+    name: string;
+    address: string;
+  };
+  host: string;
+  port: number;
+  auth: {
+    username: string;
+    password: string;
+  };
+}
+
 export interface CompanyDeveloperSettings {
   id: number;
   token: string;
