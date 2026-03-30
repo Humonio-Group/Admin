@@ -94,6 +94,9 @@
     }
   },
   "toasts": {
+    "error": {
+      "default": "Une erreur est survenue."
+    },
     "settings": {
       "developer": {
         "save": "Paramètres de développement sauvegardés.",
@@ -101,6 +104,9 @@
       },
       "sso": {
         "saved": "Paramètres d'authentification unique enregistrés."
+      },
+      "smtp": {
+        "saved": "Paramètres de mail enregistrés."
       }
     }
   },
@@ -441,6 +447,47 @@
       "actions": {
         "edit": "Modifier",
         "delete": "Supprimer"
+      }
+    },
+    "smtp": {
+      "title": "Serveur Mail (SMTP)",
+      "fields": {
+        "host": {
+          "label": "Hôte",
+          "placeholder": "smtp.ovh.net"
+        },
+        "port": {
+          "label": "Port",
+          "placeholder": "465"
+        },
+        "username": {
+          "label": "Nom d'utilisateur",
+          "placeholder": "your_email{'@'}example.xyz"
+        },
+        "password": {
+          "label": "Mot de passe",
+          "placeholder": "············"
+        },
+        "encryption": "Méthode de chiffrement",
+        "from": {
+          "name": {
+            "label": "Nom d'usage",
+            "placeholder": "John DOE"
+          },
+          "address": {
+            "label": "Adresse email",
+            "placeholder": "your_email{'@'}example.xyz"
+          }
+        }
+      },
+      "sections": {
+        "server": "Serveur SMTP",
+        "sender": "Expéditeur",
+        "encryption": "Chiffrement"
+      },
+      "invalid-configuration": {
+        "title": "Erreur de configuration",
+        "description": "Le test de la connexion à votre serveur mail a échouée."
       }
     },
     "developer": {

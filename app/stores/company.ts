@@ -2,7 +2,7 @@ import type { Listed, Nullable } from "~/types/primitives/objects";
 import type {
   Companies,
   Company, CompanyDeveloperSettings,
-  CompanyInvitationPageSettings, CompanySSOSettings, CompanyStoreProgram,
+  CompanyInvitationPageSettings, CompanySMTPSettings, CompanySSOSettings, CompanyStoreProgram,
   CompanyStoreSettings,
   CompanyUsers,
 } from "~/types/entities/company";
@@ -17,6 +17,7 @@ import { buildStoreSettings } from "~/lib/store";
 import { buildDeveloperSettings } from "~/lib/developer";
 import { toast } from "vue-sonner";
 import { buildSSOSettings } from "~/lib/entities/settings/sso";
+import { buildSMTPSettings } from "~/lib/entities/settings/smtp";
 
 interface CompanyState {
   company: Nullable<Company>;
@@ -28,6 +29,7 @@ interface CompanyState {
   storeSettings: Nullable<CompanyStoreSettings>;
   developerSettings: Nullable<CompanyDeveloperSettings>;
   ssoSettings: Nullable<CompanySSOSettings>;
+  smtpSettings: Nullable<CompanySMTPSettings>;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -41,12 +43,14 @@ interface CompanyState {
       developer: boolean;
       refreshApiToken: boolean;
       sso: boolean;
+      smtp: boolean;
     };
     saving: {
       price: Listed<number>;
       storeSettings: boolean;
       developer: boolean;
       sso: boolean;
+      smtp: boolean;
     };
   };
 }
@@ -62,6 +66,7 @@ export const useCompanyStore = defineStore("company", {
     storeSettings: null,
     developerSettings: null,
     ssoSettings: null,
+    smtpSettings: null,
     loading: {
       icon: false,
       logo: false,
@@ -75,12 +80,14 @@ export const useCompanyStore = defineStore("company", {
         developer: false,
         refreshApiToken: false,
         sso: false,
+        smtp: false,
       },
       saving: {
         price: [],
         storeSettings: false,
         developer: false,
         sso: false,
+        smtp: false,
       },
     },
   }),
@@ -468,6 +475,67 @@ export const useCompanyStore = defineStore("company", {
       }
       finally {
         this.loading.saving.sso = false;
+      }
+    },
+
+    async loadSMTPSettings() {
+      if (!this.company) return;
+      this.loading.settings.smtp = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "smtp",
+          },
+        });
+
+        this.smtpSettings = buildSMTPSettings(response.data);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.settings.smtp = false;
+      }
+    },
+    async saveSMTPSettings(settings: CompanySMTPSettings) {
+      if (!this.company || !this.smtpSettings) return;
+      this.loading.saving.smtp = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "smtp",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                smtp: {
+                  active: settings.active,
+                  settings: {
+                    host: settings.host,
+                    port: settings.port,
+                    username: settings.auth.username,
+                    password: settings.auth.password,
+                    encryption: settings.encryption,
+                    from: settings.from,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        this.smtpSettings = buildSMTPSettings(response.data);
+        toast.success(this.translate("toasts.settings.smtp.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.smtp = false;
       }
     },
 
