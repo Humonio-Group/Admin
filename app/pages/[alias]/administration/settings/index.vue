@@ -4,13 +4,33 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
 
+const store = useCompanyStore();
+const { companySettings, loading: _loading } = storeToRefs(store);
+const loading = computed(() => _loading.value.settings.default);
+const saving = computed(() => _loading.value.saving.default);
+
+watch(companySettings, (val) => {
+  if (!val) return;
+  form.resetForm({
+    values: {
+      tld: val.tlds,
+      mentorInvite: val.permissions.inviteManager,
+      forceMentorInvite: val.permissions.forceInvite,
+      shareResults: val.permissions.shareResults,
+      shareResultsScope: val.permissions.resultsLevels,
+      autoAssignAdminToTickets: val.permissions.autoAssignTickets,
+      videoconferenceButton: val.permissions.videoConference,
+    },
+  });
+});
+
 const form = useForm({
   validationSchema: toTypedSchema(z.object({
     tld: z.array(z.string()).optional(),
     mentorInvite: z.boolean().default(false),
     forceMentorInvite: z.boolean().default(false),
     shareResults: z.boolean().default(false),
-    shareResultsScope: z.enum(["1", "2"]).default("1"),
+    shareResultsScope: z.number().default(1),
     autoAssignAdminToTickets: z.boolean().default(false),
     videoconferenceButton: z.boolean().default(false),
   })),
@@ -19,15 +39,18 @@ const form = useForm({
     mentorInvite: false,
     forceMentorInvite: false,
     shareResults: false,
-    shareResultsScope: "1",
+    shareResultsScope: 1,
     autoAssignAdminToTickets: false,
     videoconferenceButton: false,
   },
   keepValuesOnUnmount: true,
 });
 const submit = form.handleSubmit(async (values) => {
-  useLogger().log("[SETTINGS.GENERAL] submit", values); // todo: bind backend - loic
+  console.log(values);
+  await store.saveCompanySettings(values);
 });
+
+store.loadCompanySettings();
 </script>
 
 <template>
@@ -39,15 +62,16 @@ const submit = form.handleSubmit(async (values) => {
       <h1 class="text-xl font-bold">
         {{ $t("settings.general.title") }}
       </h1>
-      <p
-        v-if="false"
-        class="text-sm text-muted-foreground"
-      >
-        <!-- todo: add translation - loic -->
-      </p>
     </header>
 
+    <main
+      v-if="loading"
+      class="h-24 grid place-items-center"
+    >
+      <UiSpinner />
+    </main>
     <form
+      v-else-if="companySettings"
       class="flex flex-col gap-4"
       @submit="submit"
     >
@@ -66,9 +90,13 @@ const submit = form.handleSubmit(async (values) => {
               </UiFormDescription>
             </div>
 
-            <UiTagsInput v-model="componentField.modelValue">
+            <UiTagsInput
+              :model-value="componentField.modelValue"
+              :disabled="saving"
+              @update:model-value="componentField['onUpdate:modelValue']"
+            >
               <UiFormControl>
-                <UiTagsInputInput placeholder="Fruits..." />
+                <UiTagsInputInput :placeholder="$t('settings.general.fields.tld.placeholder')" />
               </UiFormControl>
 
               <UiTagsInputItem
@@ -81,7 +109,7 @@ const submit = form.handleSubmit(async (values) => {
               </UiTagsInputItem>
             </UiTagsInput>
           </UiFormItem>
-        </UiFormField> <!-- todo: add tlds - loic -->
+        </UiFormField>
         <UiSeparator />
         <UiFormField
           v-slot="{ componentField }"
@@ -99,6 +127,7 @@ const submit = form.handleSubmit(async (values) => {
 
             <UiFormControl>
               <UiSwitch
+                :disabled="saving"
                 :model-value="componentField.modelValue"
                 @update:model-value="componentField['onUpdate:modelValue']"
               />
@@ -124,7 +153,7 @@ const submit = form.handleSubmit(async (values) => {
 
             <UiFormControl>
               <UiSwitch
-                :disabled="!form.values.mentorInvite"
+                :disabled="!form.values.mentorInvite || saving"
                 :model-value="componentField.modelValue"
                 @update:model-value="componentField['onUpdate:modelValue']"
               />
@@ -148,6 +177,7 @@ const submit = form.handleSubmit(async (values) => {
 
             <UiFormControl>
               <UiSwitch
+                :disabled="saving"
                 :model-value="componentField.modelValue"
                 @update:model-value="componentField['onUpdate:modelValue']"
               />
@@ -173,7 +203,7 @@ const submit = form.handleSubmit(async (values) => {
 
             <UiSelect
               v-bind="componentField"
-              :disabled="!form.values.shareResults"
+              :disabled="!form.values.shareResults || saving"
             >
               <UiFormControl>
                 <UiSelectTrigger>
@@ -182,11 +212,11 @@ const submit = form.handleSubmit(async (values) => {
               </UiFormControl>
 
               <UiSelectContent>
-                <UiSelectItem value="1">
-                  1
+                <UiSelectItem :value="1">
+                  {{ $t("settings.general.fields.share-results-scope.options.by-participant") }}
                 </UiSelectItem>
-                <UiSelectItem value="2">
-                  2
+                <UiSelectItem :value="2">
+                  {{ $t("settings.general.fields.share-results-scope.options.by-workspace") }}
                 </UiSelectItem>
               </UiSelectContent>
             </UiSelect>
@@ -209,6 +239,7 @@ const submit = form.handleSubmit(async (values) => {
 
             <UiFormControl>
               <UiSwitch
+                :disabled="saving"
                 :model-value="componentField.modelValue"
                 @update:model-value="componentField['onUpdate:modelValue']"
               />
@@ -231,6 +262,7 @@ const submit = form.handleSubmit(async (values) => {
 
             <UiFormControl>
               <UiSwitch
+                :disabled="saving"
                 :model-value="componentField.modelValue"
                 @update:model-value="componentField['onUpdate:modelValue']"
               />
@@ -240,8 +272,12 @@ const submit = form.handleSubmit(async (values) => {
       </main>
 
       <footer class="self-end">
-        <UiButton size="sm">
+        <UiButton
+          size="sm"
+          :disabled="saving"
+        >
           {{ $t("btn.save") }}
+          <UiSpinner v-if="saving" />
         </UiButton>
       </footer>
     </form>

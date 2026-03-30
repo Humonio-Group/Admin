@@ -1,17 +1,18 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
 import type {
-  Companies,
-  Company, CompanyDeveloperSettings,
   CompanyInvitationPageSettings, CompanyLRSSettings, CompanySMTPSettings, CompanySSOSettings, CompanyStoreProgram,
   CompanyStoreSettings,
-  CompanyUsers,
 } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
-import type { Terms } from "~/types/entities/terms";
-import type { Locations } from "~/types/entities/location";
 import { buildLocationEntity } from "~/lib/location";
-import { buildCompanyEntity, bindCompanyColors, bindCompanyLogo, buildCompanyUserEntity } from "~/lib/company";
+import {
+  buildCompanyEntity,
+  bindCompanyColors,
+  bindCompanyLogo,
+  buildCompanyUserEntity,
+  buildCompanySettings,
+} from "~/lib/company";
 import { buildInvitationPageSettings } from "~/lib/invitiation";
 import { buildStoreSettings } from "~/lib/store";
 import { buildDeveloperSettings } from "~/lib/developer";
@@ -19,87 +20,10 @@ import { toast } from "vue-sonner";
 import { buildSSOSettings } from "~/lib/entities/settings/sso";
 import { buildSMTPSettings } from "~/lib/entities/settings/smtp";
 import { buildLRSSettings } from "~/lib/entities/settings/lrs";
-
-interface CompanyState {
-  company: Nullable<Company>;
-  terms: Terms;
-  locations: Locations;
-  users: CompanyUsers;
-  companies: Companies;
-  invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
-  storeSettings: Nullable<CompanyStoreSettings>;
-  developerSettings: Nullable<CompanyDeveloperSettings>;
-  ssoSettings: Nullable<CompanySSOSettings>;
-  smtpSettings: Nullable<CompanySMTPSettings>;
-  lrsSettings: Nullable<CompanyLRSSettings>;
-  loading: {
-    icon: boolean;
-    logo: boolean;
-    settings: {
-      terms: boolean;
-      locations: boolean;
-      users: boolean;
-      companies: boolean;
-      invitation: boolean;
-      shop: boolean;
-      developer: boolean;
-      refreshApiToken: boolean;
-      sso: boolean;
-      smtp: boolean;
-      lrs: boolean;
-    };
-    saving: {
-      price: Listed<number>;
-      storeSettings: boolean;
-      developer: boolean;
-      sso: boolean;
-      smtp: boolean;
-      lrs: boolean;
-      invitation: boolean;
-    };
-  };
-}
+import { type CompanyState, defaults } from "~/types/states/company";
 
 export const useCompanyStore = defineStore("company", {
-  state: (): CompanyState => ({
-    company: null,
-    terms: [],
-    locations: [],
-    users: [],
-    companies: [],
-    invitationPageSettings: null,
-    storeSettings: null,
-    developerSettings: null,
-    ssoSettings: null,
-    smtpSettings: null,
-    lrsSettings: null,
-    loading: {
-      icon: false,
-      logo: false,
-      settings: {
-        terms: false,
-        locations: false,
-        users: false,
-        companies: false,
-        invitation: false,
-        shop: false,
-        developer: false,
-        refreshApiToken: false,
-        sso: false,
-        smtp: false,
-        lrs: false,
-      },
-      saving: {
-        price: [],
-        storeSettings: false,
-        developer: false,
-        sso: false,
-        smtp: false,
-        lrs: false,
-        invitation: false,
-      },
-    },
-  }),
+  state: (): CompanyState => ({ ...defaults }),
   getters: {
     api: () => useApi(),
     logger: () => useLogger("[COMPANY]"),
@@ -136,6 +60,25 @@ export const useCompanyStore = defineStore("company", {
       }
     },
 
+    async loadCompanySettings() {
+      if (!this.company) return;
+      this.loading.settings.default = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "default,managerSettings",
+          },
+        });
+        this.companySettings = buildCompanySettings(response.data);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.settings.default = false;
+      }
+    },
     async uploadIcon(blob: Blob): Promise<Nullable<string>> {
       this.loading.icon = true;
 
@@ -171,6 +114,56 @@ export const useCompanyStore = defineStore("company", {
       }
 
       return logo;
+    },
+    async saveCompanySettings(settings: {
+      tld?: Listed<string>;
+      mentorInvite: boolean;
+      forceMentorInvite: boolean;
+      shareResults: boolean;
+      shareResultsScope: number;
+      autoAssignAdminToTickets: boolean;
+      videoconferenceButton: boolean;
+    }) {
+      if (!this.company || !this.companySettings) return;
+      this.loading.saving.default = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "default,managerSettings",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                tlds: settings.tld,
+                allowVideoConferenceRoom: settings.videoconferenceButton,
+                canInviteManager: settings.mentorInvite,
+                handleTickets: settings.autoAssignAdminToTickets,
+                managerSettings: {
+                  forceManager: settings.forceMentorInvite,
+                  shareResults: {
+                    active: settings.shareResults,
+                    mode: {
+                      value: settings.shareResultsScope,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+        console.log(response.data);
+        this.companySettings = buildCompanySettings(response.data);
+        toast.success(this.translate("toasts.settings.general.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.default = false;
+      }
     },
 
     async loadTerms() {

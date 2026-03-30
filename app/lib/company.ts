@@ -1,4 +1,4 @@
-import type { Company, CompanyUser } from "~/types/entities/company";
+import type { Company, CompanySettings, CompanyUser } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 
 export function buildCompanyEntity(data: any, included?: any): Company {
@@ -89,4 +89,20 @@ export function bindCompanyLogo(company: Company) {
       },
     ],
   });
+}
+
+export function buildCompanySettings(data: any): CompanySettings {
+  const { attributes } = data;
+
+  return {
+    tlds: attributes.tlds,
+    permissions: {
+      inviteManager: attributes.managerSettings.canInviteManager,
+      forceInvite: attributes.managerSettings.forceManager,
+      shareResults: attributes.managerSettings.shareResults.active,
+      resultsLevels: attributes.managerSettings.shareResults.mode.value,
+      autoAssignTickets: attributes.handleTickets,
+      videoConference: attributes.allowVideoConferenceRoom,
+    },
+  };
 }

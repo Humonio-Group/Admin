@@ -30,6 +30,18 @@ export interface Company {
 }
 export type Companies = Listed<Company>;
 
+export interface CompanySettings {
+  tlds: Listed<string>;
+  permissions: {
+    inviteManager: boolean;
+    forceInvite: boolean;
+    shareResults: boolean;
+    resultsLevels: number;
+    autoAssignTickets: boolean;
+    videoConference: boolean;
+  };
+}
+
 export interface CompanyUser {
   id: number;
   avatar: string;

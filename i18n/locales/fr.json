@@ -98,6 +98,9 @@
       "default": "Une erreur est survenue."
     },
     "settings": {
+      "general": {
+        "saved": "Paramètres généraux enregistrés."
+      },
       "shop": {
         "saved": "Paramètres de la boutique en ligne enregistrés.",
         "saved-price": "Nouveau prix enregistré."
@@ -200,7 +203,8 @@
       "fields": {
         "tld": {
           "label": "TLD",
-          "description": "Limiter l'ajout de participants aux noms de domaines inclus dans la liste."
+          "description": "Limiter l'ajout de participants aux noms de domaines inclus dans la liste.",
+          "placeholder": "example.com"
         },
         "mentor-invite": {
           "label": "Inviter le mentor",
@@ -216,7 +220,11 @@
         },
         "share-results-scope": {
           "label": "Niveau de résultats",
-          "description": "Sélectionnez le niveau des résultats à partager au mentor."
+          "description": "Sélectionnez le niveau des résultats à partager au mentor.",
+          "options": {
+            "by-participant": "Déterminé par le participant",
+            "by-workspace": "Déterminé par l'espace de travail"
+          }
         },
         "auto-assign-admin-to-tickets": {
           "label": "Assignation automatique",
