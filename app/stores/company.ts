@@ -2,7 +2,7 @@ import type { Listed, Nullable } from "~/types/primitives/objects";
 import type {
   Companies,
   Company, CompanyDeveloperSettings,
-  CompanyInvitationPageSettings, CompanySMTPSettings, CompanySSOSettings, CompanyStoreProgram,
+  CompanyInvitationPageSettings, CompanyLRSSettings, CompanySMTPSettings, CompanySSOSettings, CompanyStoreProgram,
   CompanyStoreSettings,
   CompanyUsers,
 } from "~/types/entities/company";
@@ -18,6 +18,7 @@ import { buildDeveloperSettings } from "~/lib/developer";
 import { toast } from "vue-sonner";
 import { buildSSOSettings } from "~/lib/entities/settings/sso";
 import { buildSMTPSettings } from "~/lib/entities/settings/smtp";
+import { buildLRSSettings } from "~/lib/entities/settings/lrs";
 
 interface CompanyState {
   company: Nullable<Company>;
@@ -30,6 +31,7 @@ interface CompanyState {
   developerSettings: Nullable<CompanyDeveloperSettings>;
   ssoSettings: Nullable<CompanySSOSettings>;
   smtpSettings: Nullable<CompanySMTPSettings>;
+  lrsSettings: Nullable<CompanyLRSSettings>;
   loading: {
     icon: boolean;
     logo: boolean;
@@ -44,6 +46,7 @@ interface CompanyState {
       refreshApiToken: boolean;
       sso: boolean;
       smtp: boolean;
+      lrs: boolean;
     };
     saving: {
       price: Listed<number>;
@@ -51,6 +54,7 @@ interface CompanyState {
       developer: boolean;
       sso: boolean;
       smtp: boolean;
+      lrs: boolean;
     };
   };
 }
@@ -67,6 +71,7 @@ export const useCompanyStore = defineStore("company", {
     developerSettings: null,
     ssoSettings: null,
     smtpSettings: null,
+    lrsSettings: null,
     loading: {
       icon: false,
       logo: false,
@@ -81,6 +86,7 @@ export const useCompanyStore = defineStore("company", {
         refreshApiToken: false,
         sso: false,
         smtp: false,
+        lrs: false,
       },
       saving: {
         price: [],
@@ -88,6 +94,7 @@ export const useCompanyStore = defineStore("company", {
         developer: false,
         sso: false,
         smtp: false,
+        lrs: false,
       },
     },
   }),
@@ -367,6 +374,7 @@ export const useCompanyStore = defineStore("company", {
           },
         });
         this.storeSettings = { ...settings };
+        toast.success(this.translate("toasts.settings.shop.saved"));
       }
       catch {
         this.logger.error("nope");
@@ -407,6 +415,7 @@ export const useCompanyStore = defineStore("company", {
             },
           }),
         ]);
+        toast.success(this.translate("toasts.settings.shop.saved-price"));
       }
       catch {
         this.logger.error("Nope");
@@ -536,6 +545,67 @@ export const useCompanyStore = defineStore("company", {
       }
       finally {
         this.loading.saving.smtp = false;
+      }
+    },
+
+    async loadLRSSettings() {
+      if (!this.company) return;
+      this.loading.settings.lrs = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "lrs",
+          },
+        });
+        this.lrsSettings = buildLRSSettings(response.data);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.settings.lrs = false;
+      }
+    },
+    async saveLRSSettings(settings: CompanyLRSSettings) {
+      if (!this.company || !this.lrsSettings) return;
+      this.loading.saving.lrs = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "lrs",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                lrs: {
+                  active: settings.active,
+                  url: settings.url,
+                  authentication: {
+                    mode: {
+                      value: settings.mode,
+                    },
+                    settings: {
+                      basicAuthLogin: settings.auth?.login || "",
+                      basicAuthPassword: settings.auth?.password || "",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+        this.lrsSettings = buildLRSSettings(response.data);
+        toast.success(this.translate("toasts.settings.lrs.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.lrs = false;
       }
     },
 

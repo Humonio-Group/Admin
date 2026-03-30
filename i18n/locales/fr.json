@@ -98,15 +98,22 @@
       "default": "Une erreur est survenue."
     },
     "settings": {
-      "developer": {
-        "save": "Paramètres de développement sauvegardés.",
-        "token-refreshed": "Le jeton a été régénéré."
+      "shop": {
+        "saved": "Paramètres de la boutique en ligne enregistrés.",
+        "saved-price": "Nouveau prix enregistré."
       },
       "sso": {
         "saved": "Paramètres d'authentification unique enregistrés."
       },
       "smtp": {
         "saved": "Paramètres de mail enregistrés."
+      },
+      "lrs": {
+        "saved": "Paramètres de stockage LRS enregistrés."
+      },
+      "developer": {
+        "save": "Paramètres de développement sauvegardés.",
+        "token-refreshed": "Le jeton a été régénéré."
       }
     }
   },
@@ -488,6 +495,27 @@
       "invalid-configuration": {
         "title": "Erreur de configuration",
         "description": "Le test de la connexion à votre serveur mail a échouée."
+      }
+    },
+    "lrs": {
+      "title": "Stockage (LRS)",
+      "fields": {
+        "url": {
+          "label": "URL",
+          "placeholder": ""
+        },
+        "mode": {
+          "label": "Mode d'authentification",
+          "placeholder": ""
+        },
+        "login": {
+          "label": "Identifiant",
+          "placeholder": ""
+        },
+        "password": {
+          "label": "Mot de passe",
+          "placeholder": ""
+        }
       }
     },
     "developer": {

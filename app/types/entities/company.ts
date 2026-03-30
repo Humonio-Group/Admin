@@ -156,6 +156,16 @@ export interface CompanySMTPSettings {
   };
 }
 
+export interface CompanyLRSSettings {
+  active: boolean;
+  mode: number;
+  url: string;
+  auth: Nullable<{
+    login: string;
+    password: string;
+  }>;
+}
+
 export interface CompanyDeveloperSettings {
   id: number;
   token: string;
