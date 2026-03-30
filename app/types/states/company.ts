@@ -3,7 +3,7 @@ import type {
   Companies,
   Company, CompanyDeveloperSettings,
   CompanyInvitationPageSettings, CompanyLRSSettings, CompanySettings, CompanySMTPSettings, CompanySSOSettings,
-  CompanyStoreSettings, CompanyUser,
+  CompanyStoreSettings,
   CompanyUsers,
 } from "~/types/entities/company";
 import type { Terms } from "~/types/entities/terms";
