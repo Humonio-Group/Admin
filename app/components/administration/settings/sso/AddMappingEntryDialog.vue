@@ -64,9 +64,9 @@ function addEntry() {
             </UiSelectTrigger>
             <UiSelectContent>
               <UiSelectItem
-                v-for="userField in SSOUserFields"
-                :key="userField"
-                :value="userField"
+                v-for="uField in SSOUserFields"
+                :key="uField"
+                :value="uField"
               >
                 {{ $t(`settings.sso.labels.mapping.user-field.${userField}`) }}
               </UiSelectItem>
