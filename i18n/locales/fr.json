@@ -19,7 +19,8 @@
     },
     "add": {
       "default": "Ajouter",
-      "entry": "Ajouter une entrée"
+      "entry": "Ajouter une entrée",
+      "program": "Créer un programme"
     }
   },
   "dialogs": {
@@ -34,6 +35,7 @@
       "label": "Ajouter"
     }
   },
+  "default": "Défaut",
   "labels": {
     "search": "Rechercher",
     "languages": {
@@ -41,7 +43,9 @@
     },
     "state": {
       "enabled": "Activé | Activée",
-      "disabled": "Désactivé | Désactivée"
+      "disabled": "Désactivé | Désactivée",
+      "active": "Actif | Active",
+      "inactive": "Inactif | Inactive"
     },
     "miss-you": "Vous ne pouvez pas partir comme ça... 😓",
     "plan": {
@@ -51,7 +55,8 @@
     "other-workspaces": "Autres espaces de travail",
     "time": {
       "created-at": "Créé le {date} | Créée le {date}",
-      "last-update": "Dernière mise à jour le {date}"
+      "last-update": "Dernière mise à jour le {date}",
+      "days": "{count} jour | {count} jours"
     },
     "roles": {
       "3": "Administrateur",
@@ -63,7 +68,10 @@
       "9": "Mentor",
       "10": "Créateur"
     },
-    "archives": "Archives"
+    "archives": "Archives",
+    "sessions": "{count} session | {count} sessions",
+    "participants": "{count} participant | {count} participants",
+    "facilitators": "{count} facilitateur | {count} facilitateurs"
   },
   "navigation": {
     "user-menu": {
@@ -169,6 +177,31 @@
         "actions": {
           "read": "Lire",
           "revoke": "Révoquer"
+        }
+      }
+    }
+  },
+
+  "deployment": {
+    "programs": {
+      "title": "Programmes",
+      "card": {
+        "actions": {
+          "activate": "Activer",
+          "deactivate": "Désactiver",
+          "go-to": "Afficher",
+          "duplicate": "Dupliquer",
+          "config": "Configurer",
+          "build": "Construire",
+          "download": {
+            "label": "Télécharger",
+            "progress-report": "Rapport de progression",
+            "formation-plan": "Plan de formation"
+          }
+        },
+        "tooltips": {
+          "average-rating": "Note moyenne",
+          "total-duration": "Durée totale"
         }
       }
     }

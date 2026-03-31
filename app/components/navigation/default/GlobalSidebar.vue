@@ -12,10 +12,7 @@ const groups = sidebarContent;
 
 <template>
   <div>
-    <UiSidebar
-      variant="floating"
-      collapsible="icon"
-    >
+    <UiSidebar collapsible="icon">
       <UiSidebarHeader>
         <CompanySelector />
       </UiSidebarHeader>
