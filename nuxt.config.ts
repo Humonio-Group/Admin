@@ -36,6 +36,7 @@ export default defineNuxtConfig({
         gps: "",
         stripePriceCallback: "",
         sso: "",
+        builder: "",
       },
       platform: "",
       brand: {
