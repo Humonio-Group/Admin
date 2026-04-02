@@ -1,4 +1,4 @@
-import type { ProgramListEntity, ProgramTag } from "~/types/entities/program";
+import type { Program, ProgramListEntity, ProgramTag, SelectedProgram } from "~/types/entities/program";
 
 export function buildProgramListEntity(data: any): ProgramListEntity {
   const { attributes } = data;
@@ -20,7 +20,36 @@ export function buildProgramListEntity(data: any): ProgramListEntity {
     },
   };
 }
-export function buildProgramEntity() {}
+export function buildProgramEntity(data: any): Program {
+  const { id, attributes } = data;
+
+  return {
+    id,
+    key: attributes.key,
+    duration: attributes.config.duration,
+    active: attributes.active,
+    default: attributes.default,
+    name: attributes.name,
+    description: attributes.description,
+    picture: attributes.design.picture.thumbnail ?? null,
+    stats: {
+      journeys: attributes.stats.nbJourneys,
+      rate: attributes.stats.evaluation.experience,
+      participants: attributes.stats.participants,
+      facilitators: attributes.stats.facilitators,
+    },
+  };
+}
+
+export function extendToSelectedProgram(program: Program): SelectedProgram {
+  return {
+    ...program,
+    journeys: {
+      totalEntities: -1,
+      list: [],
+    },
+  };
+}
 
 export function buildTagEntity(data: any): ProgramTag {
   return {

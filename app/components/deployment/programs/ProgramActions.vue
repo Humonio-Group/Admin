@@ -3,7 +3,9 @@ import type { ProgramActionsProps } from "~/components/deployment/programs/index
 import { MoreVertical, Download, Copy, Settings, Wrench, X, Power, ChartArea, Map, Eye } from "lucide-vue-next";
 import { cn } from "~/lib/utils";
 
-const props = defineProps<ProgramActionsProps>();
+const props = withDefaults(defineProps<ProgramActionsProps>(), {
+  showProgramShortcuts: true,
+});
 const { company } = storeToRefs(useCompanyStore());
 const builderPath = () => useRuntimeConfig().public.urls.builder
   .replaceAll("{alias}", company.value?.alias ?? "")
@@ -24,20 +26,22 @@ const builderPath = () => useRuntimeConfig().public.urls.builder
       </UiButton>
     </UiDropdownMenuTrigger>
     <UiDropdownMenuContent align="end">
-      <UiDropdownMenuGroup>
-        <NuxtLinkLocale :to="`/${company?.alias}/deployment/programs/${program.id}`">
+      <template v-if="showProgramShortcuts">
+        <UiDropdownMenuGroup>
+          <NuxtLinkLocale :to="`/${company?.alias}/deployment/programs/${program.id}`">
+            <UiDropdownMenuItem>
+              <Eye />
+              {{ $t("deployment.programs.card.actions.go-to") }}
+            </UiDropdownMenuItem>
+          </NuxtLinkLocale>
           <UiDropdownMenuItem>
-            <Eye />
-            {{ $t("deployment.programs.card.actions.go-to") }}
+            <Copy />
+            {{ $t("deployment.programs.card.actions.duplicate") }}
           </UiDropdownMenuItem>
-        </NuxtLinkLocale>
-        <UiDropdownMenuItem>
-          <Copy />
-          {{ $t("deployment.programs.card.actions.duplicate") }}
-        </UiDropdownMenuItem>
-      </UiDropdownMenuGroup>
+        </UiDropdownMenuGroup>
 
-      <UiDropdownMenuSeparator />
+        <UiDropdownMenuSeparator />
+      </template>
 
       <UiDropdownMenuGroup>
         <UiDropdownMenuItem>

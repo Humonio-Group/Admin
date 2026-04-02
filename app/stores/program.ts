@@ -1,6 +1,12 @@
 import { defaults, PER_PAGE, type ProgramState } from "~/types/states/program";
-import { buildProgramListEntity, buildTagEntity } from "~/lib/entities/lifecycle/program";
+import {
+  buildProgramEntity,
+  buildProgramListEntity,
+  buildTagEntity,
+  extendToSelectedProgram,
+} from "~/lib/entities/lifecycle/program";
 import { toast } from "vue-sonner";
+import { buildJourneyEntity } from "~/lib/entities/lifecycle/journey";
 
 export const useProgramStore = defineStore("programs", {
   state: (): ProgramState => ({ ...defaults }),
@@ -53,6 +59,56 @@ export const useProgramStore = defineStore("programs", {
         this.loading.items = false;
       }
     },
-    async loadProgram(_id: string) {},
+    async loadProgram(id: number) {
+      this.loading.specimen = true;
+
+      try {
+        const response = await this.api.get(`/programs/${id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
+          },
+        });
+
+        const program = buildProgramEntity(response.data);
+        this.selectedProgram = extendToSelectedProgram(program);
+      }
+      catch (e) {
+        console.error(e);
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.specimen = false;
+      }
+    },
+
+    async loadJourneys(status: (-1 | 0 | 1 | 2)[] = [-1, 0, 1, 2]) {
+      const { company } = storeToRefs(useCompanyStore());
+      if (!company.value || !this.selectedProgram) return;
+
+      this.loading.journeys = true;
+      try {
+        const response = await this.api.get("/journeys", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "programs": this.selectedProgram.id,
+            "include": "facilitators,mainFacilitator,participants",
+            "companies": Number(company.value.id),
+            "fields[users]": "name,picture",
+            "status": status.join(","),
+            "fields[journeys]": "default,displayName,stats.participants",
+          },
+        });
+
+        this.selectedProgram.journeys = {
+          totalEntities: response.meta.total,
+          list: response.data.map((journey: any) => buildJourneyEntity(journey, response.included)),
+        };
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.journeys = false;
+      }
+    },
   },
 });

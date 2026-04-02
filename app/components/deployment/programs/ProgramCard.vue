@@ -52,13 +52,13 @@ const participants = computed(() => props.program.stats.participants ?? 0);
 
       <div class="flex items-center gap-2.5">
         <UiBadge v-if="program.active">
-          {{ $t("labels.state.active", 1) }}
+          {{ $t("labels.state.active.m") }}
         </UiBadge>
         <UiBadge
           v-else
           variant="secondary"
         >
-          {{ $t("labels.state.inactive", 1) }}
+          {{ $t("labels.state.inactive.m") }}
         </UiBadge>
 
         <UiTooltip>

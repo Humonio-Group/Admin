@@ -1,4 +1,5 @@
-import type { Nullable } from "~/types/primitives/objects";
+import type { Listed, Nullable } from "~/types/primitives/objects";
+import type { Journey } from "~/types/entities/journey";
 
 export interface ProgramStats {
   journeys: number;
@@ -23,4 +24,11 @@ export type ProgramListEntity = Pick<Program, "id" | "key" | "active" | "duratio
 export interface ProgramTag {
   id: number;
   name: string;
+}
+
+export interface SelectedProgram extends Program {
+  journeys: {
+    totalEntities: number;
+    list: Listed<Journey>;
+  };
 }

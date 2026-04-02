@@ -7,4 +7,5 @@ export interface ProgramCardProps extends HumonioProps {
 
 export interface ProgramActionsProps extends HumonioProps {
   program: ProgramListEntity;
+  showProgramShortcuts?: boolean;
 }
