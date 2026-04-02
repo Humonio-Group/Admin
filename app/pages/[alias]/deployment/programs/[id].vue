@@ -1,0 +1,156 @@
+<script setup lang="ts">
+import PageRoot from "~/components/composing/PageRoot.vue";
+import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
+import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
+
+const { t } = useI18n();
+useBreadcrumb([
+  { label: t("deployment.programs.title"), to: "/deployment/programs" },
+  { label: `${useRoute().params.id}` },
+]);
+
+const store = useProgramStore();
+const { company } = storeToRefs(useCompanyStore());
+const { selectedProgram: program, loading: _loading } = storeToRefs(store);
+const loading = computed(() => _loading.value.specimen);
+
+const { isStuck, observed } = useSticky();
+
+const route = useRoute();
+const programId = computed<number>(() => Number(route.params.id as string));
+watch(programId, async (val) => {
+  if (!val) return;
+  await store.loadProgram(val);
+}, { immediate: true });
+</script>
+
+<template>
+  <PageRoot
+    name="deployment.programs.details"
+    class="flex flex-col"
+  >
+    <main
+      v-if="loading"
+      class="h-24 grid place-items-center"
+    >
+      <UiSpinner />
+    </main>
+    <template v-else-if="program">
+      <header class="flex gap-4 mb-6">
+        <div class="aspect-4/2.5 max-w-sm overflow-hidden rounded-xl">
+          <NuxtImg
+            v-if="program.picture"
+            class="block size-full object-cover"
+            :src="program.picture"
+          />
+          <span class="block size-full bg-accent" />
+        </div>
+
+        <div class="flex flex-col gap-1.5 py-4">
+          <h1 class="text-3xl font-bold">
+            {{ program.name }}
+          </h1>
+          <MarkdownRenderer
+            :content="program.description"
+            class="*:text-base! line-clamp-4"
+          />
+
+          <div class="mt-auto">
+            auto
+          </div>
+        </div>
+
+        <ProgramActions
+          class="self-start"
+          :program
+          :show-program-shortcuts="false"
+        />
+      </header>
+
+      <div class="rounded-3xl border isolate">
+        <nav
+          ref="observed"
+          class="sticky z-10 top-12 flex items-center gap-1.5 p-2 bg-background border-b overflow-x-auto"
+          :class="{ 'rounded-t-3xl': !isStuck }"
+        >
+          <UiButton
+            variant="outline"
+            class="rounded-full"
+            as-child
+          >
+            <NuxtLinkLocale
+              :to="`/${company?.alias}/deployment/programs/${program?.id}/`"
+              exact-active-class="bg-accent! hover:bg-accent/85!"
+            >
+              {{ $t("deployment.programs.navigation.overview") }}
+            </NuxtLinkLocale>
+          </UiButton>
+          <UiButton
+            variant="outline"
+            class="rounded-full"
+            as-child
+          >
+            <NuxtLinkLocale
+              :to="`/${company?.alias}/deployment/programs/${program?.id}/journeys`"
+              active-class="bg-accent! hover:bg-accent/85!"
+            >
+              {{ $t("deployment.programs.navigation.journeys") }}
+            </NuxtLinkLocale>
+          </UiButton>
+          <UiButton
+            variant="outline"
+            class="rounded-full"
+            as-child
+          >
+            <NuxtLinkLocale
+              :to="`/${company?.alias}/deployment/programs/${program?.id}/events`"
+              active-class="bg-accent! hover:bg-accent/85!"
+            >
+              {{ $t("deployment.programs.navigation.events") }}
+            </NuxtLinkLocale>
+          </UiButton>
+          <UiButton
+            variant="outline"
+            class="rounded-full"
+            as-child
+          >
+            <NuxtLinkLocale
+              :to="`/${company?.alias}/deployment/programs/${program?.id}/contents`"
+              active-class="bg-accent! hover:bg-accent/85!"
+            >
+              {{ $t("deployment.programs.navigation.contents") }}
+            </NuxtLinkLocale>
+          </UiButton>
+          <UiButton
+            variant="outline"
+            class="rounded-full"
+            as-child
+          >
+            <NuxtLinkLocale
+              :to="`/${company?.alias}/deployment/programs/${program?.id}/people`"
+              active-class="bg-accent! hover:bg-accent/85!"
+            >
+              {{ $t("deployment.programs.navigation.people") }}
+            </NuxtLinkLocale>
+          </UiButton>
+          <UiButton
+            variant="outline"
+            class="rounded-full"
+            as-child
+          >
+            <NuxtLinkLocale
+              :to="`/${company?.alias}/deployment/programs/${program?.id}/reports`"
+              active-class="bg-accent! hover:bg-accent/85!"
+            >
+              {{ $t("deployment.programs.navigation.reports") }}
+            </NuxtLinkLocale>
+          </UiButton>
+        </nav>
+
+        <main class="p-4">
+          <NuxtPage />
+        </main>
+      </div>
+    </template>
+  </PageRoot>
+</template>
