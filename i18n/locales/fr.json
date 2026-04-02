@@ -38,14 +38,43 @@
   "default": "Défaut",
   "labels": {
     "search": "Rechercher",
+    "all": "Tous | Toutes",
     "languages": {
       "french": "Français"
     },
     "state": {
-      "enabled": "Activé | Activée",
-      "disabled": "Désactivé | Désactivée",
-      "active": "Actif | Active",
-      "inactive": "Inactif | Inactive"
+      "enabled": {
+        "m": "Activé | Activés",
+        "f": "Activée | Activées"
+      },
+      "disabled": {
+        "m": "Désactivé | Désactivés",
+        "f": "Désactivée | Désactivées"
+      },
+      "active": {
+        "m": "Actif | Actifs",
+        "f": "Active | Actives"
+      },
+      "inactive": {
+        "m": "Inactif | Inactifs",
+        "f": "Inactive | Inactives"
+      },
+      "confirmed": {
+        "m": "Confirmé | Confirmés",
+        "f": "Confirmée | Confirmées"
+      },
+      "unconfirmed": {
+        "m": "Non confirmé | Non confirmés",
+        "f": "Non confirmée | Non confirmées"
+      },
+      "cancelled": {
+        "m": "Annulé | Annulés",
+        "f": "Annulée | Annulées"
+      },
+      "closed": {
+        "m": "Fermé | Fermés",
+        "f": "Fermée | Fermées"
+      }
     },
     "miss-you": "Vous ne pouvez pas partir comme ça... 😓",
     "plan": {
@@ -187,22 +216,51 @@
       "title": "Programmes",
       "card": {
         "actions": {
-          "activate": "Activer",
-          "deactivate": "Désactiver",
-          "go-to": "Afficher",
+          "go-to": "Ouvrir",
           "duplicate": "Dupliquer",
           "config": "Configurer",
           "build": "Construire",
+          "activate": "Activer",
+          "deactivate": "Désactiver",
           "download": {
             "label": "Télécharger",
-            "progress-report": "Rapport de progression",
-            "formation-plan": "Plan de formation"
+            "formation-plan": "Plan de formation",
+            "progress-report": "Rapport de progression"
           }
-        },
-        "tooltips": {
-          "average-rating": "Note moyenne",
-          "total-duration": "Durée totale"
         }
+      },
+      "navigation": {
+        "overview": "Vue d'ensemble",
+        "journeys": "Distributions",
+        "events": "Événements",
+        "contents": "Contenus",
+        "people": "Participants",
+        "reports": "Rapports"
+      }
+    },
+    "journeys": {
+      "table": {
+        "headers": {
+          "info": "Informations",
+          "facilitators": "Facilitateurs",
+          "participants": "Participants",
+          "time-lapse": "Période"
+        },
+        "formats": {
+          "dates": "d MMMM yyyy, HH:mm"
+        }
+      },
+      "actions": {
+        "open": "Ouvrir",
+        "config": "Configurer",
+        "send-emails": "Envoyer des emails",
+        "participants-config": "Configurer les participants",
+        "watch-results": "Consulter les résultats",
+        "download": {
+          "label": "Télécharger",
+          "progress-report": "Rapport de progression"
+        },
+        "cancel": "Annuler"
       }
     }
   },
