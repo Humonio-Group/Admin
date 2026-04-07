@@ -4,10 +4,6 @@ import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
 
 const { t } = useI18n();
-useBreadcrumb([
-  { label: t("deployment.programs.title"), to: "/deployment/programs" },
-  { label: `${useRoute().params.id}` },
-]);
 
 const store = useProgramStore();
 const { company } = storeToRefs(useCompanyStore());
@@ -21,6 +17,11 @@ const programId = computed<number>(() => Number(route.params.id as string));
 watch(programId, async (val) => {
   if (!val) return;
   await store.loadProgram(val);
+
+  useBreadcrumb([
+    { label: t("deployment.programs.title"), to: "/deployment/programs" },
+    { label: `${program.value?.name}` },
+  ]);
 }, { immediate: true });
 </script>
 
@@ -37,16 +38,19 @@ watch(programId, async (val) => {
     </main>
     <template v-else-if="program">
       <header class="flex gap-4 mb-6">
-        <div class="aspect-4/2.5 max-w-sm overflow-hidden rounded-xl">
+        <div class="aspect-4/2.5 shrink-0 max-w-sm overflow-hidden rounded-xl">
           <NuxtImg
             v-if="program.picture"
             class="block size-full object-cover"
             :src="program.picture"
           />
-          <span class="block size-full bg-accent" />
+          <span
+            v-else
+            class="block size-full bg-accent"
+          />
         </div>
 
-        <div class="flex flex-col gap-1.5 py-4">
+        <div class="flex-1 flex flex-col gap-1.5 py-4">
           <h1 class="text-3xl font-bold">
             {{ program.name }}
           </h1>
