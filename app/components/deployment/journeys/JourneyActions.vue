@@ -3,6 +3,8 @@ import { MoreVertical, Eye, Settings, Users, ChartArea, ChartLine, DoorClosed, D
 import type { JourneyActionsProps } from "~/components/deployment/journeys/index";
 
 defineProps<JourneyActionsProps>();
+
+const { company } = storeToRefs(useCompanyStore());
 </script>
 
 <template>
@@ -18,10 +20,12 @@ defineProps<JourneyActionsProps>();
       </UiDropdownMenuTrigger>
       <UiDropdownMenuContent align="end">
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem>
-            <Eye />
-            {{ $t("deployment.journeys.actions.open") }}
-          </UiDropdownMenuItem>
+          <NuxtLinkLocale :to="`/${company?.alias}/deployment/journeys/${journey.id}`">
+            <UiDropdownMenuItem>
+              <Eye />
+              {{ $t("deployment.journeys.actions.open") }}
+            </UiDropdownMenuItem>
+          </NuxtLinkLocale>
           <UiDropdownMenuItem>
             <Settings />
             {{ $t("deployment.journeys.actions.config") }}
