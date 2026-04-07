@@ -239,6 +239,7 @@
       }
     },
     "journeys": {
+      "title": "Distributions",
       "table": {
         "headers": {
           "info": "Informations",
@@ -261,6 +262,13 @@
           "progress-report": "Rapport de progression"
         },
         "cancel": "Annuler"
+      },
+      "navigation": {
+        "overview": "Vue d'ensemble",
+        "participants": "Participants",
+        "actions": "Actions",
+        "contents": "Contenus",
+        "results": "Résultats"
       }
     }
   },
