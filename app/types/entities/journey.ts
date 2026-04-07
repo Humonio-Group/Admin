@@ -1,4 +1,5 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
+import type { Program } from "~/types/entities/program";
 
 export interface JourneyMember {
   firstName: string;
@@ -16,4 +17,6 @@ export interface Journey {
   };
   facilitators: Listed<JourneyMember>;
   participants: Listed<JourneyMember>;
+
+  relatedProgram?: Program;
 }

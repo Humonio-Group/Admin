@@ -1,8 +1,10 @@
 import type { Journey } from "~/types/entities/journey";
 import { EntityType } from "~/types/entities";
+import { buildProgramEntity } from "~/lib/entities/lifecycle/program";
 
 export function buildJourneyEntity(data: any, included: any): Journey {
   const { id, attributes, relationships } = data;
+  const relatedProgram = included.find((e: any) => e.type === EntityType.PROGRAM && e.id === relationships.program.data[0]?.id);
 
   const facilitatorIds = [
     ...relationships.facilitators.data.map((entity: any) => entity.id),
@@ -32,6 +34,8 @@ export function buildJourneyEntity(data: any, included: any): Journey {
       lastName: f.attributes.lastname,
       avatar: f.attributes.picture.thumbnail,
     })),
+
+    relatedProgram: relatedProgram ? buildProgramEntity(relatedProgram) : undefined,
   };
 }
 

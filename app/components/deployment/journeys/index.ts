@@ -7,16 +7,30 @@ import * as locales from "date-fns/locale";
 import { Badge } from "~/components/ui/badge";
 import { computeStatus, computeStatusColors } from "~/lib/entities/lifecycle/journey";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 import JourneyActions from "~/components/deployment/journeys/JourneyActions.vue";
+import { NuxtLinkLocale } from "#components";
 
 export interface JourneyActionsProps {
   journey: Journey;
 }
 
-export const columns = (): Listed<ColumnDef<Journey>> => {
+export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>> => {
   const { t, locale } = useNuxtApp().$i18n;
   const headerKey = (path: string) => t(`deployment.journeys.table.headers.${path}`);
+  const { company } = storeToRefs(useCompanyStore());
+
+  const programColumn: ColumnDef<Journey> = {
+    id: "program",
+    header: () => h("div", t("Programme")),
+    cell: ({ row }) => {
+      const link = h(NuxtLinkLocale, { class: "truncate", to: `/${company.value?.alias}/deployment/programs/${row.original.relatedProgram?.id}` }, () => row.original.relatedProgram?.name);
+      const button = h(Button, { asChild: true, variant: "link", class: "text-foreground! px-0! overflow-hidden" }, link);
+
+      return h("div", { class: "max-w-xs overflow-hidden" }, button);
+    },
+  };
 
   return [
     {
@@ -27,9 +41,10 @@ export const columns = (): Listed<ColumnDef<Journey>> => {
         const statusColors = computeStatusColors(row.original.status);
         const status = h(Badge, { variant: "outline", class: `${statusColors.border} ${statusColors.text} ${statusColors.background}` }, t(`labels.state.${computeStatus(row.original.status)}.f`, 1));
 
-        return h("div", { class: "flex flex-col gap-1 max-w-md overflow-hidden" }, [title, status]);
+        return h("div", { class: "flex flex-col gap-1 max-w-xs overflow-hidden" }, [title, status]);
       },
     },
+    ...(showProgram ? [programColumn] : []),
     {
       id: "time-lapse",
       header: () => h("div", headerKey("time-lapse")),
