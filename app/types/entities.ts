@@ -8,4 +8,9 @@ export enum EntityType {
   LANGUAGE = "languages",
 
   PROGRAM = "programs",
+
+  JOURNEY = "journeys",
+
+  TEAM = "teams",
+  GROUP = "groups",
 }
