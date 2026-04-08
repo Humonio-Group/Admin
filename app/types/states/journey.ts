@@ -1,15 +1,27 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
-import type { Journey } from "~/types/entities/journey";
+import type { Journey, SelectedJourney } from "~/types/entities/journey";
+import type { Group } from "~/types/entities/group";
 
 export const PER_PAGE = 20;
 
 export interface JourneyState {
   journeys: Listed<Journey>;
   totalEntities: number;
-  selectedJourney: Nullable<Journey>;
+  selectedJourney: Nullable<SelectedJourney>;
+  groups: Listed<Group>;
   loading: {
     items: boolean;
     specimen: boolean;
+    groups: boolean;
+    updatingTeamMembers: Listed<number>;
+
+    team: {
+      adding: boolean;
+      updating: number;
+      removing: number;
+    };
+    teams: boolean;
+    teamMembers: Listed<number>;
   };
 }
 
@@ -17,8 +29,19 @@ export const defaults: JourneyState = {
   journeys: [],
   totalEntities: -1,
   selectedJourney: null,
+  groups: [],
   loading: {
     items: false,
     specimen: false,
+    groups: false,
+    updatingTeamMembers: [],
+
+    team: {
+      adding: false,
+      updating: -1,
+      removing: -1,
+    },
+    teams: false,
+    teamMembers: [],
   },
 };

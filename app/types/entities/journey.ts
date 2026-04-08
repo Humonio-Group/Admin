@@ -1,5 +1,6 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
 import type { Program } from "~/types/entities/program";
+import type { Group } from "~/types/entities/group";
 
 export interface JourneyMember {
   firstName: string;
@@ -19,4 +20,35 @@ export interface Journey {
   participants: Listed<JourneyMember>;
 
   relatedProgram?: Program;
+}
+
+export interface SelectedJourney extends Journey {
+  teams: {
+    totalEntities: number;
+    list: Listed<any>;
+  };
+}
+
+export interface JourneyTeam {
+  id: number;
+  name: string;
+  stats: {
+    full: boolean;
+    maxParticipants: number;
+    coaches: number;
+    participants: number;
+  };
+  leader: Nullable<number>;
+  coaches: Listed<JourneyTeamMember>;
+  participants: Listed<JourneyTeamMember>;
+}
+
+export interface JourneyTeamMember {
+  id: number;
+  archived: boolean;
+  avatar: Nullable<string>;
+  firstName: string;
+  lastName: string;
+  email: string;
+  groups: Listed<Group>;
 }
