@@ -21,7 +21,12 @@
       "default": "Ajouter",
       "entry": "Ajouter une entrée",
       "program": "Créer un programme",
-      "team": "Ajouter une équipe"
+      "team": "Ajouter une équipe",
+      "participant": "Ajouter un participant"
+    },
+    "import": {
+      "default": "Importer",
+      "participants": "Importer des participants"
     }
   },
   "dialogs": {
@@ -103,6 +108,11 @@
       "9": "Mentor",
       "10": "Créateur"
     },
+    "fields": {
+      "first-name": "Prénom",
+      "last-name": "Nom",
+      "email": "Adresse email"
+    },
     "archives": "Archives",
     "sessions": "{count} session | {count} sessions",
     "participants": "{count} participant | {count} participants",
@@ -179,6 +189,10 @@
         "loading": "Suppression de l'équipe \"{name}\"...",
         "success": "Équipe \"{name}\" supprimée.",
         "error": "Erreur lors de la suppression de l'équipe \"{name}\"."
+      },
+      "add-participant": {
+        "success": "Le participant {memberName} a été ajouté à l'équipe \"{teamName}\".",
+        "error": "Erreur lors de l'ajout du participant {name}."
       }
     }
   },

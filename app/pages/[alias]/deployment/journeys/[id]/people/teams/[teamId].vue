@@ -5,6 +5,7 @@ import { Edit2, Plus, Trash } from "lucide-vue-next";
 import { columns } from "~/components/deployment/journeys/teams";
 import TeamDialog from "~/components/deployment/journeys/teams/TeamDialog.vue";
 import ConfirmDialog from "~/components/primitives/ConfirmDialog.vue";
+import TeamAddMemberDialog from "~/components/deployment/journeys/teams/TeamAddMemberDialog.vue";
 
 const store = useJourneyStore();
 const { teams, loading: _loading } = storeToRefs(store);
@@ -13,6 +14,8 @@ const teamId = Number(useRoute().params.teamId as string);
 const team = computed<JourneyTeam | undefined>(() => teams.value.find(t => t.id === teamId));
 const loading = computed<boolean>(() => _loading.value.teamMembers.includes(teamId));
 const removing = computed<boolean>(() => _loading.value.team.removing === team.value?.id);
+
+const addParticipant = ref<boolean>(false);
 </script>
 
 <template>
@@ -63,10 +66,27 @@ const removing = computed<boolean>(() => _loading.value.team.removing === team.v
             </UiButton>
           </ConfirmDialog>
 
-          <UiButton size="sm">
-            <Plus />
-            {{ $t("btn.add.default") }}
-          </UiButton>
+          <UiDropdownMenu>
+            <UiDropdownMenuTrigger as-child>
+              <UiButton size="sm">
+                <Plus />
+                {{ $t("btn.add.default") }}
+              </UiButton>
+            </UiDropdownMenuTrigger>
+            <UiDropdownMenuContent align="end">
+              <UiDropdownMenuItem @click="addParticipant = true">
+                {{ $t("btn.add.participant") }}
+              </UiDropdownMenuItem>
+              <UiDropdownMenuItem disabled>
+                {{ $t("btn.import.participants") }}
+              </UiDropdownMenuItem>
+            </UiDropdownMenuContent>
+          </UiDropdownMenu>
+
+          <TeamAddMemberDialog
+            v-model:open="addParticipant"
+            :team
+          />
         </div>
       </header>
 

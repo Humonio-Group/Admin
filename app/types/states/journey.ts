@@ -19,6 +19,8 @@ export interface JourneyState {
       adding: boolean;
       updating: number;
       removing: number;
+
+      addingParticipant: boolean;
     };
     teams: boolean;
     teamMembers: Listed<number>;
@@ -40,6 +42,8 @@ export const defaults: JourneyState = {
       adding: false,
       updating: -1,
       removing: -1,
+
+      addingParticipant: false,
     },
     teams: false,
     teamMembers: [],

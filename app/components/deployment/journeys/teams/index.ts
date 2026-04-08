@@ -16,6 +16,16 @@ export interface JourneyTeamMemberActionsProps {
   team: JourneyTeam;
 }
 
+export interface TeamAddMemberDialogProps {
+  team: JourneyTeam;
+  trigger?: boolean;
+}
+
+export interface TeamMoveMemberDialogProps {
+  member: JourneyTeamMember;
+  teams: Listed<JourneyTeam>;
+}
+
 export interface TeamDialog {
   team?: JourneyTeam;
   trigger?: boolean;

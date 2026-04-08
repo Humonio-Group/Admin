@@ -10,6 +10,7 @@ export enum EntityType {
   PROGRAM = "programs",
 
   JOURNEY = "journeys",
+  PARTICIPATION = "participations",
 
   TEAM = "teams",
   GROUP = "groups",

@@ -335,5 +335,59 @@ export const useJourneyStore = defineStore("journeys", {
         },
       });
     },
+
+    async addParticipant(team: JourneyTeam, firstName: string, lastName: string, email: string) {
+      if (!this.selectedJourney || !this.selectedJourney.teams.list.find(t => t.id === team.id)) return;
+
+      this.loading.team.addingParticipant = true;
+      let state = true;
+
+      try {
+        const { data, included } = await this.api.post("/participations", { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "user",
+            "fields[users]": "name,email,picture",
+          },
+          body: {
+            key: useRuntimeConfig().public.api.key,
+            data: {
+              type: EntityType.PARTICIPATION,
+              relationships: {
+                team: {
+                  data: {
+                    id: team.id,
+                    type: EntityType.TEAM,
+                  },
+                },
+                user: {
+                  data: {
+                    attributes: {
+                      email,
+                      firstname: firstName,
+                      lastname: lastName,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const participant = buildTeamMemberEntity(data, included);
+        team.participants = [...team.participants, participant];
+        team.stats.participants++;
+
+        toast.success(this.translate("toasts.journeys.add-participant.success", { teamName: team.name, memberName: `${participant.firstName} ${participant.lastName}` }));
+      }
+      catch {
+        toast.error(this.translate("toasts.journeys.add-participant.error", { name: `${firstName} ${lastName}` }));
+        state = false;
+      }
+      finally {
+        this.loading.team.addingParticipant = false;
+      }
+
+      return state;
+    },
   },
 });
