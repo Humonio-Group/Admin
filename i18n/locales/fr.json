@@ -20,7 +20,8 @@
     "add": {
       "default": "Ajouter",
       "entry": "Ajouter une entrée",
-      "program": "Créer un programme"
+      "program": "Créer un programme",
+      "team": "Ajouter une équipe"
     }
   },
   "dialogs": {
@@ -28,6 +29,11 @@
       "title": "Recadrer l'image",
       "description": "Ajustez le cadrage de votre image avant de valider.",
       "confirm": "Valider"
+    },
+    "delete-team": {
+      "title": "Supprimer l'équipe",
+      "description": "Supprimer l'équipe \"{name}\" est une action irréversible. Êtes-vous sûr de vouloir poursuivre ?",
+      "action": "Supprimer"
     }
   },
   "primitives": {
@@ -157,6 +163,22 @@
       "developer": {
         "save": "Paramètres de développement sauvegardés.",
         "token-refreshed": "Le jeton a été régénéré."
+      }
+    },
+    "journeys": {
+      "update-group": {
+        "adding": "Ajout du groupe \"{groupName}\" à {memberName}...",
+        "removing": "Retrait du groupe \"{groupName}\" à {memberName}...",
+        "added": "Groupe \"{groupName}\" ajouté à {memberName}.",
+        "removed": "Groupe \"{groupName}\" retiré à {memberName}.",
+        "error-while-adding": "Erreur lors de l'ajout du group {name}.",
+        "error-while-removing": "Erreur lors du retrait du groupe {name}."
+      },
+      "team-added": "L'équipe \"{name}\" a été ajoutée !",
+      "delete-team": {
+        "loading": "Suppression de l'équipe \"{name}\"...",
+        "success": "Équipe \"{name}\" supprimée.",
+        "error": "Erreur lors de la suppression de l'équipe \"{name}\"."
       }
     }
   },

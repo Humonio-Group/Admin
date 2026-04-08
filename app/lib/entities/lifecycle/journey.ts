@@ -1,6 +1,12 @@
-import type { Journey } from "~/types/entities/journey";
+import type {
+  Journey,
+  JourneyTeam,
+  JourneyTeamMember,
+  SelectedJourney,
+} from "~/types/entities/journey";
 import { EntityType } from "~/types/entities";
 import { buildProgramEntity } from "~/lib/entities/lifecycle/program";
+import type { Group } from "~/types/entities/group";
 
 export function buildJourneyEntity(data: any, included: any): Journey {
   const { id, attributes, relationships } = data;
@@ -78,4 +84,55 @@ export function computeStatusColors(status: Journey["status"]): { border: string
       background: "bg-amber-400/10 dark:bg-amber-400/20",
     };
   }
+}
+
+export function extendToSelectedJourney(journey: Journey): SelectedJourney {
+  return {
+    ...journey,
+    teams: {
+      totalEntities: -1,
+      list: [],
+    },
+  };
+}
+
+export function buildTeamEntity(data: any): JourneyTeam {
+  const { id, attributes, relationships } = data;
+  const leader = relationships.leader.data[0]?.id ?? null;
+
+  return {
+    id,
+    name: attributes.name,
+    stats: {
+      full: attributes.isFull,
+      maxParticipants: attributes.stats.maxParticipants,
+      coaches: attributes.stats.nbLeads,
+      participants: attributes.stats.nbParticipants,
+    },
+    leader,
+    coaches: [],
+    participants: [],
+  };
+}
+export function buildTeamMemberEntity(data: any, included: any): JourneyTeamMember {
+  const { id, attributes, relationships } = data;
+  const user = included.find((e: any) => e.type === EntityType.USER && e.id === relationships.user.data[0]?.id);
+  const groups = included.filter((e: any) => e.type === EntityType.GROUP && relationships.groups.data.map((g: any) => g.id).includes(e.id));
+
+  return {
+    id,
+    archived: attributes.archived,
+    avatar: user.attributes.picture.thumbnail || null,
+    firstName: user.attributes.firstname,
+    lastName: user.attributes.lastname,
+    email: user.attributes.email,
+    groups: groups.map(buildTeamMemberGroup),
+  };
+}
+
+export function buildTeamMemberGroup(data: any): Group {
+  return {
+    id: data.id,
+    name: data.attributes.name,
+  };
 }

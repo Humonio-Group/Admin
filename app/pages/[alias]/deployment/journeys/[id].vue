@@ -194,7 +194,7 @@ watch(journeyId, async (val) => {
             as-child
           >
             <NuxtLinkLocale
-              :to="`/${company?.alias}/deployment/journeys/${journey.id}/participants`"
+              :to="`/${company?.alias}/deployment/journeys/${journey.id}/people/teams`"
               active-class="bg-accent! hover:bg-accent/85!"
             >
               {{ $t("deployment.journeys.navigation.participants") }}
@@ -226,7 +226,7 @@ watch(journeyId, async (val) => {
           </UiButton>
         </nav>
 
-        <main class="p-4">
+        <main>
           <NuxtPage />
         </main>
       </div>

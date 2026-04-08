@@ -3,7 +3,7 @@ import PageRoot from "~/components/composing/PageRoot.vue";
 </script>
 
 <template>
-  <PageRoot name="journeys.specimen.participants">
-    participants
+  <PageRoot name="journey.details.people.teams.empty">
+    Aucune équipe sélectionnée.
   </PageRoot>
 </template>
