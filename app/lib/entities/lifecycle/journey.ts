@@ -31,14 +31,16 @@ export function buildJourneyEntity(data: any, included: any): Journey {
       end: new Date(attributes.dates.end),
     },
     facilitators: facilitators.map((f: any) => ({
+      id: f.id,
       firstName: f.attributes.firstname,
       lastName: f.attributes.lastname,
       avatar: f.attributes.picture.thumbnail,
     })),
-    participants: participants.map((f: any) => ({
-      firstName: f.attributes.firstname,
-      lastName: f.attributes.lastname,
-      avatar: f.attributes.picture.thumbnail,
+    participants: participants.map((p: any) => ({
+      id: p.id,
+      firstName: p.attributes.firstname,
+      lastName: p.attributes.lastname,
+      avatar: p.attributes.picture.thumbnail,
     })),
 
     relatedProgram: relatedProgram ? buildProgramEntity(relatedProgram) : undefined,
@@ -121,6 +123,7 @@ export function buildTeamMemberEntity(data: any, included: any): JourneyTeamMemb
 
   return {
     id,
+    reference: user.id,
     archived: attributes.archived,
     avatar: user.attributes.picture.thumbnail || null,
     firstName: user.attributes.firstname,

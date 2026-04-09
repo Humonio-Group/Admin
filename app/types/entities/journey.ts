@@ -3,6 +3,7 @@ import type { Program } from "~/types/entities/program";
 import type { Group } from "~/types/entities/group";
 
 export interface JourneyMember {
+  id: number;
   firstName: string;
   lastName: string;
   avatar: string;
@@ -45,6 +46,7 @@ export interface JourneyTeam {
 
 export interface JourneyTeamMember {
   id: number;
+  reference: number;
   archived: boolean;
   avatar: Nullable<string>;
   firstName: string;

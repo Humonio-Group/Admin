@@ -44,6 +44,11 @@
       "title": "Déplacer {name} | Déplacer {count} participants",
       "field": "Nouvelle équipe",
       "action": "Appliquer"
+    },
+    "delete-participants": {
+      "title": "Supprimer {name} | Supprimer {count} participants",
+      "description": "Supprimer {name} supprimera la trace de sa participation à cette distribution. Toutefois, ses résultats seront conservés. Voulez-vous continuer ? | Supprimer les participants supprimera la trace de leur participation à cette distribution. Toutefois, leurs résultats seront conservés. Voulez-vous continuer ?",
+      "action": "Supprimer"
     }
   },
   "primitives": {
@@ -203,15 +208,20 @@
         "success": "{name} déplacé dans l'équipe \"{teamName}\". | {count} participants déplacés dans l'équipe \"{teamName}\".",
         "error": "Erreur lors du déplacement de {name}. | Erreur lors du déplacement de {count} participants."
       },
-      "archiving": {
+      "archiving-participants": {
         "loading": "Désactivation de {name}... | Désactivation de {count} participants...",
         "success": "{name} désactivé. | {count} participants désactivés.",
         "error": "Erreur lors de la désactivation de {name}. | Erreur lors de la désactivation de {count} participants."
       },
-      "restoring": {
+      "restoring-participants": {
         "loading": "Activation de {name}... | Activation de {count} participants...",
         "success": "{name} activé. | {count} participants activés.",
         "error": "Erreur lors de l'activation de {name}. | Erreur lors de l'activation de {count} participants."
+      },
+      "deleting-participants": {
+        "loading": "Suppression de {name}... | Suppression de {count} participants...",
+        "success": "{name} supprimé. | {count} participants supprimés.",
+        "error": "Erreur lors de la suppression de {name}. | Erreur lors de la suppression de {count} participants."
       }
     }
   },

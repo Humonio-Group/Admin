@@ -95,6 +95,11 @@ export const useJourneyStore = defineStore("journeys", {
       }
     },
 
+    removeParticipants(...ids: Listed<number>) {
+      if (!this.selectedJourney) return;
+      this.selectedJourney.participants = this.selectedJourney.participants.filter(member => !ids.includes(member.id));
+    },
+
     async loadGroups() {
       if (!this.selectedJourney) return;
 
@@ -377,6 +382,16 @@ export const useJourneyStore = defineStore("journeys", {
         team.participants = [...team.participants, participant];
         team.stats.participants++;
 
+        this.selectedJourney.participants = [
+          ...this.selectedJourney.participants,
+          {
+            id: participant.reference,
+            firstName: participant.firstName,
+            lastName: participant.lastName,
+            avatar: participant.avatar ?? "",
+          },
+        ];
+
         toast.success(this.translate("toasts.journeys.add-participant.success", { teamName: team.name, memberName: `${participant.firstName} ${participant.lastName}` }));
       }
       catch {
@@ -459,7 +474,7 @@ export const useJourneyStore = defineStore("journeys", {
           },
         },
       }), {
-        loading: () => this.translate("toasts.journeys.archiving.loading", members.length, {
+        loading: () => this.translate("toasts.journeys.archiving-participants.loading", members.length, {
           named: {
             name: `${members[0]?.firstName} ${members[0]?.lastName}`,
             count: members.length,
@@ -467,8 +482,13 @@ export const useJourneyStore = defineStore("journeys", {
         }),
         success: () => {
           members.forEach(member => member.archived = true);
+          this.removeParticipants(...members.reduce((acc, curr) => {
+            acc = [...acc, curr.reference];
+            return acc;
+          }, [] as Listed<number>));
+
           clearLoading();
-          return this.translate("toasts.journeys.archiving.success", members.length, {
+          return this.translate("toasts.journeys.archiving-participants.success", members.length, {
             named: {
               name: `${members[0]?.firstName} ${members[0]?.lastName}`,
               count: members.length,
@@ -477,7 +497,7 @@ export const useJourneyStore = defineStore("journeys", {
         },
         error: () => {
           clearLoading();
-          return this.translate("toasts.journeys.archiving.error", members.length, {
+          return this.translate("toasts.journeys.archiving-participants.error", members.length, {
             named: {
               name: `${members[0]?.firstName} ${members[0]?.lastName}`,
               count: members.length,
@@ -505,7 +525,7 @@ export const useJourneyStore = defineStore("journeys", {
           },
         },
       }), {
-        loading: () => this.translate("toasts.journeys.restoring.loading", members.length, {
+        loading: () => this.translate("toasts.journeys.restoring-participants.loading", members.length, {
           named: {
             name: `${members[0]?.firstName} ${members[0]?.lastName}`,
             count: members.length,
@@ -513,8 +533,18 @@ export const useJourneyStore = defineStore("journeys", {
         }),
         success: () => {
           members.forEach(member => member.archived = false);
+          this.selectedJourney!.participants = [
+            ...this.selectedJourney!.participants,
+            ...members.map(member => ({
+              id: member.reference,
+              firstName: member.firstName,
+              lastName: member.lastName,
+              avatar: member.avatar ?? "",
+            })),
+          ];
+
           clearLoading();
-          return this.translate("toasts.journeys.restoring.success", members.length, {
+          return this.translate("toasts.journeys.restoring-participants.success", members.length, {
             named: {
               name: `${members[0]?.firstName} ${members[0]?.lastName}`,
               count: members.length,
@@ -523,7 +553,58 @@ export const useJourneyStore = defineStore("journeys", {
         },
         error: () => {
           clearLoading();
-          return this.translate("toasts.journeys.restoring.error", members.length, {
+          return this.translate("toasts.journeys.restoring-participants.error", members.length, {
+            named: {
+              name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+              count: members.length,
+            },
+          });
+        },
+      });
+    },
+    async deleteParticipants(team: JourneyTeam, ...members: Listed<JourneyTeamMember>) {
+      if (!this.selectedJourney || !members.length) return;
+
+      const membersIds = members.reduce((acc, curr) => {
+        acc = [...acc, curr.id];
+        return acc;
+      }, [] as Listed<number>);
+      this.loading.team.deleting = [...this.loading.team.deleting, ...membersIds];
+
+      const clearLoading = () => this.loading.team.deleting = this.loading.team.deleting.filter(m => !membersIds.includes(m));
+
+      toast.promise(this.api.delete("/participations/multiple", { version: 2, endpointVersion: 1 }, {
+        body: {
+          meta: {
+            ids: membersIds,
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.journeys.deleting-participants.loading", members.length, {
+          named: {
+            name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+            count: members.length,
+          },
+        }),
+        success: () => {
+          team.participants = team.participants.filter(mbr => !membersIds.includes(mbr.id));
+          team.stats.participants -= members.length;
+          this.removeParticipants(...members.reduce((acc, curr) => {
+            acc = [...acc, curr.reference];
+            return acc;
+          }, [] as Listed<number>));
+
+          clearLoading();
+          return this.translate("toasts.journeys.deleting-participants.success", members.length, {
+            named: {
+              name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+              count: members.length,
+            },
+          });
+        },
+        error: () => {
+          clearLoading();
+          return this.translate("toasts.journeys.deleting-participants.error", members.length, {
             named: {
               name: `${members[0]?.firstName} ${members[0]?.lastName}`,
               count: members.length,

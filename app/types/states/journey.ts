@@ -24,6 +24,7 @@ export interface JourneyState {
       moving: boolean;
       archiving: Listed<number>;
       restoring: Listed<number>;
+      deleting: Listed<number>;
     };
     teams: boolean;
     teamMembers: Listed<number>;
@@ -50,6 +51,7 @@ export const defaults: JourneyState = {
       moving: false,
       archiving: [],
       restoring: [],
+      deleting: [],
     },
     teams: false,
     teamMembers: [],

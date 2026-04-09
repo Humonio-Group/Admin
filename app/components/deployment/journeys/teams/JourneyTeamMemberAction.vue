@@ -2,6 +2,7 @@
 import { MoreVertical, UserStar, ArrowRightLeft, ToggleLeft, ToggleRight, Trash } from "lucide-vue-next";
 import type { JourneyTeamMemberActionsProps } from "~/components/deployment/journeys/teams/index";
 import TeamMoveMemberDialog from "~/components/deployment/journeys/teams/TeamMoveMemberDialog.vue";
+import ConfirmDialog from "~/components/primitives/ConfirmDialog.vue";
 
 const props = defineProps<JourneyTeamMemberActionsProps>();
 
@@ -11,6 +12,7 @@ const { teams, loading } = storeToRefs(store);
 const availableTeams = computed(() => teams.value.filter(team => team.id !== props.team.id));
 
 const moveMemberDialog = ref<boolean>(false);
+const confirmDeleteDialog = ref<boolean>(false);
 </script>
 
 <template>
@@ -59,7 +61,10 @@ const moveMemberDialog = ref<boolean>(false);
             {{ $t("deployment.journeys.teams.actions.disable") }}
           </UiDropdownMenuItem>
 
-          <UiDropdownMenuItem variant="destructive">
+          <UiDropdownMenuItem
+            variant="destructive"
+            @click="confirmDeleteDialog = true"
+          >
             <Trash />
             {{ $t("deployment.journeys.teams.actions.delete") }}
           </UiDropdownMenuItem>
@@ -72,6 +77,13 @@ const moveMemberDialog = ref<boolean>(false);
       :members="[member]"
       :team="team"
       :teams="availableTeams"
+    />
+    <ConfirmDialog
+      v-model:open="confirmDeleteDialog"
+      :title-key="$t('dialogs.delete-participants.title', 1, { named: { name: `${member.firstName} ${member.lastName}` } })"
+      :description-key="$t('dialogs.delete-participants.description', 1, { named: { name: `${member.firstName} ${member.lastName}` } })"
+      action-key="dialogs.delete-participants.action"
+      @confirm="store.deleteParticipants(team, member)"
     />
   </div>
 </template>
