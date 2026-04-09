@@ -389,5 +389,43 @@ export const useJourneyStore = defineStore("journeys", {
 
       return state;
     },
+    async moveParticipants(oldTeam: JourneyTeam, newTeam: JourneyTeam, ...members: Listed<JourneyTeamMember>) {
+      if (!this.selectedJourney || !this.selectedJourney.teams.list.filter(t => [oldTeam.id, newTeam.id].includes(t.id)).length) return;
+
+      this.loading.team.moving = true;
+      let state = true;
+
+      const membersIds = members.reduce((acc, curr) => {
+        acc = [...acc, curr.id];
+        return acc;
+      }, [] as Listed<number>);
+
+      try {
+        await this.api.post(`/participations/move`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            key: useRuntimeConfig().public.api.key,
+            meta: {
+              ids: membersIds,
+              teamId: newTeam.id,
+            },
+          },
+        });
+
+        oldTeam.participants = oldTeam.participants.filter(mbr => !membersIds.includes(mbr.id));
+        oldTeam.stats.participants -= members.length;
+
+        newTeam.participants = [...newTeam.participants, ...members.map(member => ({ ...member }))];
+        newTeam.stats.participants += members.length;
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default", { code: 500 }));
+        state = false;
+      }
+      finally {
+        this.loading.team.moving = false;
+      }
+
+      return state;
+    },
   },
 });
