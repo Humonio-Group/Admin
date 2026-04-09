@@ -390,7 +390,7 @@ export const useJourneyStore = defineStore("journeys", {
       return state;
     },
     async moveParticipants(oldTeam: JourneyTeam, newTeam: JourneyTeam, ...members: Listed<JourneyTeamMember>) {
-      if (!this.selectedJourney || !this.selectedJourney.teams.list.filter(t => [oldTeam.id, newTeam.id].includes(t.id)).length) return;
+      if (!this.selectedJourney || !members.length || !this.selectedJourney.teams.list.filter(t => [oldTeam.id, newTeam.id].includes(t.id)).length) return;
 
       this.loading.team.moving = true;
       let state = true;
@@ -416,9 +416,22 @@ export const useJourneyStore = defineStore("journeys", {
 
         newTeam.participants = [...newTeam.participants, ...members.map(member => ({ ...member }))];
         newTeam.stats.participants += members.length;
+
+        toast.success(this.translate("toasts.journeys.members-moved.success", members.length, {
+          named: {
+            name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+            teamName: newTeam.name,
+            count: members.length,
+          },
+        }));
       }
       catch {
-        toast.error(this.translate("toasts.error.default", { code: 500 }));
+        toast.error(this.translate("toasts.journeys.members-moved.error", members.length, {
+          named: {
+            name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+            count: members.length,
+          },
+        }));
         state = false;
       }
       finally {

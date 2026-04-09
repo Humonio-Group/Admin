@@ -198,6 +198,10 @@
       "add-participant": {
         "success": "Le participant {memberName} a été ajouté à l'équipe \"{teamName}\".",
         "error": "Erreur lors de l'ajout du participant {name}."
+      },
+      "members-moved": {
+        "success": "{name} déplacé dans l'équipe \"{teamName}\". | {count} participants déplacés dans l'équipe \"{teamName}\".",
+        "error": "Erreur lors du déplacement de {name}. | Erreur lors du déplacement de {count} participants."
       }
     }
   },
