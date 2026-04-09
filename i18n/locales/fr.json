@@ -305,6 +305,15 @@
         "actions": "Actions",
         "contents": "Contenus",
         "results": "Résultats"
+      },
+      "teams": {
+        "actions": {
+          "set-as-team-leader": "Définir comme chef d'équipe",
+          "move": "Déplacer",
+          "disable": "Désactiver",
+          "enable": "Activer",
+          "delete": "Supprimer"
+        }
       }
     }
   },

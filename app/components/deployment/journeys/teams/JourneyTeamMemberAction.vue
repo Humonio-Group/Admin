@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MoreVertical, UserStar, ArrowRightLeft, ToggleLeft, Trash } from "lucide-vue-next";
+import { MoreVertical, UserStar, ArrowRightLeft, ToggleLeft, ToggleRight, Trash } from "lucide-vue-next";
 import type { JourneyTeamMemberActionsProps } from "~/components/deployment/journeys/teams/index";
 import TeamMoveMemberDialog from "~/components/deployment/journeys/teams/TeamMoveMemberDialog.vue";
 
@@ -28,27 +28,32 @@ const moveMemberDialog = ref<boolean>(false);
         <UiDropdownMenuGroup>
           <UiDropdownMenuItem>
             <UserStar />
-            Désigner comme chef d'équipe
+            {{ $t("deployment.journeys.teams.actions.set-as-team-leader") }}
           </UiDropdownMenuItem>
           <UiDropdownMenuItem
             :disabled="teams.length < 2"
             @click="moveMemberDialog = true"
           >
             <ArrowRightLeft />
-            Déplacer
+            {{ $t("deployment.journeys.teams.actions.move") }}
           </UiDropdownMenuItem>
         </UiDropdownMenuGroup>
 
         <UiDropdownMenuSeparator />
 
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem>
-            <ToggleLeft />
-            Désactiver
+          <UiDropdownMenuItem v-if="member.archived">
+            <ToggleRight />
+            {{ $t("deployment.journeys.teams.actions.enable") }}
           </UiDropdownMenuItem>
+          <UiDropdownMenuItem v-else>
+            <ToggleLeft />
+            {{ $t("deployment.journeys.teams.actions.disable") }}
+          </UiDropdownMenuItem>
+
           <UiDropdownMenuItem variant="destructive">
             <Trash />
-            Supprimer
+            {{ $t("deployment.journeys.teams.actions.delete") }}
           </UiDropdownMenuItem>
         </UiDropdownMenuGroup>
       </UiDropdownMenuContent>
