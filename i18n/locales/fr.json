@@ -39,6 +39,11 @@
       "title": "Supprimer l'équipe",
       "description": "Supprimer l'équipe \"{name}\" est une action irréversible. Êtes-vous sûr de vouloir poursuivre ?",
       "action": "Supprimer"
+    },
+    "move-participants": {
+      "title": "Déplacer {name} | Déplacer {count} participants",
+      "field": "Nouvelle équipe",
+      "action": "Appliquer"
     }
   },
   "primitives": {

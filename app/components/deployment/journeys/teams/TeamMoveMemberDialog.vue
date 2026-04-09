@@ -32,7 +32,7 @@ const submit = form.handleSubmit(async ({ teamId }) => {
   const team = props.teams.find(t => t.id === teamId);
   if (!team) return;
 
-  open.value = !(await store.moveParticipants(props.team, team, props.member));
+  open.value = !(await store.moveParticipants(props.team, team, ...props.members));
 });
 </script>
 
@@ -45,7 +45,7 @@ const submit = form.handleSubmit(async ({ teamId }) => {
       >
         <UiDialogHeader>
           <UiDialogTitle>
-            Changer d'équipe
+            {{ $t("dialogs.move-participants.title", members.length, { named: { name: `${members[0]!.firstName} ${members[0]!.lastName}`, count: members.length } }) }}
           </UiDialogTitle>
         </UiDialogHeader>
 
@@ -55,7 +55,7 @@ const submit = form.handleSubmit(async ({ teamId }) => {
         >
           <UiFormItem>
             <UiFormLabel>
-              Equipe
+              {{ $t("dialogs.move-participants.field") }}
             </UiFormLabel>
             <UiSelect
               v-bind="componentField"
@@ -90,7 +90,7 @@ const submit = form.handleSubmit(async ({ teamId }) => {
           </UiDialogClose>
 
           <UiButton :disabled="loading">
-            Appliquer
+            {{ $t("dialogs.move-participants.action") }}
             <UiSpinner v-if="loading" />
           </UiButton>
         </UiDialogFooter>

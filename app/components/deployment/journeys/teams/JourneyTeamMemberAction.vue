@@ -61,7 +61,7 @@ const moveMemberDialog = ref<boolean>(false);
 
     <TeamMoveMemberDialog
       v-model:open="moveMemberDialog"
-      :member="member"
+      :members="[member]"
       :team="team"
       :teams="availableTeams"
     />

@@ -22,7 +22,7 @@ export interface TeamAddMemberDialogProps {
 }
 
 export interface TeamMoveMemberDialogProps {
-  member: JourneyTeamMember;
+  members: Listed<JourneyTeamMember>;
   team: JourneyTeam;
   teams: Listed<JourneyTeam>;
 }
