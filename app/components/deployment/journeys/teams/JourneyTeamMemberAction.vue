@@ -6,7 +6,7 @@ import TeamMoveMemberDialog from "~/components/deployment/journeys/teams/TeamMov
 const props = defineProps<JourneyTeamMemberActionsProps>();
 
 const store = useJourneyStore();
-const { teams } = storeToRefs(store);
+const { teams, loading } = storeToRefs(store);
 
 const availableTeams = computed(() => teams.value.filter(team => team.id !== props.team.id));
 
@@ -44,6 +44,7 @@ const moveMemberDialog = ref<boolean>(false);
         <UiDropdownMenuGroup>
           <UiDropdownMenuItem
             v-if="member.archived"
+            :disabled="loading.team.restoring.includes(member.id)"
             @click="store.restoreParticipants(member)"
           >
             <ToggleRight />
@@ -51,6 +52,7 @@ const moveMemberDialog = ref<boolean>(false);
           </UiDropdownMenuItem>
           <UiDropdownMenuItem
             v-else
+            :disabled="loading.team.archiving.includes(member.id)"
             @click="store.archiveParticipants(member)"
           >
             <ToggleLeft />
