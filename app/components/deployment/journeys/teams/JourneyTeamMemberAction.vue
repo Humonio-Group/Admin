@@ -26,7 +26,7 @@ const moveMemberDialog = ref<boolean>(false);
       </UiDropdownMenuTrigger>
       <UiDropdownMenuContent align="end">
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem>
+          <UiDropdownMenuItem :disabled="member.archived">
             <UserStar />
             {{ $t("deployment.journeys.teams.actions.set-as-team-leader") }}
           </UiDropdownMenuItem>
@@ -42,11 +42,17 @@ const moveMemberDialog = ref<boolean>(false);
         <UiDropdownMenuSeparator />
 
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem v-if="member.archived">
+          <UiDropdownMenuItem
+            v-if="member.archived"
+            @click="store.restoreParticipants(member)"
+          >
             <ToggleRight />
             {{ $t("deployment.journeys.teams.actions.enable") }}
           </UiDropdownMenuItem>
-          <UiDropdownMenuItem v-else>
+          <UiDropdownMenuItem
+            v-else
+            @click="store.archiveParticipants(member)"
+          >
             <ToggleLeft />
             {{ $t("deployment.journeys.teams.actions.disable") }}
           </UiDropdownMenuItem>

@@ -202,6 +202,16 @@
       "members-moved": {
         "success": "{name} déplacé dans l'équipe \"{teamName}\". | {count} participants déplacés dans l'équipe \"{teamName}\".",
         "error": "Erreur lors du déplacement de {name}. | Erreur lors du déplacement de {count} participants."
+      },
+      "archiving": {
+        "loading": "Désactivation de {name}... | Désactivation de {count} participants...",
+        "success": "{name} désactivé. | {count} participants désactivés.",
+        "error": "Erreur lors de la désactivation de {name}. | Erreur lors de la désactivation de {count} participants."
+      },
+      "restoring": {
+        "loading": "Activation de {name}... | Activation de {count} participants...",
+        "success": "{name} activé. | {count} participants activés.",
+        "error": "Erreur lors de l'activation de {name}. | Erreur lors de l'activation de {count} participants."
       }
     }
   },

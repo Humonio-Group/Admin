@@ -43,8 +43,10 @@ export const columns = (team: JourneyTeam): Listed<ColumnDef<JourneyTeamMember>>
         const avatar = h(Avatar, [avatarImage, avatarFallback]);
 
         const name = h("p", `${row.original.firstName} ${row.original.lastName}`);
+        const archived = h("p", { class: "text-xs text-destructive" }, "Archivé");
+        const info = h("div", { class: "grid" }, [name, ...(row.original.archived ? [archived] : [])]);
 
-        return h("div", { class: "flex items-center gap-2" }, [avatar, name]);
+        return h("div", { class: "flex items-center gap-2" }, [avatar, info]);
       },
     },
     {
@@ -56,6 +58,11 @@ export const columns = (team: JourneyTeam): Listed<ColumnDef<JourneyTeamMember>>
 
         return h("div", { class: "flex items-center gap-1" }, [...groups, add]);
       },
+    },
+    {
+      id: "mentor",
+      header: () => h("div", "Mentor"),
+      cell: () => h("div", "-"),
     },
     {
       id: "actions",

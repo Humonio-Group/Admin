@@ -440,5 +440,97 @@ export const useJourneyStore = defineStore("journeys", {
 
       return state;
     },
+    async archiveParticipants(...members: Listed<JourneyTeamMember>) {
+      if (!this.selectedJourney || !members.length) return;
+
+      const membersIds = members.reduce((acc, curr) => {
+        acc = [...acc, curr.id];
+        return acc;
+      }, [] as Listed<number>);
+      this.loading.team.archiving = [...this.loading.team.archiving, ...membersIds];
+
+      const clearLoading = () => this.loading.team.archiving = this.loading.team.archiving.filter(m => !membersIds.includes(m));
+      toast.promise(this.api.post("/participations/archive", { version: 2, endpointVersion: 1 }, {
+        body: {
+          key: useRuntimeConfig().public.api.key,
+          meta: {
+            ids: membersIds,
+            archived: true,
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.journeys.archiving.loading", members.length, {
+          named: {
+            name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+            count: members.length,
+          },
+        }),
+        success: () => {
+          members.forEach(member => member.archived = true);
+          clearLoading();
+          return this.translate("toasts.journeys.archiving.success", members.length, {
+            named: {
+              name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+              count: members.length,
+            },
+          });
+        },
+        error: () => {
+          clearLoading();
+          return this.translate("toasts.journeys.archiving.error", members.length, {
+            named: {
+              name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+              count: members.length,
+            },
+          });
+        },
+      });
+    },
+    async restoreParticipants(...members: Listed<JourneyTeamMember>) {
+      if (!this.selectedJourney || !members.length) return;
+
+      const membersIds = members.reduce((acc, curr) => {
+        acc = [...acc, curr.id];
+        return acc;
+      }, [] as Listed<number>);
+      this.loading.team.restoring = [...this.loading.team.restoring, ...membersIds];
+
+      const clearLoading = () => this.loading.team.restoring = this.loading.team.restoring.filter(m => !membersIds.includes(m));
+      toast.promise(this.api.post("/participations/archive", { version: 2, endpointVersion: 1 }, {
+        body: {
+          key: useRuntimeConfig().public.api.key,
+          meta: {
+            ids: membersIds,
+            archived: false,
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.journeys.restoring.loading", members.length, {
+          named: {
+            name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+            count: members.length,
+          },
+        }),
+        success: () => {
+          members.forEach(member => member.archived = false);
+          clearLoading();
+          return this.translate("toasts.journeys.restoring.success", members.length, {
+            named: {
+              name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+              count: members.length,
+            },
+          });
+        },
+        error: () => {
+          clearLoading();
+          return this.translate("toasts.journeys.restoring.error", members.length, {
+            named: {
+              name: `${members[0]?.firstName} ${members[0]?.lastName}`,
+              count: members.length,
+            },
+          });
+        },
+      });
+    },
   },
 });

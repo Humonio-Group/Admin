@@ -12,6 +12,8 @@ const { teams, loading: _loading } = storeToRefs(store);
 
 const teamId = Number(useRoute().params.teamId as string);
 const team = computed<JourneyTeam | undefined>(() => teams.value.find(t => t.id === teamId));
+const participants = computed(() => [...(team.value?.participants ?? [])].sort((_a, b) => b.archived ? -1 : 0));
+
 const loading = computed<boolean>(() => _loading.value.teamMembers.includes(teamId));
 const removing = computed<boolean>(() => _loading.value.team.removing === team.value?.id);
 
@@ -94,7 +96,7 @@ const addParticipant = ref<boolean>(false);
         <section>
           <UiDataTable
             :columns="columns(team)"
-            :data="team.participants"
+            :data="participants"
           />
         </section>
         <section v-if="false">
