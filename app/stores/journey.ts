@@ -10,6 +10,7 @@ import {
   extendToSelectedJourney,
 } from "~/lib/entities/lifecycle/journey";
 import { type Group, GroupAction } from "~/types/entities/group";
+import { buildActionEntity } from "~/lib/entities/lifecycle/action";
 
 export const useJourneyStore = defineStore("journeys", {
   state: (): JourneyState => ({ ...defaults }),
@@ -179,6 +180,31 @@ export const useJourneyStore = defineStore("journeys", {
       }
       finally {
         this.loading.teamMembers = this.loading.teamMembers.filter(t => t !== team.id);
+      }
+    },
+
+    async loadActions() {
+      if (!this.selectedJourney) return;
+
+      this.loading.actions = true;
+
+      try {
+        const response = await this.api.get("/actions", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "journeys": this.selectedJourney.id,
+            "include": "user,journey,journey.program,journey.program.company,template",
+            "fields[programs]": "name",
+          },
+        });
+
+        const { data, included } = response;
+        this.selectedJourney.actions = data.map((action: any) => buildActionEntity(action, included));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default", { code: 500 }));
+      }
+      finally {
+        this.loading.actions = false;
       }
     },
 
@@ -613,7 +639,6 @@ export const useJourneyStore = defineStore("journeys", {
         },
       });
     },
-
     async setLeader(team: JourneyTeam, member: JourneyTeamMember) {
       const oldLeaderId = team.leader;
       const oldLeader = { ...team.participants.find(participant => participant.reference === oldLeaderId) };

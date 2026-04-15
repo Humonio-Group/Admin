@@ -339,7 +339,26 @@
           "label": "Télécharger",
           "progress-report": "Rapport de progression"
         },
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "table": {
+          "headers": {
+            "description": "Description",
+            "author": "Auteur",
+            "status": "Statut",
+            "template": "Modèle",
+            "created-at": "Créée le"
+          },
+          "date-format": "d MMMM yyyy",
+          "status": {
+            "late": "En retard",
+            "on-track": "En cours",
+            "terminated": "Terminée"
+          }
+        },
+        "details-dialog": {
+          "deadline": "Date buttoir",
+          "task-list": "Liste de tâches"
+        }
       },
       "navigation": {
         "overview": "Vue d'ensemble",

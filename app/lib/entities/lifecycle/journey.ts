@@ -95,6 +95,10 @@ export function extendToSelectedJourney(journey: Journey): SelectedJourney {
       totalEntities: -1,
       list: [],
     },
+    actions: {
+      totalEntities: -1,
+      list: [],
+    },
   };
 }
 
