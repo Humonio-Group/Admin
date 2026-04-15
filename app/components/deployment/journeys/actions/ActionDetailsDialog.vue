@@ -28,6 +28,10 @@ const open = defineModel<boolean>("open", { default: false });
     <UiDialogContent>
       <UiDialogHeader class="flex flex-row items-center gap-4">
         <UiAvatar class="size-14">
+          <UiAvatarImage
+            v-if="action.author.avatar"
+            :src="action.author.avatar"
+          />
           <UiAvatarFallback class="text-sm text-muted-foreground">
             {{ action.author.name.first[0] }}{{ action.author.name.last[0] }}
           </UiAvatarFallback>

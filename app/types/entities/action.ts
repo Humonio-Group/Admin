@@ -20,6 +20,7 @@ export interface Action {
     name: string;
   }>;
   author: {
+    avatar: Nullable<string>;
     name: {
       first: string;
       last: string;

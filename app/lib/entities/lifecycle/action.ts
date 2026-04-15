@@ -22,6 +22,7 @@ export function buildActionEntity(data: any, included: any): Action {
     progress: attributes.progression,
     tasks: attributes.tasklist,
     author: {
+      avatar: author?.attributes.picture.thumbnail ?? null,
       name: {
         first: author?.attributes.firstname,
         last: author?.attributes.lastname,
