@@ -2,9 +2,11 @@ import type { Listed } from "~/types/primitives/objects";
 import type { ColumnDef } from "@tanstack/vue-table";
 import type { JourneyTeam, JourneyTeamMember } from "~/types/entities/journey";
 import { Badge } from "~/components/ui/badge";
+import { Crown } from "lucide-vue-next";
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import JourneyTeamMemberGroupMenu from "~/components/deployment/journeys/teams/JourneyTeamMemberGroupMenu.vue";
 import JourneyTeamMemberAction from "~/components/deployment/journeys/teams/JourneyTeamMemberAction.vue";
+import { Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
 
 export interface JourneyTeamMemberGroupMenuProps {
   member: JourneyTeamMember;
@@ -42,7 +44,15 @@ export const columns = (team: JourneyTeam): Listed<ColumnDef<JourneyTeamMember>>
         const avatarFallback = h(AvatarFallback, `${row.original.firstName[0]}${row.original.lastName[0]}`);
         const avatar = h(Avatar, [avatarImage, avatarFallback]);
 
-        const name = h("p", `${row.original.firstName} ${row.original.lastName}`);
+        const crown = h(Crown, { class: "size-3.5 text-primary" });
+        const trigger = h(TooltipTrigger, { asChild: true }, crown);
+        const content = h(TooltipContent, h("p", "Chef d'équipe"));
+        const tooltip = h(Tooltip, [trigger, content]);
+
+        const name = h("p", { class: "flex items-center gap-2" }, [
+          `${row.original.firstName} ${row.original.lastName}`,
+          ...(row.original.reference === team.leader ? [tooltip] : []),
+        ]);
         const archived = h("p", { class: "text-xs text-destructive" }, "Archivé");
         const info = h("div", { class: "grid" }, [name, ...(row.original.archived ? [archived] : [])]);
 

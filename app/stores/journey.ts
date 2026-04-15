@@ -613,5 +613,87 @@ export const useJourneyStore = defineStore("journeys", {
         },
       });
     },
+
+    async setLeader(team: JourneyTeam, member: JourneyTeamMember) {
+      const oldLeaderId = team.leader;
+      const oldLeader = { ...team.participants.find(participant => participant.reference === oldLeaderId) };
+
+      team.leader = member.reference;
+      team.participants = team.participants.map(participant => participant.reference === member.id ? { ...participant, leader: true } : { ...participant, leader: false });
+
+      const reset = () => {
+        team.leader = oldLeaderId;
+        team.participants = team.participants.map(participant => participant.reference === oldLeaderId ? { ...participant, leader: true } : { ...participant, leader: false });
+      };
+
+      try {
+        await this.api.put(`/teams/${team.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: team.id,
+              type: EntityType.TEAM,
+              relationships: {
+                leader: {
+                  data: {
+                    id: member.reference,
+                    type: EntityType.USER,
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+      catch {
+        toast.error(this.translate("toasts.journeys.leader-update.error", { name: `${member.firstName} ${member.lastName}` }));
+
+        if (!oldLeaderId) {
+          team.leader = null;
+          return;
+        }
+        if (!oldLeader) return;
+
+        reset();
+      }
+    },
+    async removeLeader(team: JourneyTeam, member: JourneyTeamMember) {
+      const oldLeaderId = team.leader;
+      const oldLeader = { ...team.participants.find(participant => participant.reference === oldLeaderId) };
+
+      team.leader = null;
+      member.leader = false;
+
+      const reset = () => {
+        team.leader = oldLeaderId;
+        team.participants = team.participants.map(participant => participant.reference === oldLeaderId ? { ...participant, leader: true } : { ...participant, leader: false });
+      };
+
+      try {
+        await this.api.put(`/teams/${team.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: team.id,
+              type: EntityType.TEAM,
+              relationships: {
+                leader: {
+                  data: null,
+                },
+              },
+            },
+          },
+        });
+      }
+      catch {
+        toast.error(this.translate("toasts.journeys.remove-leader.error", { name: "" }));
+
+        if (!oldLeaderId) {
+          team.leader = null;
+          return;
+        }
+        if (!oldLeader) return;
+
+        reset();
+      }
+    },
   },
 });

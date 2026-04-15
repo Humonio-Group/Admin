@@ -48,6 +48,7 @@ export interface JourneyTeamMember {
   id: number;
   reference: number;
   archived: boolean;
+  leader?: boolean;
   avatar: Nullable<string>;
   firstName: string;
   lastName: string;

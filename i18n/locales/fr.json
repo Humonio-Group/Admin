@@ -49,6 +49,11 @@
       "title": "Supprimer {name} | Supprimer {count} participants",
       "description": "Supprimer {name} supprimera la trace de sa participation à cette distribution. Toutefois, ses résultats seront conservés. Voulez-vous continuer ? | Supprimer les participants supprimera la trace de leur participation à cette distribution. Toutefois, leurs résultats seront conservés. Voulez-vous continuer ?",
       "action": "Supprimer"
+    },
+    "update-team-leader": {
+      "title": "Changer de chef d'équipe",
+      "description": "L'équipe \"{teamName}\" a déjà {name} pour chef. Changer de chef d'équipe aura pour incidence de retirer les contenus distribués au chef d'équipe à {name} et les distribuer à {newName}. Êtes-vous sûr ?",
+      "action": "Appliquer"
     }
   },
   "primitives": {
@@ -222,6 +227,14 @@
         "loading": "Suppression de {name}... | Suppression de {count} participants...",
         "success": "{name} supprimé. | {count} participants supprimés.",
         "error": "Erreur lors de la suppression de {name}. | Erreur lors de la suppression de {count} participants."
+      },
+      "leader-update": {
+        "success": "{name} est maintenant le chef d'équipe de \"{teamName}\".",
+        "error": "Une erreur est survenue lors de l'enregistrement de {name} comme chef d'équipe."
+      },
+      "remove-leader": {
+        "success": "{name} n'est maintenant plus le chef d'équipe de \"{teamName}\".",
+        "error": "Une erreur est survenue lors du retrait du statut de chef d'équipe de {name}."
       }
     }
   },
@@ -338,6 +351,7 @@
       "teams": {
         "actions": {
           "set-as-team-leader": "Définir comme chef d'équipe",
+          "remove-team-leader": "Retirer le statut de chef d'équipe",
           "move": "Déplacer",
           "disable": "Désactiver",
           "enable": "Activer",
