@@ -2,7 +2,9 @@
 import { MoreVertical, Eye, Settings, Users, ChartArea, ChartLine, DoorClosed, Download, MailPlus } from "lucide-vue-next";
 import type { JourneyActionsProps } from "~/components/deployment/journeys/index";
 
-defineProps<JourneyActionsProps>();
+withDefaults(defineProps<JourneyActionsProps>(), {
+  showJourneyShortcuts: true,
+});
 
 const { company } = storeToRefs(useCompanyStore());
 </script>
@@ -20,7 +22,10 @@ const { company } = storeToRefs(useCompanyStore());
       </UiDropdownMenuTrigger>
       <UiDropdownMenuContent align="end">
         <UiDropdownMenuGroup>
-          <NuxtLinkLocale :to="`/${company?.alias}/deployment/journeys/${journey.id}`">
+          <NuxtLinkLocale
+            v-if="showJourneyShortcuts"
+            :to="`/${company?.alias}/deployment/journeys/${journey.id}`"
+          >
             <UiDropdownMenuItem>
               <Eye />
               {{ $t("deployment.journeys.actions.open") }}
@@ -39,11 +44,11 @@ const { company } = storeToRefs(useCompanyStore());
             <MailPlus />
             {{ $t("deployment.journeys.actions.send-emails") }}
           </UiDropdownMenuItem>
-          <UiDropdownMenuItem>
+          <UiDropdownMenuItem v-if="showJourneyShortcuts">
             <Users />
             {{ $t("deployment.journeys.actions.participants-config") }}
           </UiDropdownMenuItem>
-          <UiDropdownMenuItem>
+          <UiDropdownMenuItem v-if="showJourneyShortcuts">
             <ChartLine />
             {{ $t("deployment.journeys.actions.watch-results") }}
           </UiDropdownMenuItem>
@@ -66,7 +71,10 @@ const { company } = storeToRefs(useCompanyStore());
         <UiDropdownMenuSeparator />
 
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem variant="destructive">
+          <UiDropdownMenuItem
+            variant="destructive"
+            disabled
+          >
             <DoorClosed />
             {{ $t("deployment.journeys.actions.cancel") }}
           </UiDropdownMenuItem>

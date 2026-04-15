@@ -14,6 +14,7 @@ import { NuxtLinkLocale } from "#components";
 
 export interface JourneyActionsProps {
   journey: Journey;
+  showJourneyShortcuts?: boolean;
 }
 
 export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>> => {
