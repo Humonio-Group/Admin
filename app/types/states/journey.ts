@@ -28,6 +28,8 @@ export interface JourneyState {
     };
     teams: boolean;
     teamMembers: Listed<number>;
+
+    actions: boolean;
   };
 }
 
@@ -55,5 +57,7 @@ export const defaults: JourneyState = {
     },
     teams: false,
     teamMembers: [],
+
+    actions: false,
   },
 };

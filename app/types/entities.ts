@@ -14,4 +14,6 @@ export enum EntityType {
 
   TEAM = "teams",
   GROUP = "groups",
+
+  ACTION = "actions",
 }

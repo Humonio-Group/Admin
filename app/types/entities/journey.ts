@@ -1,6 +1,7 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
 import type { Program } from "~/types/entities/program";
 import type { Group } from "~/types/entities/group";
+import type { Action } from "~/types/entities/action";
 
 export interface JourneyMember {
   id: number;
@@ -27,6 +28,10 @@ export interface SelectedJourney extends Journey {
   teams: {
     totalEntities: number;
     list: Listed<any>;
+  };
+  actions: {
+    totalEntities: number;
+    list: Listed<Action>;
   };
 }
 
