@@ -155,8 +155,36 @@ store.loadScores();
       </div>
       <div class="grid gap-4">
         <UiCard>
-          <UiCardContent>
-            facilitators
+          <UiCardHeader>
+            <UiCardTitle>
+              {{ $t("deployment.journeys.overview.facilitators.title") }}
+            </UiCardTitle>
+          </UiCardHeader>
+          <UiCardContent class="grid gap-2">
+            <template v-if="journey.facilitators.length">
+              <div
+                v-for="facilitator in journey.facilitators"
+                :key="`facilitator-${facilitator.id}`"
+                class="flex items-center gap-2"
+              >
+                <UiAvatar>
+                  <UiAvatarImage
+                    v-if="facilitator.avatar"
+                    :src="facilitator.avatar"
+                  />
+                  <UiAvatarFallback>{{ facilitator.firstName[0] }}{{ facilitator.lastName[0] }}</UiAvatarFallback>
+                </UiAvatar>
+                <p class="font-medium">
+                  {{ facilitator.firstName }} {{ facilitator.lastName }}
+                </p>
+              </div>
+            </template>
+            <p
+              v-else
+              class="text-sm text-muted-foreground"
+            >
+              {{ $t("deployment.journeys.overview.facilitators.empty") }}
+            </p>
           </UiCardContent>
         </UiCard>
         <UiCard>

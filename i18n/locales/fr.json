@@ -403,6 +403,10 @@
             "average-scores-team": "Moyenne des scores de l'équipe"
           },
           "empty": "Aucun score n'est configuré pour le moment."
+        },
+        "facilitators": {
+          "title": "Facilitateurs",
+          "empty": "Cette distribution n'a pas de facilitateur attitré."
         }
       }
     }
