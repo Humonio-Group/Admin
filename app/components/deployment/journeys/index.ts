@@ -1,4 +1,4 @@
-import type { Journey } from "~/types/entities/journey";
+import type { Journey, JourneyEvent, JourneyScore } from "~/types/entities/journey";
 import { ArrowRight } from "lucide-vue-next";
 import type { ColumnDef } from "@tanstack/vue-table";
 import type { Listed } from "~/types/primitives/objects";
@@ -15,6 +15,20 @@ import { NuxtLinkLocale } from "#components";
 export interface JourneyActionsProps {
   journey: Journey;
   showJourneyShortcuts?: boolean;
+}
+
+export interface JourneyStatCardProps {
+  label: string;
+  max: number;
+  value: number;
+}
+
+export interface NextEventCardProps {
+  event: JourneyEvent;
+}
+
+export interface JourneyTeamScoreProps {
+  score: JourneyScore;
 }
 
 export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>> => {
