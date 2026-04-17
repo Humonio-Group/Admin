@@ -376,6 +376,34 @@
           "enable": "Activer",
           "delete": "Supprimer"
         }
+      },
+      "overview": {
+        "evaluation": {
+          "title": "Evaluation de l'atelier",
+          "experience": "Expérience",
+          "facilitators": "Facilitateurs"
+        },
+        "next-events": {
+          "title": "Prochains événements",
+          "tooltips": {
+            "location": "Localisation",
+            "period": "Période"
+          },
+          "links": {
+            "open-video": "Ouvrir la visioconférence",
+            "open-map": "Ouvrir la carte",
+            "add-to-calendar": "Ajouter au calendrier"
+          }
+        },
+        "team-progress": {
+          "title": "Progression de l'équipe",
+          "options": {
+            "access-rate": "Taux d'accès",
+            "average-scores-participants": "Moyenne des scores des participants",
+            "average-scores-team": "Moyenne des scores de l'équipe"
+          },
+          "empty": "Aucun score n'est configuré pour le moment."
+        }
       }
     }
   },
