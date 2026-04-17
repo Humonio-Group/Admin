@@ -1,9 +1,8 @@
-import type {
-  Journey,
+import type { JourneyScoreScope,
+  Journey, JourneyEvent, JourneyScore,
   JourneyTeam,
   JourneyTeamMember,
-  SelectedJourney,
-} from "~/types/entities/journey";
+  SelectedJourney } from "~/types/entities/journey";
 import { EntityType } from "~/types/entities";
 import { buildProgramEntity } from "~/lib/entities/lifecycle/program";
 import type { Group } from "~/types/entities/group";
@@ -29,6 +28,12 @@ export function buildJourneyEntity(data: any, included: any): Journey {
     dates: {
       start: new Date(attributes.dates.start),
       end: new Date(attributes.dates.end),
+    },
+    stats: {
+      evaluation: {
+        experience: attributes.stats.evaluation.experience,
+        facilitators: attributes.stats.evaluation.facilitator,
+      },
     },
     facilitators: facilitators.map((f: any) => ({
       id: f.id,
@@ -99,6 +104,17 @@ export function extendToSelectedJourney(journey: Journey): SelectedJourney {
       totalEntities: -1,
       list: [],
     },
+    nextEvents: {
+      totalEntities: -1,
+      list: [],
+    },
+    scores: {
+      access: [],
+      average: {
+        participants: [],
+        teams: [],
+      },
+    },
   };
 }
 
@@ -142,4 +158,69 @@ export function buildTeamMemberGroup(data: any): Group {
     id: data.id,
     name: data.attributes.name,
   };
+}
+
+export function buildJourneyEvent(data: any, included: any): JourneyEvent {
+  const { id, attributes, relationships } = data;
+  const facilitators = relationships.facilitators.data.map((d: any) => {
+    const related = included.find((entity: any) => entity.type === EntityType.USER && entity.id === d.id);
+    return {
+      id: related.id,
+      firstName: related.attributes.firstname,
+      lastName: related.attributes.lastname,
+      avatar: related.attributes.picture.thumbnail,
+    };
+  });
+
+  const timeBasedContent = included.find((entity: any) => entity.type === EntityType.CONTENT && entity.id === id);
+  const location = included.find((entity: any) => entity.type === EntityType.LOCATION && entity.id === relationships.location?.data.id);
+
+  const meetingUrl = attributes.links?.meetingUrl;
+  const mapUrl = location?.attributes.googleMapsLink;
+
+  return {
+    id,
+    name: timeBasedContent?.attributes.displayName,
+    duration: attributes.blended.duration,
+    icon: timeBasedContent.attributes.design.picture?.thumbnail || null,
+    dates: {
+      start: new Date(attributes.blended.start),
+      end: new Date(attributes.blended.end),
+    },
+    config: {
+      calendarLink: "",
+      link: meetingUrl || mapUrl || null,
+      place: location?.attributes.inline || null,
+      display: attributes.links?.lable || null,
+    },
+    facilitators,
+  };
+}
+
+export function buildScore(data: any, scope: JourneyScoreScope): JourneyScore {
+  const { attributes } = data;
+
+  switch (scope) {
+    case "scores-participants": return {
+      label: attributes.name,
+      min: attributes.minimum,
+      max: attributes.maximum,
+      value: attributes.recipient.programAverageScores.byJourney[0].averageScore.participants,
+      percent: false,
+    };
+    case "scores-teams": return {
+      label: attributes.name,
+      min: attributes.minimum,
+      max: attributes.maximum,
+      value: attributes.recipient.programAverageScores.byJourney[0].averageScore.teams,
+      percent: true,
+    };
+    default: return {
+      label: data.name,
+      min: 0,
+      max: 100,
+      value: data.viewed,
+      percent: true,
+    };
+  }
 }

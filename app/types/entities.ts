@@ -10,10 +10,16 @@ export enum EntityType {
   PROGRAM = "programs",
 
   JOURNEY = "journeys",
+  JOURNEY_STAGE = "journeyStages",
   PARTICIPATION = "participations",
 
   TEAM = "teams",
   GROUP = "groups",
 
   ACTION = "actions",
+  CONTENT = "contents",
+
+  LOCATION = "locations",
+
+  SCORE = "scores",
 }

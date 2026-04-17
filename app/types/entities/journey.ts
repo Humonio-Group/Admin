@@ -18,12 +18,44 @@ export interface Journey {
     start: Date;
     end: Date;
   };
+  stats: {
+    evaluation: {
+      experience: number;
+      facilitators: number;
+    };
+  };
   facilitators: Listed<JourneyMember>;
   participants: Listed<JourneyMember>;
 
   relatedProgram?: Program;
 }
 
+export interface JourneyEvent {
+  id: number;
+  duration: number;
+  icon: Nullable<string>;
+  name: string;
+  dates: {
+    start: Date;
+    end: Date;
+  };
+  config: {
+    calendarLink: string;
+    link: Nullable<string>;
+    display: Nullable<string>;
+    place: Nullable<string>;
+  };
+  facilitators: Listed<JourneyMember>;
+}
+
+export type JourneyScoreScope = "access" | "scores-participants" | "scores-teams";
+export interface JourneyScore {
+  label: string;
+  min: number;
+  max: number;
+  value: number;
+  percent: boolean;
+}
 export interface SelectedJourney extends Journey {
   teams: {
     totalEntities: number;
@@ -32,6 +64,17 @@ export interface SelectedJourney extends Journey {
   actions: {
     totalEntities: number;
     list: Listed<Action>;
+  };
+  nextEvents: {
+    totalEntities: number;
+    list: Listed<JourneyEvent>;
+  };
+  scores: {
+    access: Listed<JourneyScore>;
+    average: {
+      participants: Listed<JourneyScore>;
+      teams: Listed<JourneyScore>;
+    };
   };
 }
 

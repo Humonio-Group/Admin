@@ -30,6 +30,11 @@ export interface JourneyState {
     teamMembers: Listed<number>;
 
     actions: boolean;
+
+    nextEvents: boolean;
+    requestingEventCalendarIcs: Listed<number>;
+
+    scores: boolean;
   };
 }
 
@@ -59,5 +64,10 @@ export const defaults: JourneyState = {
     teamMembers: [],
 
     actions: false,
+
+    nextEvents: false,
+    requestingEventCalendarIcs: [],
+
+    scores: false,
   },
 };

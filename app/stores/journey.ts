@@ -1,10 +1,15 @@
 import { defaults, type JourneyState, PER_PAGE } from "~/types/states/journey";
 import { EntityType } from "~/types/entities";
-import type { Journey, JourneyTeam, JourneyTeamMember } from "~/types/entities/journey";
+import type {
+  Journey,
+  JourneyEvent,
+  JourneyTeam,
+  JourneyTeamMember,
+} from "~/types/entities/journey";
 import type { Listed } from "~/types/primitives/objects";
 import { toast } from "vue-sonner";
 import {
-  buildJourneyEntity,
+  buildJourneyEntity, buildJourneyEvent, buildScore,
   buildTeamEntity,
   buildTeamMemberEntity, buildTeamMemberGroup,
   extendToSelectedJourney,
@@ -78,7 +83,7 @@ export const useJourneyStore = defineStore("journeys", {
             "include": "facilitators,mainFacilitator,participants,program",
             "companies": Number(this.company.id),
             "fields[users]": "name,picture",
-            "fields[journeys]": "default,displayName,stats.participants",
+            "fields[journeys]": "default,displayName,stats.participants,stats.evaluation",
             "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
           },
         });
@@ -718,6 +723,111 @@ export const useJourneyStore = defineStore("journeys", {
         if (!oldLeader) return;
 
         reset();
+      }
+    },
+
+    async loadNextEvents() {
+      if (!this.selectedJourney) return;
+
+      this.loading.nextEvents = true;
+
+      try {
+        const response = await this.api.get(`/journeys/${this.selectedJourney.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "journey": this.selectedJourney.id,
+            "include": "journeyStages,journeyStages.blendedContents,journeyStages.timebasedContents.location,journeyStages.timebasedContents.facilitators",
+            "fields[journeys]": "displayName,blendedContents",
+            "fields[users]": "name,picture",
+          },
+        });
+
+        const { included } = response;
+        const journeyStages = included.filter((entity: any) => entity.type === EntityType.JOURNEY_STAGE && entity.relationships.timebasedContents?.data.length);
+        const timeBasedContents = journeyStages
+          .map((js: any) => [...js.attributes.timebasedContents])
+          .reduce((acc: Listed<any>, curr: Listed<any>) => [...acc, ...curr], [] as Listed<any>)
+          .filter((content: any) => {
+            const start = new Date(content.attributes.blended.start).getTime();
+            const end = new Date(content.attributes.blended.end).getTime();
+
+            return Date.now() < start || Date.now() < (end + (1000 * 60 * 60 * 24));
+          });
+
+        const contents = timeBasedContents.map((content: any) => buildJourneyEvent(content, included));
+        this.selectedJourney.nextEvents.totalEntities = contents.length;
+        this.selectedJourney.nextEvents.list = contents;
+      }
+      catch (e) {
+        console.error(e);
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.nextEvents = false;
+      }
+    },
+    async downloadEventCalendarIcs(event: JourneyEvent) {
+      if (!this.selectedJourney || this.loading.requestingEventCalendarIcs.includes(event.id)) return;
+
+      this.loading.requestingEventCalendarIcs = [...this.loading.requestingEventCalendarIcs, event.id];
+
+      try {
+        const response = await this.api.get(`journeys/${this.selectedJourney.id}/contents/${event.id}/calendar`, { version: 2, endpointVersion: 1, vanilla: true }, {});
+        const link = response.meta.url;
+
+        const a = document.createElement("a");
+        a.href = link;
+        a.download = `event-${event.id}-${event.dates.start.getTime()}-${event.dates.end.getTime()}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.requestingEventCalendarIcs = this.loading.requestingEventCalendarIcs.filter(e => e !== event.id);
+      }
+    },
+
+    async loadScores() {
+      if (!this.selectedJourney) return;
+
+      this.loading.scores = true;
+
+      try {
+        const response = await this.api.get(`journeys/${this.selectedJourney.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "journey": this.selectedJourney.id,
+            "include": "teams,program,program.scores",
+            "fields[programs]": "name",
+            "fields[scores]": "default,recipient.programAverageScores",
+            "fields[teams]": "name,stats.all",
+          },
+        });
+
+        const { included } = response;
+        const scores = included.filter((entity: any) => entity.type === EntityType.SCORE);
+        const stats = included
+          .filter((entity: any) => entity.type === EntityType.TEAM)
+          .map((team: any) => ({
+            name: team.attributes.name,
+            viewed: team.attributes.stats.progression.viewed,
+          }));
+
+        const accessRate = stats.map((stat: any) => buildScore(stat, "access"));
+        const averageParticipants = scores.map((score: any) => buildScore(score, "scores-participants"));
+        const averageTeams = scores.map((score: any) => buildScore(score, "scores-teams"));
+
+        this.selectedJourney.scores.access = accessRate;
+        this.selectedJourney.scores.average.participants = averageParticipants;
+        this.selectedJourney.scores.average.teams = averageTeams;
+      }
+      catch (e) {
+        console.error(e);
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.scores = false;
       }
     },
   },
