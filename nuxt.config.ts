@@ -30,6 +30,11 @@ export default defineNuxtConfig({
         2: "",
         key: "",
       },
+      sinsim: {
+        api: "",
+        key: "",
+        token: "",
+      },
       urls: {
         auth: "",
         product: "",
@@ -77,6 +82,10 @@ export default defineNuxtConfig({
     ],
     defaultLocale: "fr",
     strategy: "no_prefix",
+    vueI18n: "./i18n.config.ts",
+    compilation: {
+      strictMessage: false,
+    },
   },
   shadcn: {
     prefix: "Ui",
