@@ -119,7 +119,7 @@ const participants = computed(() => props.program.stats.participants ?? 0);
     </UiCardFooter>
 
     <NuxtLinkLocale
-      :to="`/${company!.alias}/deployment/programs/${program.id}`"
+      :to="`/${company!.alias}/deployment/programs/${program.id}/journeys`"
       class="absolute z-1 inset-0 size-full"
     />
   </UiCard>
