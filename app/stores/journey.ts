@@ -2,20 +2,24 @@ import { defaults, type JourneyState, PER_PAGE } from "~/types/states/journey";
 import { EntityType } from "~/types/entities";
 import type {
   Journey,
-  JourneyEvent,
+  JourneyEvent, JourneySimulation, JourneyStage,
   JourneyTeam,
   JourneyTeamMember,
 } from "~/types/entities/journey";
 import type { Listed } from "~/types/primitives/objects";
 import { toast } from "vue-sonner";
 import {
-  buildJourneyEntity, buildJourneyEvent, buildScore,
+  buildContentGraph,
+  buildJourneyEntity, buildJourneyEvent,
+  buildJourneyStageContentEntity, buildJourneyStageEntity, buildScore, buildSimulation,
   buildTeamEntity,
   buildTeamMemberEntity, buildTeamMemberGroup,
   extendToSelectedJourney,
 } from "~/lib/entities/lifecycle/journey";
 import { type Group, GroupAction } from "~/types/entities/group";
 import { buildActionEntity } from "~/lib/entities/lifecycle/action";
+import type { UserRole } from "~/types/entities/user";
+import type { ApiResponse, ApiResponseData } from "~/types/primitives/api";
 
 export const useJourneyStore = defineStore("journeys", {
   state: (): JourneyState => ({ ...defaults }),
@@ -828,6 +832,207 @@ export const useJourneyStore = defineStore("journeys", {
       }
       finally {
         this.loading.scores = false;
+      }
+    },
+
+    async loadSimulations() {
+      if (!this.selectedJourney) return;
+
+      this.loading.simulations = true;
+
+      try {
+        const response = await this.api.get("contents", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            journey: this.selectedJourney.id,
+            types: 7,
+            subtypes: "1,3",
+            status: 1,
+            sort: "-id",
+            limit: -1,
+            include: "embedContent",
+          },
+        });
+
+        const { data, included } = response;
+        const simulations = data.map((content: any) => buildSimulation(content, included));
+
+        this.selectedJourney.simulations.totalEntities = simulations.length;
+        this.selectedJourney.simulations.list = simulations;
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.simulations = false;
+      }
+    },
+    async exportSimulation(simulation: JourneySimulation, format: "scorm-1_2" | "scorm-2004", mainScore: number = 0) {
+      const { public: config } = useRuntimeConfig();
+
+      this.loading.exportSimulation = true;
+      let state = true;
+
+      try {
+        const response = await $fetch(`${config.sinsim.api}/simulations/${simulation.token}/versions/${simulation.version.key}/standalone`, {
+          method: "POST",
+          body: {
+            apiKey: config.sinsim.key,
+            apiToken: config.sinsim.token,
+            mainScoreId: mainScore || null,
+            os: format,
+            requesterKey: storeToRefs(useUserStore()).user.value?.key,
+            webhook: this.api.path(this.api.url(2, 1), `/simulation_evolutions/webhook?key=${config.api.key}`),
+          },
+          credentials: "include",
+        });
+
+        console.log(response);
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.error.default", { code: 500 }));
+      }
+      finally {
+        this.loading.exportSimulation = false;
+      }
+
+      return state;
+    },
+    async shareSimulation(to: Listed<number>, subject: string, body: string): Promise<boolean> {
+      if (!this.selectedJourney) return false;
+
+      this.loading.shareSimulation = true;
+      let state = true;
+
+      try {
+        await this.api.post("/notificate", { version: 1, endpointVersion: 2 }, {
+          body: {
+            email: true,
+            emailSubject: subject,
+            emailContent: body,
+            users: to,
+            journey_id: this.selectedJourney.id,
+            notification_id: 250,
+            key: useRuntimeConfig().public.api.key,
+          },
+        });
+        toast.success(this.translate("toasts.simulations.shared", to.length, {
+          named: {
+            count: to.length,
+          },
+        }));
+      }
+      catch {
+        state = false;
+      }
+      finally {
+        this.loading.shareSimulation = false;
+      }
+
+      return state;
+    },
+
+    async loadResults() {
+      if (!this.selectedJourney) return;
+
+      this.loading.results.stages = true;
+
+      try {
+        const response = await this.api.get(`/journeys/${this.selectedJourney.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "journeyStages,journeyStages.timebasedContents,journeyStages.timebasedContents.location,journeyStages.programStage",
+            "fields[journeys]": "displayName",
+            "fields[journeyStages]": "default",
+            "fields[programStages]": "default,position",
+          },
+        });
+
+        const { included } = response;
+        const journeyStages = included.filter((entity: any) => entity.type === EntityType.JOURNEY_STAGE);
+        const programStages = included.filter((entity: any) => entity.type === EntityType.PROGRAM_STAGE);
+
+        this.selectedJourney.results.stages = journeyStages
+          .map((journeyStage: any) => {
+            const programStage = programStages.find((ps: any) => ps.id === journeyStage.relationships.programStage.data[0]?.id);
+
+            return {
+              journeyStage,
+              programStage,
+            };
+          })
+          .map((stage: any) => buildJourneyStageEntity(stage, this.selectedJourney?.results.stages.find(s => s.id === stage.journeyStage.id))) as Listed<JourneyStage>;
+      }
+      catch (e) {
+        console.error(e);
+      }
+      finally {
+        this.loading.results.stages = false;
+        await Promise.all(this.selectedJourney.results.stages.map(async stage => this.loadResultsStageContents(stage)));
+      }
+    },
+    async loadResultsStageContents(stage: JourneyStage) {
+      if (!this.selectedJourney) return;
+
+      this.loading.results.contents = [...this.loading.results.contents, stage.id];
+
+      try {
+        const { data } = await this.api.get("/contents", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "journey": this.selectedJourney.id,
+            "recipientRole": 6,
+            "fields[contents]": "name,type,design,stats,stats.all,activation.graphicSettings,topicSettings",
+            "sort": "order",
+            "limit": -1,
+            "journeyStages": stage.id,
+          },
+        });
+
+        stage.contents = data.map((content: any) => buildJourneyStageContentEntity(content));
+        stage.progress = stage.contents.reduce((acc, curr) => {
+          acc += curr.stats.completion;
+          return acc;
+        }, 0) / stage.contents.length;
+      }
+      catch (e) {
+        console.error(e);
+      }
+      finally {
+        this.loading.results.contents = this.loading.results.contents.filter(id => id !== stage.id);
+      }
+    },
+    async loadResultContentGraphs(id: number, role: UserRole, defaultReporting: boolean = true) {
+      if (!this.selectedJourney) return;
+      this.loading.results.graphs = true;
+
+      try {
+        const response = await this.api.get<ApiResponse>(`/contents/${id}/graph_results`, { version: 1, endpointVersion: 2 }, {
+          query: {
+            journey: this.selectedJourney.id,
+            offset: 0,
+            limit: -1,
+            requester_role: role,
+            ...(defaultReporting ? { defaultReporting: 1 } : {}),
+          },
+          headers: {
+            "X-COMPANY": this.company?.key ?? "",
+          },
+        });
+        if (!response) return;
+
+        const { data } = response;
+        this.selectedJourney.results.stages = this.selectedJourney.results.stages.map(s => s.contents.find(c => c.id === id)
+          ? {
+              ...s,
+              contents: s.contents.map(c => c.id === id ? { ...c, graphs: (data as ApiResponseData[]).map(buildContentGraph) } : c),
+            }
+          : s);
+      }
+      catch (e) {
+        console.error(e);
+        toast.error(this.translate("toasts.error.default", { code: (e as any).statusCode }));
+      }
+      finally {
+        this.loading.results.graphs = false;
       }
     },
   },

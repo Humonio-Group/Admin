@@ -1,11 +1,16 @@
-import type { JourneyScoreScope,
+import type {
+  JourneyScoreScope,
   Journey, JourneyEvent, JourneyScore,
   JourneyTeam,
   JourneyTeamMember,
-  SelectedJourney } from "~/types/entities/journey";
+  SelectedJourney, JourneySimulation, JourneyStage, JourneyStageContent, JourneyStageContentAccess,
+  JourneyStageContentGraph,
+} from "~/types/entities/journey";
 import { EntityType } from "~/types/entities";
 import { buildProgramEntity } from "~/lib/entities/lifecycle/program";
 import type { Group } from "~/types/entities/group";
+import type { ApiResponseData } from "~/types/primitives/api";
+import { type ChartData, GraphType } from "~/types/entities/graph";
 
 export function buildJourneyEntity(data: any, included: any): Journey {
   const { id, attributes, relationships } = data;
@@ -31,8 +36,8 @@ export function buildJourneyEntity(data: any, included: any): Journey {
     },
     stats: {
       evaluation: {
-        experience: attributes.stats.evaluation.experience,
-        facilitators: attributes.stats.evaluation.facilitator,
+        experience: attributes.stats.evaluation?.experience ?? 0,
+        facilitators: attributes.stats.evaluation?.facilitator ?? 0,
       },
     },
     facilitators: facilitators.map((f: any) => ({
@@ -114,6 +119,13 @@ export function extendToSelectedJourney(journey: Journey): SelectedJourney {
         participants: [],
         teams: [],
       },
+    },
+    simulations: {
+      totalEntities: -1,
+      list: [],
+    },
+    results: {
+      stages: [],
     },
   };
 }
@@ -223,4 +235,172 @@ export function buildScore(data: any, scope: JourneyScoreScope): JourneyScore {
       percent: true,
     };
   }
+}
+
+export function buildSimulation(data: any, included: any): JourneySimulation {
+  const { id, attributes, relationships } = data;
+
+  const evolution = included.find((e: any) => e.type === EntityType.SIMULATION_EVOLUTION && e.id === relationships.embedContent.data?.[1].id);
+
+  return {
+    id,
+    name: attributes.displayName,
+    version: attributes.embedContent.version,
+    token: attributes.embedContent.fields.simulationToken,
+    icon: attributes.design.picture?.large,
+    downloadCode: evolution.attributes.specific.downloadCode,
+    simKey: evolution.attributes.specific.accessKey.simulation,
+    trialKey: evolution.attributes.specific.accessKey.trial,
+  };
+}
+
+export function buildJourneyStageEntity(data: any, existingStage?: JourneyStage): JourneyStage {
+  const { journeyStage, programStage } = data;
+
+  return {
+    id: journeyStage.id,
+    reference: programStage.id,
+    picture: null,
+    name: programStage.attributes.displayName,
+    modality: detectModality(programStage.attributes.type.value),
+    progress: 0,
+    locked: journeyStage.attributes.isLocked,
+    hidden: journeyStage.attributes.isHidden,
+    conditions: [],
+
+    contents: existingStage?.contents ?? [],
+  };
+}
+
+export function buildJourneyStageContentEntity(data: any): JourneyStageContent {
+  const { id, attributes } = data;
+
+  return {
+    id,
+    name: attributes.name,
+    picture: attributes.design.picture.thumbnail || null,
+    duration: attributes.topicSettings.duration || 0,
+    stats: {
+      views: attributes.stats.percentView,
+      viewsCount: attributes.stats.nbView,
+      completion: attributes.stats.percentCompletion,
+      completionCount: attributes.stats.nbCompletion,
+    },
+    access: attributes.stats.access.map((access: any) => buildJourneyStageContentAccessEntity(access)),
+    graphs: [],
+  };
+}
+export function buildJourneyStageContentAccessEntity(data: any): JourneyStageContentAccess {
+  return {
+    userId: data.id,
+    visibility: detectAccessVisibility(data.state.value),
+    participation: {
+      id: data.reference.id,
+      team: data.reference.teamName,
+      name: data.name,
+      picture: data.picture || null,
+    },
+    progress: {
+      viewedAt: data.createdAt ? new Date(data.createdAt) : null,
+      completedAt: data.completedAt ? new Date(data.completedAt) : null,
+    },
+    permissions: {
+      pushable: data.isPushable,
+      unPushable: data.isUnpushable,
+    },
+    result: {
+      link: data.resultLink || null,
+      data: data.resultData || null,
+    },
+  };
+}
+
+export function detectModality(value: number): string {
+  switch (value) {
+    case 2: return "on-site";
+    case 3: return "videoconference";
+    case 4: return "multimodale";
+    default: return "e-learning";
+  }
+}
+
+export function detectAccessVisibility(value: number): JourneyStageContentAccess["visibility"] {
+  switch (value) {
+    case 2: return "hidden";
+    case 3: return "locked";
+    default: return "accessible";
+  }
+}
+
+function buildGraphConfig(type: GraphType, data: any): JourneyStageContentGraph["config"] {
+  let chartData: ChartData;
+
+  switch (type) {
+    case GraphType.GAUGE: {
+      chartData = {
+        color: data.color,
+        min: data.min,
+        max: data.max,
+        value: data.value,
+        percent: data.isPercent,
+      };
+      break;
+    }
+    case GraphType.HORIZONTAL_BAR: case GraphType.VERTICAL_BAR: {
+      chartData = {
+        categories: data.categories,
+        series: data.series.map((serie: any) => ({
+          name: serie.name,
+          color: serie.color,
+          config: {
+            min: serie.min,
+            max: serie.max,
+          },
+          data: serie.data,
+        })),
+      };
+      break;
+    }
+    case GraphType.POLAR: {
+      chartData = {
+        percent: data.isPercent,
+        series: data.data,
+      };
+      break;
+    }
+    case GraphType.LEADER_BOARD: {
+      chartData = {
+        series: data.data,
+      };
+      break;
+    }
+    case GraphType.INDIVIDUAL_CHOICE: {
+      chartData = {
+        series: data.data,
+      };
+      break;
+    }
+    case GraphType.VALUE: {
+      chartData = {
+        title: data.title,
+        subtitle: data.subtitle,
+        percent: data.isPercent,
+      };
+      break;
+    }
+    default: return null;
+  }
+
+  return chartData;
+}
+export function buildContentGraph(data: ApiResponseData): JourneyStageContentGraph {
+  const { id, attributes } = data;
+
+  return {
+    id: id as string,
+    title: attributes.title,
+    description: attributes.description,
+    type: attributes.type.value as GraphType,
+    config: buildGraphConfig(attributes.type.value as GraphType, attributes.specific),
+  };
 }

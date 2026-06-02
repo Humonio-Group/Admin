@@ -78,6 +78,7 @@ watch(programId, async (val) => {
           :class="{ 'rounded-t-3xl': !isStuck }"
         >
           <UiButton
+            v-if="false"
             variant="outline"
             class="rounded-full"
             as-child
@@ -102,6 +103,7 @@ watch(programId, async (val) => {
             </NuxtLinkLocale>
           </UiButton>
           <UiButton
+            v-if="false"
             variant="outline"
             class="rounded-full"
             as-child
@@ -114,6 +116,7 @@ watch(programId, async (val) => {
             </NuxtLinkLocale>
           </UiButton>
           <UiButton
+            v-if="false"
             variant="outline"
             class="rounded-full"
             as-child
@@ -126,6 +129,7 @@ watch(programId, async (val) => {
             </NuxtLinkLocale>
           </UiButton>
           <UiButton
+            v-if="false"
             variant="outline"
             class="rounded-full"
             as-child
@@ -138,6 +142,7 @@ watch(programId, async (val) => {
             </NuxtLinkLocale>
           </UiButton>
           <UiButton
+            v-if="false"
             variant="outline"
             class="rounded-full"
             as-child

@@ -8,6 +8,7 @@ export enum EntityType {
   LANGUAGE = "languages",
 
   PROGRAM = "programs",
+  PROGRAM_STAGE = "programStages",
 
   JOURNEY = "journeys",
   JOURNEY_STAGE = "journeyStages",
@@ -22,4 +23,6 @@ export enum EntityType {
   LOCATION = "locations",
 
   SCORE = "scores",
+
+  SIMULATION_EVOLUTION = "simulationEvolutions",
 }

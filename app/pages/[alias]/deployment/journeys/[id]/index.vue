@@ -4,6 +4,7 @@ import JourneyStatCard from "~/components/deployment/journeys/JourneyStatCard.vu
 import NextEventCard from "~/components/deployment/journeys/NextEventCard.vue";
 import type { JourneyScoreScope } from "~/types/entities/journey";
 import JourneyTeamScore from "~/components/deployment/journeys/JourneyTeamScore.vue";
+import JourneySimulationCard from "~/components/deployment/journeys/simulations/JourneySimulationCard.vue";
 
 const { t } = useI18n();
 
@@ -19,6 +20,7 @@ useBreadcrumb([
 
 store.loadNextEvents();
 store.loadScores();
+store.loadSimulations();
 </script>
 
 <template>
@@ -28,7 +30,7 @@ store.loadScores();
   >
     <template v-if="journey">
       <div class="@4xl/layout:col-span-2 grid gap-4">
-        <UiCard>
+        <UiCard class="gap-3">
           <UiCardHeader>
             <UiCardTitle>
               {{ $t("deployment.journeys.overview.evaluation.title") }}
@@ -47,7 +49,7 @@ store.loadScores();
             />
           </UiCardContent>
         </UiCard>
-        <UiCard>
+        <UiCard class="gap-3">
           <UiCardHeader>
             <UiCardTitle>
               {{ $t("deployment.journeys.overview.next-events.title") }}
@@ -69,8 +71,8 @@ store.loadScores();
             </template>
           </UiCardContent>
         </UiCard>
-        <UiCard>
-          <UiCardHeader class="flex items-center justify-between">
+        <UiCard class="gap-3">
+          <UiCardHeader class="flex-row! items-center justify-between">
             <UiCardTitle>
               {{ $t("deployment.journeys.overview.team-progress.title") }}
             </UiCardTitle>
@@ -154,7 +156,7 @@ store.loadScores();
         </UiCard>
       </div>
       <div class="grid gap-4">
-        <UiCard>
+        <UiCard class="gap-3">
           <UiCardHeader>
             <UiCardTitle>
               {{ $t("deployment.journeys.overview.facilitators.title") }}
@@ -187,9 +189,30 @@ store.loadScores();
             </p>
           </UiCardContent>
         </UiCard>
-        <UiCard>
-          <UiCardContent>
-            simulations
+        <UiCard class="gap-3">
+          <UiCardHeader>
+            <UiCardTitle>{{ $t("deployment.journeys.overview.simulations.title") }}</UiCardTitle>
+          </UiCardHeader>
+          <UiCardContent class="overflow-x-auto flex items-start gap-4">
+            <div
+              v-if="loading.simulations && journey.simulations.totalEntities === -1"
+              class="w-full h-16 grid place-items-center"
+            >
+              <UiSpinner />
+            </div>
+            <template v-else-if="journey.simulations.list.length">
+              <JourneySimulationCard
+                v-for="simulation in journey.simulations.list"
+                :key="`simulation-${simulation.id}`"
+                :simulation
+              />
+            </template>
+            <p
+              v-else
+              class="text-sm text-muted-foreground"
+            >
+              {{ $t("deployment.journeys.overview.simulations.empty") }}
+            </p>
           </UiCardContent>
         </UiCard>
       </div>

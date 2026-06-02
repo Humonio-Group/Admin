@@ -27,7 +27,18 @@
     "import": {
       "default": "Importer",
       "participants": "Importer des participants"
-    }
+    },
+    "export": {
+      "default": "Exporter"
+    },
+    "send": {
+      "default": "Envoyer",
+      "mail": "Envoyer l'email",
+      "by-mail": "Envoyer par email"
+    },
+    "push": "Pousser",
+    "un-push": "Dé-pousser",
+    "see-results": "Voir le résultat"
   },
   "dialogs": {
     "image-crop": {
@@ -54,6 +65,44 @@
       "title": "Changer de chef d'équipe",
       "description": "L'équipe \"{teamName}\" a déjà {name} pour chef. Changer de chef d'équipe aura pour incidence de retirer les contenus distribués au chef d'équipe à {name} et les distribuer à {newName}. Êtes-vous sûr ?",
       "action": "Appliquer"
+    },
+    "export-simulation": {
+      "title": "Exporter la simulation",
+      "fields": {
+        "scorm-version": {
+          "label": "Version SCORM",
+          "options": {
+            "scorm-1_2": "Scorm 1.2",
+            "scorm-2004": "Scorm 2004 (1.3)"
+          }
+        },
+        "main-score": {
+          "label": "Score principal",
+          "description": "La notation étant limitée, seul un score sera pris en compte dans l'exportation SCORM.",
+          "default-option": "Aucun score"
+        }
+      }
+    },
+    "share-simulation": {
+      "title": "Partager la simulation",
+      "description": "Vous pouvez partager cette simulation avec toute personne participant à cette distribution. Elle recevra un email contenant des instructions sur la manière de télécharger et d'installer la simulation sur l'application Qigu Play de son iPad.",
+      "fields": {
+        "to": {
+          "label": "Destinataire(s)",
+          "facilitators": "Tous les facilitateurs",
+          "coaches": "Tous les coachs",
+          "participants": "Tous les participants"
+        },
+        "subject": "Sujet",
+        "body": "Corps"
+      },
+      "errors": {
+        "at-least-one-to": "Ajoutez au moins 1 destinataire."
+      },
+      "defaults": {
+        "subject": "Votre accès à la simulation \"Simulation\" Qigu simulation sur iPad !",
+        "body": "Bonjour [[user_name]],\n\n{name} vient de partager avec vous la « {simName} » du parcours « {journeyName} » !\nVous pourrez télécharger et installer cette simulation en version autonome sur plusieurs appareils, afin de l’utiliser n’importe où et à tout moment (même hors ligne).\n\n<b>Sur un appareil Windows :</b>  \nUtilisez le lien suivant pour télécharger la version Windows de cette simulation : <a href=\"https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/windows\" style=\"overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -ms-hyphens: auto; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;\" target=\"_blank\">https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/windows</a>  \nUne fois téléchargé, décompressez le fichier et ouvrez « SinSim.exe » pour lancer votre simulation autonome.\n\n<b>Sur un appareil Mac :</b>  \nUtilisez le lien suivant pour télécharger la version Mac OS de cette simulation : <a href=\"https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/mac\" style=\"overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -ms-hyphens: auto; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;\" target=\"_blank\">https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/mac</a>  \nUne fois téléchargé, décompressez le fichier et ouvrez « SinSim.app » pour lancer votre simulation autonome.\n\n<b>Sur iPad :</b>\n\n<ol><li>Installez l’application SinSim sur votre iPad : </li>\n<li>Téléchargez et installez la simulation en utilisant l’option de votre choix :\n<ul>\n<li>Option 1 : ouvrez ce lien dans un navigateur web depuis votre iPad pour télécharger et installer automatiquement la simulation : sinsim://download?code=o0j86</li>\n<li>Option 2 : utilisez un lecteur de QR code sur votre iPad et scannez ce QR code : <br/><img src=\"https://staging.qigu.app/services/qrcode?code=sinsim://download?code=o0j86\" width=\"100\" height=\"100\" style=\"display: table; margin-left: auto; margin-right: auto; margin-top: 10px;\" /></li>\n<li>Option 3 : ouvrez l’application SinSim sur votre iPad et saisissez le code suivant pour télécharger la simulation : o0j86</li></ul></li></ol>\n\n<b>Note importante :</b>  \nPour des raisons de sécurité, les simulations autonomes sont protégées par une clé. Veuillez utiliser le code ci-dessous pour déverrouiller et lancer cette simulation :\n\nCode live (valide du 29 avril 2026 au 06 mai 2026) :  {simKey}\nCode démo (uniquement pour démonstration et toujours valide) : {trialKey}  \n\nSi vous rencontrez des problèmes pour accéder à votre simulation, veuillez nous contacter en créant un ticket ici : <a href=\"https://staging.qigu.app/auth/get-help\">https://staging.qigu.app/auth/get-help</a>\n\nNous espérons que vous apprécierez votre expérience !\n\nCordialement,<br />\nLeo <br />\nAssistant digital de Qigu<br />\n<br />\nPour toute question ou pour une assistance humaine, veuillez vous rendre sur https://staging.qigu.app/auth/get-help."
+      }
     }
   },
   "primitives": {
@@ -64,6 +113,7 @@
   "default": "Défaut",
   "labels": {
     "search": "Rechercher",
+    "optional": "Facultatif",
     "all": "Tous | Toutes",
     "languages": {
       "french": "Français"
@@ -111,7 +161,8 @@
     "time": {
       "created-at": "Créé le {date} | Créée le {date}",
       "last-update": "Dernière mise à jour le {date}",
-      "days": "{count} jour | {count} jours"
+      "days": "{count} jour | {count} jours",
+      "minutes": "{count} minute | {count} minutes"
     },
     "roles": {
       "3": "Administrateur",
@@ -131,7 +182,23 @@
     "archives": "Archives",
     "sessions": "{count} session | {count} sessions",
     "participants": "{count} participant | {count} participants",
-    "facilitators": "{count} facilitateur | {count} facilitateurs"
+    "facilitators": "{count} facilitateur | {count} facilitateurs",
+    "modalities": {
+      "e-learning": "E-Learning",
+      "on-site": "Présentiel",
+      "videoconference": "Visioconférence",
+      "multimodale": "Multimodale"
+    },
+    "content-state": {
+      "accessible": "Accessible",
+      "hidden": "Caché",
+      "locked": "Bloqué"
+    },
+    "content-progress": {
+      "not-started": "Pas commencé",
+      "viewed": "Vu",
+      "completed": "Complété"
+    }
   },
   "navigation": {
     "user-menu": {
@@ -235,6 +302,11 @@
       "remove-leader": {
         "success": "{name} n'est maintenant plus le chef d'équipe de \"{teamName}\".",
         "error": "Une erreur est survenue lors du retrait du statut de chef d'équipe de {name}."
+      },
+      "simulations": {
+        "key-copied": "La clé de simulation a été copiée.",
+        "trial-copied": "La clé d'essaie a été copiée.",
+        "shared": "L'email a été envoyé. | Les emails ont étés envoyés à {count} destinataires."
       }
     }
   },
@@ -407,6 +479,42 @@
         "facilitators": {
           "title": "Facilitateurs",
           "empty": "Cette distribution n'a pas de facilitateur attitré."
+        },
+        "simulations": {
+          "title": "Simulations",
+          "empty": "Cette distribution n'a pas de simulation.",
+          "actions": {
+            "import": {
+              "default": "Importer",
+              "for-participant": "Pour un participant",
+              "for-team": "Pour une équipe"
+            },
+            "export": "Exporter",
+            "share": "Partager",
+            "copy-key": "Copier la clé",
+            "copy-trial": "Copier la clé d'essai"
+          }
+        }
+      },
+      "results": {
+        "navigation": {
+          "completion": "Complétion",
+          "graphs": "Graphiques"
+        },
+        "graphs": {
+          "roles": {
+            "label": "Voir les graphiques",
+            "auto": "automatiques",
+            "participant": "participant",
+            "facilitator": "facilitateur",
+            "coach": "coach",
+            "client": "analyste"
+          },
+          "empty": {
+            "title": "C'est vide par ici...",
+            "description": "Il n'y a aucun graphique à afficher pour ce rôle.",
+            "action": "Voir les graphiques automatiques"
+          }
         }
       }
     }

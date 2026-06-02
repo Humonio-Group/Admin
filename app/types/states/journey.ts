@@ -35,6 +35,16 @@ export interface JourneyState {
     requestingEventCalendarIcs: Listed<number>;
 
     scores: boolean;
+
+    simulations: boolean;
+    exportSimulation: boolean;
+    shareSimulation: boolean;
+
+    results: {
+      stages: boolean;
+      contents: Listed<number>;
+      graphs: boolean;
+    };
   };
 }
 
@@ -69,5 +79,15 @@ export const defaults: JourneyState = {
     requestingEventCalendarIcs: [],
 
     scores: false,
+
+    simulations: false,
+    exportSimulation: false,
+    shareSimulation: false,
+
+    results: {
+      stages: false,
+      contents: [],
+      graphs: false,
+    },
   },
 };
