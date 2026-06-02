@@ -164,6 +164,22 @@
       "days": "{count} jour | {count} jours",
       "minutes": "{count} minute | {count} minutes"
     },
+    "dates": {
+      "months": {
+        "january": "Janvier",
+        "february": "Février",
+        "march": "Mars",
+        "april": "Avril",
+        "may": "Mai",
+        "june": "Juin",
+        "july": "Juillet",
+        "august": "Août",
+        "september": "Septembre",
+        "october": "Octobre",
+        "november": "Novembre",
+        "december": "Décembre"
+      }
+    },
     "roles": {
       "3": "Administrateur",
       "4": "Analyste",
@@ -516,6 +532,31 @@
             "action": "Voir les graphiques automatiques"
           }
         }
+      }
+    }
+  },
+
+  "analytics": {
+    "ai": {
+      "navigation": {
+        "text": "Texte",
+        "audio": "Audio",
+        "video": "Vidéo"
+      },
+      "stats": {
+        "simulations": "Simulations jouées",
+        "tokens-remaining": "Crédits restants",
+        "tokens-available": "Crédits inclus",
+        "minutes-remaining": "Minutes restantes",
+        "minutes-available": "Minutes inclues",
+        "hours-remaining": "Heures restantes",
+        "hours-available": "Heures inclues"
+      },
+      "graph": {
+        "title": "Consommation en {year}",
+        "text": "Total : {count} crédits",
+        "audio": "Total In : {in} minutes | Total Out : {out} minutes",
+        "video": "Total : {count} minutes"
       }
     }
   },
