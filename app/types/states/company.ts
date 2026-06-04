@@ -39,7 +39,11 @@ export interface CompanyState {
       smtp: boolean;
       lrs: boolean;
     };
+    creating: {
+      terms: boolean;
+    };
     saving: {
+      terms: boolean;
       price: Listed<number>;
       default: boolean;
       storeSettings: boolean;
@@ -83,7 +87,11 @@ export const defaults: CompanyState = {
       smtp: false,
       lrs: false,
     },
+    creating: {
+      terms: false,
+    },
     saving: {
+      terms: false,
       price: [],
       default: false,
       storeSettings: false,

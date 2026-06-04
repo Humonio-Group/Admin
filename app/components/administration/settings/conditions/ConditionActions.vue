@@ -7,11 +7,11 @@ import ConfirmDialog from "~/components/primitives/ConfirmDialog.vue";
 
 defineProps<ConditionActionsProps>();
 
+const store = useCompanyStore();
+
 const detailsOpen = ref<boolean>(false);
 const editOpen = ref<boolean>(false);
 const deleteOpen = ref<boolean>(false);
-
-function deleteTerm() {}
 </script>
 
 <template>
@@ -62,7 +62,7 @@ function deleteTerm() {}
       title-key="settings.conditions.dialog.delete-confirm.title"
       description-key="settings.conditions.dialog.delete-confirm.description"
       action-key="settings.conditions.dialog.delete-confirm.action"
-      @confirm="deleteTerm"
+      @confirm="store.deleteTerm(term.id)"
     />
   </div>
 </template>

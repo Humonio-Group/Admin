@@ -241,9 +241,96 @@ export const useCompanyStore = defineStore("company", {
         this.loading.settings.terms = false;
       }
     },
-    // todo: async createTerm() {},
-    // todo: async updateTerm(id: number) {},
-    // todo: async deleteTerm(id: number) {},
+    async createTerm(body: { name: string; description: string }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.creating.terms = true;
+      let state = true;
+
+      try {
+        const response = await this.api.post("/terms", { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              type: EntityType.TERM,
+              attributes: {
+                title: body.name,
+                displayTitle: body.name,
+                description: body.description,
+                displayDescription: body.description,
+              },
+              relationships: {
+                scope: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        this.terms = [...this.terms, buildTermEntity(response.data)];
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.creating.terms = false;
+      }
+
+      return state;
+    },
+    async saveTerm(id: number, body: { name: string; description: string }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.saving.terms = true;
+      let state = true;
+
+      try {
+        const response = await this.api.put(`/terms/${id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id,
+              type: EntityType.TERM,
+              attributes: {
+                title: body.name,
+                displayTitle: body.name,
+                description: body.description,
+                displayDescription: body.description,
+              },
+              relationships: {
+                scope: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        this.terms = this.terms.map(term => term.id === id ? buildTermEntity(response.data) : term);
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.saving.terms = false;
+      }
+
+      return state;
+    },
+    async deleteTerm(id: number) {
+      try {
+        await this.api.delete(`/terms/${id}`, { version: 2, endpointVersion: 1 });
+        this.terms = this.terms.filter(term => term.id !== id);
+      }
+      catch (e) {
+        console.error(e);
+      }
+    },
 
     async loadLocations() {
       if (!this.company) return;
