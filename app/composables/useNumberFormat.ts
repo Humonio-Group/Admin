@@ -1,8 +1,8 @@
 const TIERS = [
   { threshold: 1e12, divisor: 1e12, suffix: "T" },
-  { threshold: 1e9,  divisor: 1e9,  suffix: "B" },
-  { threshold: 1e6,  divisor: 1e6,  suffix: "M" },
-  { threshold: 1e3,  divisor: 1e3,  suffix: "k" },
+  { threshold: 1e9, divisor: 1e9, suffix: "B" },
+  { threshold: 1e6, divisor: 1e6, suffix: "M" },
+  { threshold: 1e3, divisor: 1e3, suffix: "k" },
 ];
 
 export function useNumberFormat(decimals: number = 1) {
