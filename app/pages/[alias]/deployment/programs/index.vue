@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Search, Plus } from "lucide-vue-next";
+import { Search, Plus, X } from "lucide-vue-next";
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramCard from "~/components/deployment/programs/ProgramCard.vue";
 import type { Nullable } from "~/types/primitives/objects";
-import type { ProgramTag } from "~/types/entities/program";
 
 const store = useProgramStore();
 const { programs, tags, hasFirstLoaded, loading: _loading } = storeToRefs(store);
@@ -36,6 +35,12 @@ useBreadcrumb([
   { label: useNuxtApp().$i18n.t("deployment.programs.title") },
 ]);
 
+const { search, clear } = useDebounceSearch(async (val) => {
+  shouldShowLoader.value = true;
+  await store.loadPrograms(undefined, val);
+  shouldShowLoader.value = false;
+});
+
 store.loadPrograms();
 store.loadTags();
 </script>
@@ -64,7 +69,7 @@ store.loadTags();
               class="border"
               @click="tagId = null"
             >
-              Tous
+              {{ $t("labels.all") }}
             </UiButton>
             <UiButton
               v-for="tag in tags"
@@ -90,10 +95,21 @@ store.loadTags();
       <div class="shrink-0 flex items-center gap-1.5">
         <div class="relative">
           <UiInput
+            v-model="search"
             class="pl-8"
+            :class="{ 'pr-9': search?.length }"
             :placeholder="$t('labels.search')"
           />
           <Search class="absolute size-4 top-2.5 left-2.5 text-muted-foreground pointer-events-none" />
+          <UiButton
+            v-if="search?.length"
+            variant="ghost"
+            size="icon-xs"
+            class="absolute top-1 right-1"
+            @click="clear"
+          >
+            <X />
+          </UiButton>
         </div>
 
         <UiButton>

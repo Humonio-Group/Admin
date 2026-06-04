@@ -53,6 +53,7 @@ export const useProgramStore = defineStore("programs", {
             "offset": keywords?.length ? 0 : offset,
             "active": active ? 1 : 0,
             ...(tagId ? { tags: tagId } : {}),
+            ...(keywords?.length ? { keyword: keywords } : {}),
           },
         });
         this.programs = response.data.map((program: any) => buildProgramListEntity(program));
