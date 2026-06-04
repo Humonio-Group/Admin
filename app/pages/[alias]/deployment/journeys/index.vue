@@ -17,10 +17,19 @@ const statuses = ref<Listed<Journey["status"]>>(status
   ? (status as string).split(",").map((e: string) => parseStatus(e))
   : [-1, 0, 1, 2]);
 watch(statuses, async (val) => {
-  navigateTo({
+  if (!val || val.length >= 4) navigateTo({
     query: {
-      status: (val ?? [-1, 0, 1, 2]).map(e => computeStatus(e)).join(","),
-    }, replace: true });
+      status: undefined,
+    },
+    replace: true,
+  });
+  else navigateTo({
+    query: {
+      status: val.map(e => computeStatus(e)).join(","),
+    },
+    replace: true,
+  });
+
   shouldShowLoader.value = true;
   await store.loadJourneys(undefined, val);
   shouldShowLoader.value = false;
@@ -36,10 +45,9 @@ useBreadcrumb([
 ]);
 
 const { search, clear } = useDebounceSearch(async (val) => {
-  const oldValue = shouldShowLoader.value;
   shouldShowLoader.value = true;
   await store.loadJourneys(val);
-  shouldShowLoader.value = oldValue;
+  shouldShowLoader.value = false;
 });
 
 store.loadJourneys(undefined, statuses.value);
