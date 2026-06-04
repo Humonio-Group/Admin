@@ -9,7 +9,7 @@ import { Plus, Search, X } from "lucide-vue-next";
 const { t } = useI18n();
 
 const store = useJourneyStore();
-const { journeys, hasFirstLoaded, loading: _loading } = storeToRefs(store);
+const { journeys, hasFirstLoaded, loading: _loading, perPage, totalEntities } = storeToRefs(store);
 
 const shouldShowLoader = ref<boolean>(false);
 const { status } = useRoute().query;
@@ -50,7 +50,11 @@ const { search, clear } = useDebounceSearch(async (val) => {
   shouldShowLoader.value = false;
 });
 
-store.loadJourneys(undefined, statuses.value);
+const { activePage } = usePagination(async (page) => {
+  shouldShowLoader.value = true;
+  await store.loadJourneys(undefined, statuses.value, page);
+  shouldShowLoader.value = false;
+});
 </script>
 
 <template>
@@ -137,11 +141,43 @@ store.loadJourneys(undefined, statuses.value);
     >
       <UiSpinner />
     </main>
-    <main v-else>
-      <UiDataTable
-        :columns="columns(true)"
-        :data="journeys"
-      />
-    </main>
+    <template v-else>
+      <main>
+        <UiDataTable
+          :columns="columns(true)"
+          :data="journeys"
+        />
+      </main>
+
+      <footer v-if="totalEntities > perPage">
+        <UiPagination
+          v-model:page="activePage"
+          :items-per-page="perPage"
+          :total="totalEntities"
+          :default-page="1"
+          :sibling-count="2"
+        >
+          <UiPaginationContent v-slot="{ items }">
+            <UiPaginationPrevious />
+
+            <template
+              v-for="item in items"
+              :key="item.type === 'page' ? item.value : item.type"
+            >
+              <UiPaginationItem
+                v-if="item.type === 'page'"
+                :value="item.value"
+                :is-active="item.value === activePage"
+              >
+                {{ item.value }}
+              </UiPaginationItem>
+              <UiPaginationEllipsis v-else />
+            </template>
+
+            <UiPaginationNext />
+          </uipaginationcontent>
+        </UiPagination>
+      </footer>
+    </template>
   </PageRoot>
 </template>

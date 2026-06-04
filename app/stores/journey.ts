@@ -32,6 +32,7 @@ export const useJourneyStore = defineStore("journeys", {
       const { company } = storeToRefs(useCompanyStore());
       return company.value;
     },
+    perPage: () => PER_PAGE,
 
     hasFirstLoaded: state => state.totalEntities >= 0,
     hasTeamsFirstLoaded: state => (state.selectedJourney?.teams.totalEntities ?? -1) >= 0,
