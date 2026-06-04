@@ -8,5 +8,9 @@ export function useDebounceSearch(cb: (search: string) => Promise<unknown> | unk
     await cb(search.value ?? "");
   }
 
-  return { search, reload };
+  function clear() {
+    search.value = "";
+  }
+
+  return { search, reload, clear };
 }
