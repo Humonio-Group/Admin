@@ -122,8 +122,14 @@ const chartOptions = computed<HighchartsOptions>(() => ({
 </script>
 
 <template>
-  <div ref="wrapperRef" class="area-chart-wrapper h-full w-full">
-    <highcharts ref="chartRef" :options="chartOptions" />
+  <div
+    ref="wrapperRef"
+    class="area-chart-wrapper h-full w-full"
+  >
+    <highcharts
+      ref="chartRef"
+      :options="chartOptions"
+    />
   </div>
 </template>
 
