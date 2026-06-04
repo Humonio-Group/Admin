@@ -1,5 +1,6 @@
 export function usePagination(cb: (val: number) => Promise<unknown> | unknown) {
-  const { page: pageParam } = useRoute().query;
+  const { query } = useRoute();
+  const { page: pageParam } = query;
   const page = pageParam ? Number(pageParam) : 1;
   const defaultPage = page >= 1 ? page : 1;
 
@@ -8,6 +9,7 @@ export function usePagination(cb: (val: number) => Promise<unknown> | unknown) {
     const p = val ? (val >= 1 ? val : 1) : 1;
     navigateTo({
       query: {
+        ...query,
         page: p,
       },
       replace: true,

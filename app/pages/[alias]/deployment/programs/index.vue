@@ -5,7 +5,22 @@ import ProgramCard from "~/components/deployment/programs/ProgramCard.vue";
 import type { Nullable } from "~/types/primitives/objects";
 
 const store = useProgramStore();
-const { programs, tags, hasFirstLoaded, loading: _loading } = storeToRefs(store);
+const { programs, tags, hasFirstLoaded, loading: _loading, totalEntities, perPage } = storeToRefs(store);
+
+const { query } = useRoute();
+
+const showArchived = ref<boolean>(query.archived === "true");
+watch(showArchived, async (val) => {
+  navigateTo({
+    query: {
+      archived: val ? "true" : undefined,
+    },
+    replace: true,
+  });
+  shouldShowLoader.value = true;
+  await store.loadPrograms(tagId.value ?? undefined, search.value || undefined, !val);
+  shouldShowLoader.value = false;
+});
 
 const shouldShowLoader = ref<boolean>(false);
 const loading = computed(() => _loading.value.items);
@@ -41,7 +56,12 @@ const { search, clear } = useDebounceSearch(async (val) => {
   shouldShowLoader.value = false;
 });
 
-store.loadPrograms();
+const { activePage } = usePagination(async (page) => {
+  shouldShowLoader.value = true;
+  await store.loadPrograms(tagId.value ?? undefined, search.value || undefined, !showArchived.value, page);
+  shouldShowLoader.value = false;
+});
+
 store.loadTags();
 </script>
 
@@ -54,8 +74,9 @@ store.loadTags();
       <div class="flex items-center gap-1.5 overflow-hidden">
         <UiButtonGroup>
           <UiButton
-            variant="outline"
+            :variant="showArchived ? 'secondary' : 'outline'"
             size="sm"
+            @click="showArchived = !showArchived"
           >
             {{ $t("labels.archives") }}
           </UiButton>
@@ -125,16 +146,44 @@ store.loadTags();
     >
       <UiSpinner />
     </main>
-    <main
-      v-else-if="programs.length"
-      class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]"
-    >
-      <ProgramCard
-        v-for="program in programs"
-        :key="program.key"
-        :program
-      />
-    </main>
+    <template v-else-if="programs.length">
+      <main class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
+        <ProgramCard
+          v-for="program in programs"
+          :key="program.key"
+          :program
+        />
+      </main>
+
+      <footer v-if="totalEntities > perPage">
+        <UiPagination
+          v-model:page="activePage"
+          :total="totalEntities"
+          :items-per-page="perPage"
+          :sibling-count="2"
+        >
+          <UiPaginationContent v-slot="{ items }">
+            <UiPaginationPrevious />
+
+            <template
+              v-for="item in items"
+              :key="item.type === 'page' ? item.value : item.type"
+            >
+              <UiPaginationItem
+                v-if="item.type === 'page'"
+                :value="item.value"
+                :is-active="item.value === activePage"
+              >
+                {{ item.value }}
+              </UiPaginationItem>
+              <UiPaginationEllipsis v-else />
+            </template>
+
+            <UiPaginationNext />
+          </UiPaginationContent>
+        </UiPagination>
+      </footer>
+    </template>
     <UiEmpty v-else>
       empty
     </UiEmpty>

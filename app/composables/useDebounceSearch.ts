@@ -9,6 +9,7 @@ export function useDebounceSearch(cb: (search: string) => Promise<unknown> | unk
     if (!val) {
       navigateTo({
         query: {
+          ...query,
           search: undefined,
           q: undefined,
         },
@@ -20,6 +21,7 @@ export function useDebounceSearch(cb: (search: string) => Promise<unknown> | unk
     const param = query.search ? "search" : "q";
     navigateTo({
       query: {
+        ...query,
         [param]: val,
       },
       replace: true,

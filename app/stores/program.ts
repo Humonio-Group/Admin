@@ -15,6 +15,7 @@ export const useProgramStore = defineStore("programs", {
     translate: () => useNuxtApp().$i18n.t,
 
     company: () => storeToRefs(useCompanyStore()).company.value,
+    perPage: () => PER_PAGE,
 
     hasFirstLoaded: state => state.totalEntities >= 0,
   },
@@ -40,7 +41,7 @@ export const useProgramStore = defineStore("programs", {
         this.loading.tags = false;
       }
     },
-    async loadPrograms(tagId?: number, keywords?: string, active: boolean = true, page: number = 1, offset: number = 0) {
+    async loadPrograms(tagId?: number, keywords?: string, active: boolean = true, page: number = 1) {
       if (!this.company) return;
       this.loading.items = true;
 
@@ -49,14 +50,15 @@ export const useProgramStore = defineStore("programs", {
           query: {
             "companies": this.company.id,
             "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
-            "limit": keywords?.length ? -1 : page * PER_PAGE,
-            "offset": keywords?.length ? 0 : offset,
+            "limit": keywords?.length ? -1 : PER_PAGE,
+            "offset": keywords?.length ? 0 : (page - 1) * PER_PAGE,
             "active": active ? 1 : 0,
             ...(tagId ? { tags: tagId } : {}),
             ...(keywords?.length ? { keyword: keywords } : {}),
           },
         });
         this.programs = response.data.map((program: any) => buildProgramListEntity(program));
+        this.totalEntities = response.meta.total;
       }
       catch (e) {
         console.error("error", e);
