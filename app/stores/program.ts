@@ -14,6 +14,8 @@ export const useProgramStore = defineStore("programs", {
     api: () => useApi(),
     translate: () => useNuxtApp().$i18n.t,
 
+    company: () => storeToRefs(useCompanyStore()).company.value,
+
     hasFirstLoaded: state => state.totalEntities >= 0,
   },
   actions: {
@@ -38,22 +40,25 @@ export const useProgramStore = defineStore("programs", {
         this.loading.tags = false;
       }
     },
-    async loadPrograms(active: boolean = true, page: number = 1, offset: number = 0) {
+    async loadPrograms(tagId?: number, keywords?: string, active: boolean = true, page: number = 1, offset: number = 0) {
+      if (!this.company) return;
       this.loading.items = true;
 
       try {
         const response = await this.api.get("/programs", { version: 2, endpointVersion: 1 }, {
           query: {
+            "companies": this.company.id,
             "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
-            "limit": page * PER_PAGE,
-            offset,
+            "limit": keywords?.length ? -1 : page * PER_PAGE,
+            "offset": keywords?.length ? 0 : offset,
             "active": active ? 1 : 0,
+            ...(tagId ? { tags: tagId } : {}),
           },
         });
         this.programs = response.data.map((program: any) => buildProgramListEntity(program));
       }
-      catch {
-        console.error("error");
+      catch (e) {
+        console.error("error", e);
       }
       finally {
         this.loading.items = false;

@@ -2,11 +2,35 @@
 import { Search, Plus } from "lucide-vue-next";
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramCard from "~/components/deployment/programs/ProgramCard.vue";
+import type { Nullable } from "~/types/primitives/objects";
+import type { ProgramTag } from "~/types/entities/program";
 
 const store = useProgramStore();
-const { programs, loading: _loading } = storeToRefs(store);
+const { programs, tags, hasFirstLoaded, loading: _loading } = storeToRefs(store);
 
+const shouldShowLoader = ref<boolean>(false);
 const loading = computed(() => _loading.value.items);
+
+const tagParam = useRoute().query.category as string | undefined;
+const tagId = ref<Nullable<number>>(tagParam ? Number(tagParam) : null);
+watch(tagId, async (val) => {
+  if (!val) navigateTo({
+    query: {
+      category: undefined,
+    },
+    replace: true,
+  });
+  else navigateTo({
+    query: {
+      category: val,
+    },
+    replace: true,
+  });
+
+  shouldShowLoader.value = true;
+  await store.loadPrograms(val ? val : undefined);
+  shouldShowLoader.value = false;
+});
 
 useBreadcrumb([
   { label: useNuxtApp().$i18n.t("deployment.programs.title") },
@@ -35,29 +59,29 @@ store.loadTags();
         <div class="min-w-0 flex-1 overflow-x-auto">
           <UiButtonGroup>
             <UiButton
-              variant="secondary"
+              :variant="tagId === null ? 'secondary' : 'outline'"
               size="sm"
               class="border"
+              @click="tagId = null"
             >
               Tous
             </UiButton>
             <UiButton
-              variant="outline"
+              v-for="tag in tags"
+              :key="tag.id"
+              :variant="tagId === tag.id ? 'secondary' : 'outline'"
               size="sm"
+              @click="tagId = tag.id"
             >
-              Développement
+              {{ tag.name }}
             </UiButton>
             <UiButton
+              v-if="_loading.tags"
+              disabled
               variant="outline"
-              size="sm"
+              size="icon"
             >
-              Production
-            </UiButton>
-            <UiButton
-              variant="outline"
-              size="sm"
-            >
-              Support
+              <UiSpinner />
             </UiButton>
           </UiButtonGroup>
         </div>
@@ -80,7 +104,7 @@ store.loadTags();
     </header>
 
     <main
-      v-if="loading"
+      v-if="loading && (!hasFirstLoaded || shouldShowLoader)"
       class="h-24 grid place-items-center"
     >
       <UiSpinner />
