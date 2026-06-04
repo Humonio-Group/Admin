@@ -40,7 +40,7 @@ export const useJourneyStore = defineStore("journeys", {
     teams: state => state.selectedJourney?.teams.list ?? [],
   },
   actions: {
-    async loadJourneys(status: Listed<Journey["status"]> = [-1, 0, 1, 2], page: number = 1, take: number = PER_PAGE) {
+    async loadJourneys(keywords?: string, status: Listed<Journey["status"]> = [-1, 0, 1, 2], page: number = 1, take: number = PER_PAGE) {
       if (!this.company) return;
 
       if (page < 1) page = 1;
@@ -53,14 +53,15 @@ export const useJourneyStore = defineStore("journeys", {
       try {
         const response = await this.api.get("/journeys", { version: 2, endpointVersion: 1, vanilla: true }, {
           query: {
-            limit,
-            offset,
+            "limit": keywords?.length ? -1 : limit,
+            "offset": keywords?.length ? 0 : offset,
             "include": "facilitators,mainFacilitator,participants,program",
             "companies": Number(this.company.id),
             "fields[users]": "name,picture",
             "status": status.join(","),
             "fields[journeys]": "default,displayName,stats.participants",
             "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
+            ...(keywords?.length ? { keyword: keywords } : {}),
           },
         });
 

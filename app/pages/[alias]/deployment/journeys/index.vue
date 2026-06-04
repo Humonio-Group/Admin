@@ -4,7 +4,7 @@ import { columns } from "~/components/deployment/journeys";
 import type { Listed } from "~/types/primitives/objects";
 import type { Journey } from "~/types/entities/journey";
 import { computeStatus, parseStatus } from "~/lib/entities/lifecycle/journey";
-import { Plus, Search } from "lucide-vue-next";
+import { Plus, Search, X } from "lucide-vue-next";
 
 const { t } = useI18n();
 
@@ -22,7 +22,7 @@ watch(statuses, async (val) => {
       status: (val ?? [-1, 0, 1, 2]).map(e => computeStatus(e)).join(","),
     }, replace: true });
   shouldShowLoader.value = true;
-  await store.loadJourneys(val);
+  await store.loadJourneys(undefined, val);
   shouldShowLoader.value = false;
 });
 
@@ -35,7 +35,14 @@ useBreadcrumb([
   { label: t("deployment.journeys.title") },
 ]);
 
-store.loadJourneys(statuses.value);
+const { search, clear } = useDebounceSearch(async (val) => {
+  const oldValue = shouldShowLoader.value;
+  shouldShowLoader.value = true;
+  await store.loadJourneys(val);
+  shouldShowLoader.value = oldValue;
+});
+
+store.loadJourneys(undefined, statuses.value);
 </script>
 
 <template>
@@ -92,10 +99,21 @@ store.loadJourneys(statuses.value);
       <div class="flex items-center gap-1">
         <div class="relative">
           <UiInput
+            v-model="search"
             class="pl-8"
+            :class="{ 'pr-9': search?.length }"
             :placeholder="$t('labels.search')"
           />
           <Search class="absolute top-2.5 left-2.5 text-muted-foreground size-4" />
+          <UiButton
+            v-if="search?.length"
+            class="absolute top-1 right-1"
+            variant="ghost"
+            size="icon-xs"
+            @click="clear"
+          >
+            <X />
+          </UiButton>
         </div>
 
         <UiButton>
