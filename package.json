@@ -23,6 +23,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
+    "@lucide/vue": "^1.17.0",
     "@nuxt/eslint": "1.12.1",
     "@nuxt/image": "2.0.0",
     "@nuxt/scripts": "0.13.2",
@@ -45,7 +46,7 @@
     "@types/date-fns": "^2.6.3",
     "@unhead/vue": "^2.0.3",
     "@vee-validate/zod": "^4.15.1",
-    "@vueuse/core": "^14.2.1",
+    "@vueuse/core": "^14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -69,7 +70,7 @@
     "nuxt": "^4.2.2",
     "pinia": "^3.0.4",
     "pusher-js": "^8.4.0",
-    "reka-ui": "^2.9.2",
+    "reka-ui": "^2.9.9",
     "shadcn-nuxt": "2.4.3",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
