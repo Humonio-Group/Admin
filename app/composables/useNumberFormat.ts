@@ -15,7 +15,7 @@ export function useNumberFormat(decimals: number = 1) {
 
   function separate(value: number, separator: string = " "): string {
     const [integer, decimal] = value.toString().split(".");
-    const formatted = integer.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+    const formatted = integer!.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
     return decimal ? `${formatted}.${decimal}` : formatted;
   }
 
