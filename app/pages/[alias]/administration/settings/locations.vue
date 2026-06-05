@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
 import { Plus } from "lucide-vue-next";
-import ConditionEditDialog from "~/components/administration/settings/conditions/ConditionEditDialog.vue";
 import { columns } from "~/components/administration/settings/locations";
 import LocationEditDialog from "~/components/administration/settings/locations/LocationEditDialog.vue";
 
