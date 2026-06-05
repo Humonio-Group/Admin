@@ -3,6 +3,7 @@ import PageRoot from "~/components/composing/PageRoot.vue";
 import { Plus } from "lucide-vue-next";
 import ConditionEditDialog from "~/components/administration/settings/conditions/ConditionEditDialog.vue";
 import { columns } from "~/components/administration/settings/locations";
+import LocationEditDialog from "~/components/administration/settings/locations/LocationEditDialog.vue";
 
 const store = useCompanyStore();
 const { locations, loading } = storeToRefs(store);
@@ -19,12 +20,12 @@ store.loadLocations();
       <h1 class="text-xl font-bold">
         {{ $t("settings.locations.title") }}
       </h1>
-      <ConditionEditDialog trigger>
+      <LocationEditDialog trigger>
         <UiButton>
           <Plus />
           {{ $t("btn.new.location") }}
         </UiButton>
-      </ConditionEditDialog>
+      </LocationEditDialog>
     </header>
 
     <main>

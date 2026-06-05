@@ -7,7 +7,7 @@ import type {
   CompanyUsers,
 } from "~/types/entities/company";
 import type { Terms } from "~/types/entities/terms";
-import type { Locations } from "~/types/entities/location";
+import type { LocationCountry, Locations } from "~/types/entities/location";
 
 export interface CompanyState {
   company: Nullable<Company>;
@@ -15,6 +15,7 @@ export interface CompanyState {
   locations: Locations;
   users: CompanyUsers;
   companies: Companies;
+  countries: Listed<LocationCountry>;
   invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
   storeSettings: Nullable<CompanyStoreSettings>;
   developerSettings: Nullable<CompanyDeveloperSettings>;
@@ -26,6 +27,7 @@ export interface CompanyState {
     icon: boolean;
     logo: boolean;
     settings: {
+      countries: boolean;
       default: boolean;
       terms: boolean;
       locations: boolean;
@@ -41,9 +43,11 @@ export interface CompanyState {
     };
     creating: {
       terms: boolean;
+      location: boolean;
     };
     saving: {
       terms: boolean;
+      location: boolean;
       price: Listed<number>;
       default: boolean;
       storeSettings: boolean;
@@ -63,6 +67,7 @@ export const defaults: CompanyState = {
   locations: [],
   users: [],
   companies: [],
+  countries: [],
   invitationPageSettings: null,
   storeSettings: null,
   developerSettings: null,
@@ -74,6 +79,7 @@ export const defaults: CompanyState = {
     icon: false,
     logo: false,
     settings: {
+      countries: false,
       default: false,
       terms: false,
       locations: false,
@@ -89,9 +95,11 @@ export const defaults: CompanyState = {
     },
     creating: {
       terms: false,
+      location: false,
     },
     saving: {
       terms: false,
+      location: false,
       price: [],
       default: false,
       storeSettings: false,

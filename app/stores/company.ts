@@ -5,7 +5,7 @@ import type {
 } from "~/types/entities/company";
 import { EntityType } from "~/types/entities";
 import { buildTermEntity } from "~/lib/terms";
-import { buildLocationEntity } from "~/lib/location";
+import { buildCountryEntity, buildLocationEntity } from "~/lib/location";
 import {
   buildCompanyEntity,
   bindCompanyColors,
@@ -30,6 +30,7 @@ export const useCompanyStore = defineStore("company", {
     translate: () => useNuxtApp().$i18n.t,
 
     isLoaded: state => !!state.company,
+    isCountriesLoaded: state => !!state.countries.length,
 
     invpSelectedPrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => state.invitationPageSettings?.programs.includes(p.id)) ?? [],
     invpAvailablePrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => !state.invitationPageSettings?.programs.includes(p.id)) ?? [],
@@ -341,7 +342,7 @@ export const useCompanyStore = defineStore("company", {
         const response = await this.api.get("/locations", { version: 2, endpointVersion: 1, vanilla: true }, {
           query: {
             "include": "country",
-            "fields[locations]": "name,city,stats.journeys",
+            "fields[locations]": "default,stats.journeys",
             "companies": this.company.id,
             "limit": -1,
           },
@@ -357,9 +358,154 @@ export const useCompanyStore = defineStore("company", {
         this.loading.settings.locations = false;
       }
     },
-    // todo: async createLocation() {},
-    // todo: async updateLocation(id: number) {},
-    // todo: async deleteLocation(id: number) {},
+    async loadCountries() {
+      if (this.countries.length > 0) return;
+      this.loading.settings.countries = true;
+
+      try {
+        const response = await this.api.get("/countries", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            limit: -1,
+            offset: 0,
+          },
+        });
+
+        this.countries = response.data.map((country: any) => buildCountryEntity(country));
+      }
+      catch (e) {
+        console.error(e);
+      }
+      finally {
+        this.loading.settings.countries = false;
+      }
+    },
+    async createLocation(body: {
+      name: string;
+      country: number;
+      city: string;
+      zipcode: string;
+      addressMain: string;
+      addressComp?: string;
+      infos?: string;
+    }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.creating.location = true;
+      let state = true;
+      const { country, ...payload } = body;
+
+      try {
+        const response = await this.api.post("/locations", { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "country",
+            "fields[locations]": "default,stats.journeys",
+          },
+          body: {
+            data: {
+              type: EntityType.LOCATION,
+              attributes: {
+                ...payload,
+                isOwner: true,
+              },
+              relationships: {
+                company: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+                country: {
+                  data: {
+                    type: EntityType.COUNTRY,
+                    id: country,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const { data, included } = response;
+        this.locations = [...this.locations, buildLocationEntity(data, included)];
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.creating.location = false;
+      }
+
+      return state;
+    },
+    async saveLocation(id: number, body: {
+      name: string;
+      country: number;
+      city: string;
+      zipcode: string;
+      addressMain: string;
+      addressComp?: string;
+      infos?: string;
+    }): Promise<boolean> {
+      if (!this.company) return false;
+
+      this.loading.saving.location = true;
+      let state = true;
+
+      const { country, ...payload } = body;
+
+      try {
+        const response = await this.api.put(`/locations/${id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "country",
+            "fields[locations]": "default,stats.journeys",
+          },
+          body: {
+            data: {
+              id,
+              type: EntityType.LOCATION,
+              attributes: {
+                ...payload,
+              },
+              relationships: {
+                company: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+                country: {
+                  data: {
+                    type: EntityType.COUNTRY,
+                    id: country,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const { data, included } = response;
+        this.locations = this.locations.map(location => location.id === id ? buildLocationEntity(data, included) : location);
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.saving.location = false;
+      }
+
+      return state;
+    },
+    async deleteLocation(id: number) {
+      try {
+        await this.api.delete(`/locations/${id}`, { version: 2, endpointVersion: 1 });
+        this.locations = this.locations.filter(location => location.id !== id);
+      }
+      catch (e) {
+        console.error(e);
+      }
+    },
 
     async loadUsers() {
       if (!this.company) return;

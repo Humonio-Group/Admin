@@ -21,6 +21,12 @@ export function buildLocationEntity(data: any, included: any): Location {
     id: data.id,
     name: data.attributes.name,
     city: data.attributes.city,
+    zip: data.attributes.zipcode,
+    infos: data.attributes.infos,
+    address: {
+      main: data.attributes.addressMain,
+      comp: data.attributes.addressComp || undefined,
+    },
     country: buildCountryEntity(country),
   };
 }

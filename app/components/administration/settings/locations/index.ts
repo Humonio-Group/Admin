@@ -7,6 +7,11 @@ export interface LocationActionsProps {
   location: Location;
 }
 
+export interface LocationEditDialogProps {
+  location?: Location;
+  trigger?: boolean;
+}
+
 export const columns = (): ColumnDef<Location>[] => {
   const { t } = useNuxtApp().$i18n;
 
