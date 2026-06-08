@@ -45,10 +45,13 @@ export interface CompanyState {
     creating: {
       terms: boolean;
       location: boolean;
+      user: boolean;
     };
     saving: {
       terms: boolean;
       location: boolean;
+      user: boolean;
+
       price: Listed<number>;
       default: boolean;
       storeSettings: boolean;
@@ -98,10 +101,13 @@ export const defaults: CompanyState = {
     creating: {
       terms: false,
       location: false,
+      user: false,
     },
     saving: {
       terms: false,
       location: false,
+      user: false,
+
       price: [],
       default: false,
       storeSettings: false,

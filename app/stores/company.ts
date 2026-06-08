@@ -538,9 +538,127 @@ export const useCompanyStore = defineStore("company", {
         this.loading.settings.users = false;
       }
     },
-    // todo: async createUser() {},
-    // todo: async updateUser() {},
-    // todo: async deleteUser() {},
+    async createUser(payload: { firstname: string; lastname: string; email: string; roles: Listed<number> }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.creating.user = true;
+
+      let state = true;
+
+      try {
+        const response = await this.api.post("/users", { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "interfaceLanguage",
+            "fields[users]": "name,dates,active,recipient,email,picture",
+          },
+          body: {
+            data: {
+              type: EntityType.USER,
+              attributes: {
+                firstname: payload.firstname,
+                lastname: payload.lastname,
+                email: payload.email,
+                recipient: {
+                  rolesInWorkspace: [
+                    {
+                      id: this.company.id,
+                      name: this.company.name,
+                      escalationLevel: 0,
+                      hasRole: payload.roles.length > 0,
+                      roles: payload.roles,
+                    },
+                  ],
+                },
+              },
+            },
+            sendNewPasswordEmail: false,
+          },
+        });
+
+        const { data, included } = response;
+        const user = buildCompanyUserEntity(data, included);
+        this.users = [...this.users, user];
+        this.totalUsers++;
+
+        toast.success(this.translate("toasts.settings.users.create.success", { name: user.name.full }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.settings.users.create.error", { name: `${payload.firstname} ${payload.lastname}` }));
+      }
+      finally {
+        this.loading.creating.user = false;
+      }
+
+      return state;
+    },
+    async saveUser(id: number, payload: { firstname: string; lastname: string; email: string; roles: Listed<number> }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.saving.user = true;
+
+      let state = true;
+
+      try {
+        const response = await this.api.put(`/users/${id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "interfaceLanguage",
+            "fields[users]": "name,dates,active,recipient,email,picture",
+          },
+          body: {
+            data: {
+              id,
+              type: EntityType.USER,
+              attributes: {
+                firstname: payload.firstname,
+                lastname: payload.lastname,
+                email: payload.email,
+                recipient: {
+                  rolesInWorkspace: [
+                    {
+                      id: this.company.id,
+                      name: this.company.name,
+                      escalationLevel: 0,
+                      hasRole: payload.roles.length > 0,
+                      roles: payload.roles,
+                    },
+                  ],
+                },
+              },
+            },
+            sendNewPasswordEmail: false,
+          },
+        });
+
+        const { data, included } = response;
+        const user = buildCompanyUserEntity(data, included);
+        this.users = this.users.map(u => u.id === id ? user : u);
+
+        toast.success(this.translate("toasts.settings.users.save.success", { name: user.name.full }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.settings.users.save.error", { name: `${payload.firstname} ${payload.lastname}` }));
+      }
+      finally {
+        this.loading.saving.user = false;
+      }
+
+      return state;
+    },
+    async sendNewPasswordEmail(id: number, email: string) {
+      toast.promise(this.api.put(`/users/${id}`, { version: 2, endpointVersion: 1 }, {
+        body: {
+          data: {
+            id,
+            type: EntityType.USER,
+          },
+          sendNewPasswordEmail: true,
+        },
+      }), {
+        loading: () => this.translate("toasts.settings.users.send-new-password.loading", { email }),
+        success: () => this.translate("toasts.settings.users.send-new-password.success", { email }),
+        error: () => this.translate("toasts.settings.users.send-new-password.error", { email }),
+      });
+    },
 
     async loadCompanies() {
       if (!this.company) return;

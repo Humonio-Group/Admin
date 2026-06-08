@@ -275,6 +275,21 @@
       "developer": {
         "save": "Paramètres de développement sauvegardés.",
         "token-refreshed": "Le jeton a été régénéré."
+      },
+      "users": {
+        "create": {
+          "success": "\"{name}\" a été créé !",
+          "error": "Erreur lors de la création de \"{name}\"."
+        },
+        "save": {
+          "success": "Les informations de \"{name}\" ont été enregistrées !",
+          "error": "Erreur lors de l'enregistrement des informations de \"{name}\"."
+        },
+        "send-new-password": {
+          "loading": "Envoi du nouveau mot de passe à \"{email}\"...",
+          "success": "Nouveau mot de passe envoyé à \"{email}\" !",
+          "error": "Erreur lors de l'envoi du nouveau mot de passe à \"{email}\"."
+        }
       }
     },
     "journeys": {
@@ -699,6 +714,7 @@
         },
         "actions": {
           "edit": "Modifier",
+          "send-new-password": "Envoyer un nouveau mot de passe",
           "delete": "Supprimer"
         }
       },

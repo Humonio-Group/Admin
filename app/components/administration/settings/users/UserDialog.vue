@@ -8,6 +8,9 @@ import { UserRole } from "~/types/entities/user";
 const props = defineProps<UserDialogProps>();
 const userRoles = [3, 4, 5, 6, 7, 8, 9, 10] as const;
 
+const store = useCompanyStore();
+const { loading } = storeToRefs(store);
+
 const form = useForm({
   validationSchema: toTypedSchema(z.object({
     firstname: z.string(),
@@ -43,7 +46,9 @@ watch(open, (val) => {
   });
 });
 
-const submit = form.handleSubmit(useLogger().log);
+const submit = form.handleSubmit(async (values) => {
+  open.value = !(props.user ? await store.saveUser(props.user.id, values) : await store.createUser(values));
+});
 
 function toggleRole(role: number) {
   if (form.values.roles?.includes(role)) form.setFieldValue("roles", form.values.roles?.filter(r => r !== role));
@@ -53,18 +58,8 @@ function toggleRole(role: number) {
 
 <template>
   <UiDialog v-model:open="open">
-    <UiTooltip v-if="trigger && tooltip">
-      <UiTooltipTrigger as-child>
-        <UiDialogTrigger as-child>
-          <slot />
-        </UiDialogTrigger>
-      </UiTooltipTrigger>
-      <UiTooltipContent side="left">
-        <p>{{ $t(tooltip) }}</p>
-      </UiTooltipContent>
-    </UiTooltip>
     <UiDialogTrigger
-      v-else-if="trigger"
+      v-if="trigger"
       as-child
     >
       <slot />
@@ -158,7 +153,10 @@ function toggleRole(role: number) {
               {{ $t("btn.cancel") }}
             </UiButton>
           </UiDialogClose>
-          <UiButton>{{ $t(`btn.${editMode ? "save" : "create.user"}`) }}</UiButton>
+          <UiButton :disabled="loading.creating.user || loading.saving.user">
+            {{ $t(`btn.${editMode ? "save" : "create.user"}`) }}
+            <UiSpinner v-if="loading.creating.user || loading.saving.user" />
+          </UiButton>
         </UiDialogFooter>
       </form>
     </UiDialogContent>
