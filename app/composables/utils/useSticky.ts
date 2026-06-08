@@ -6,8 +6,14 @@ export function useSticky() {
   let sentinel: HTMLElement | null = null;
 
   function cleanup() {
-    if (observer) { observer.disconnect(); observer = null; }
-    if (sentinel) { sentinel.remove(); sentinel = null; }
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    if (sentinel) {
+      sentinel.remove();
+      sentinel = null;
+    }
     isStuck.value = false;
   }
 
