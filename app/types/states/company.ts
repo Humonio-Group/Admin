@@ -14,6 +14,7 @@ export interface CompanyState {
   terms: Terms;
   locations: Locations;
   users: CompanyUsers;
+  totalUsers: number;
   companies: Companies;
   countries: Listed<LocationCountry>;
   invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
@@ -66,6 +67,7 @@ export const defaults: CompanyState = {
   terms: [],
   locations: [],
   users: [],
+  totalUsers: -1,
   companies: [],
   countries: [],
   invitationPageSettings: null,

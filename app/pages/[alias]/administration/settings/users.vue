@@ -3,13 +3,15 @@ import PageRoot from "~/components/composing/PageRoot.vue";
 import { Plus, X, Search } from "lucide-vue-next";
 import { columns } from "~/components/administration/settings/users";
 import UserDialog from "~/components/administration/settings/users/UserDialog.vue";
+import UsersPagination from "~/components/administration/settings/users/UsersPagination.vue";
 
 const store = useCompanyStore();
-const { users, loading } = storeToRefs(store);
+const { users, loading, perPage, totalUsers } = storeToRefs(store);
 
 const { search, results, clear } = useSearch(users, "name.full", "email");
 
-store.loadUsers();
+const { activePage } = usePagination(async page => await store.loadUsers(page));
+provide("activePage", activePage);
 </script>
 
 <template>
@@ -64,5 +66,9 @@ store.loadUsers();
         :data="results"
       />
     </main>
+
+    <footer v-if="!loading.settings.users || (totalUsers >= 0 && totalUsers > perPage)">
+      <UsersPagination :active-page="activePage" />
+    </footer>
   </PageRoot>
 </template>

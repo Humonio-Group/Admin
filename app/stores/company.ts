@@ -37,6 +37,8 @@ export const useCompanyStore = defineStore("company", {
 
     storeActivePrograms: state => state.storeSettings?.programs.filter(p => p.catalogue.active) ?? [],
     storeAvailablePrograms: state => state.storeSettings?.programs.filter(p => !p.catalogue.active) ?? [],
+
+    perPage: () => 25,
   },
   actions: {
     async fetchCompany(alias: string) {
@@ -507,8 +509,9 @@ export const useCompanyStore = defineStore("company", {
       }
     },
 
-    async loadUsers() {
+    async loadUsers(page: number = 1) {
       if (!this.company) return;
+      if (page < 1) page = 1;
 
       this.loading.settings.users = true;
 
@@ -519,12 +522,14 @@ export const useCompanyStore = defineStore("company", {
             "sort": "firstname",
             "fields[users]": "name,dates,active,recipient,email,picture",
             "companies": this.company.id,
-            "limit": -1,
+            "limit": this.perPage,
+            "offset": (page - 1) * this.perPage,
           },
         });
 
-        const { data, included } = response;
+        const { data, included, meta } = response;
         this.users = data.map((user: any) => buildCompanyUserEntity(user, included));
+        this.totalUsers = meta.total;
       }
       catch (e) {
         this.logger.error(e);

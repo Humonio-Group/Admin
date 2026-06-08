@@ -38,7 +38,11 @@
     },
     "push": "Pousser",
     "un-push": "Dé-pousser",
-    "see-results": "Voir le résultat"
+    "see-results": "Voir le résultat",
+    "navigate": {
+      "next": "Suivant",
+      "previous": "Précédent"
+    }
   },
   "dialogs": {
     "image-crop": {
