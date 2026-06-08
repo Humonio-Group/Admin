@@ -68,7 +68,7 @@ provide("activePage", activePage);
     </main>
 
     <footer v-if="!loading.settings.users || (totalUsers >= 0 && totalUsers > perPage)">
-      <UsersPagination :active-page="activePage" />
+      <UsersPagination />
     </footer>
   </PageRoot>
 </template>
