@@ -1,18 +1,30 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
 import { Plus, Search, X, Archive } from "lucide-vue-next";
-import ConditionEditDialog from "~/components/administration/settings/conditions/ConditionEditDialog.vue";
 import { columns } from "~/components/administration/settings/companies";
+import PaginationProvider from "~/components/primitives/PaginationProvider.vue";
+import CompanyDialog from "~/components/administration/settings/companies/CompanyDialog.vue";
 
 const store = useCompanyStore();
-const { companies: _companies, loading } = storeToRefs(store);
+const { companies: companies, loading, perPage, totalCompanies } = storeToRefs(store);
 
-const archived = ref<boolean>(false);
-const companies = computed(() => _companies.value.filter(c => c.active === !archived.value));
+const { query } = useRoute();
+const archived = ref<boolean>(query.acrhived === "true");
+watch(archived, (val) => {
+  navigateTo({
+    query: {
+      ...query,
+      archived: val.toString(),
+    },
+    replace: true,
+  });
+  reload();
+});
 
 const { search, results, clear } = useSearch(companies, "name", "alias");
 
-store.loadCompanies();
+const { activePage, reload } = usePagination(async page => await store.loadCompanies(page, archived.value));
+provide("activePage", activePage);
 </script>
 
 <template>
@@ -60,12 +72,12 @@ store.loadCompanies();
             <p>{{ $t("labels.archives") }}</p>
           </UiTooltipContent>
         </UiTooltip>
-        <ConditionEditDialog trigger>
+        <CompanyDialog trigger>
           <UiButton>
             <Plus />
             {{ $t("btn.new.company") }}
           </UiButton>
-        </ConditionEditDialog>
+        </CompanyDialog>
       </div>
     </header>
 
@@ -82,5 +94,12 @@ store.loadCompanies();
         :data="results"
       />
     </main>
+
+    <footer v-if="!loading.settings.companies && totalCompanies >= 0 && totalCompanies > perPage">
+      <PaginationProvider
+        :total="totalCompanies"
+        :per-page="perPage"
+      />
+    </footer>
   </PageRoot>
 </template>

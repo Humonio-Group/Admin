@@ -107,6 +107,11 @@
         "subject": "Votre accès à la simulation \"Simulation\" Qigu simulation sur iPad !",
         "body": "Bonjour [[user_name]],\n\n{name} vient de partager avec vous la « {simName} » du parcours « {journeyName} » !\nVous pourrez télécharger et installer cette simulation en version autonome sur plusieurs appareils, afin de l’utiliser n’importe où et à tout moment (même hors ligne).\n\n<b>Sur un appareil Windows :</b>  \nUtilisez le lien suivant pour télécharger la version Windows de cette simulation : <a href=\"https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/windows\" style=\"overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -ms-hyphens: auto; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;\" target=\"_blank\">https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/windows</a>  \nUne fois téléchargé, décompressez le fichier et ouvrez « SinSim.exe » pour lancer votre simulation autonome.\n\n<b>Sur un appareil Mac :</b>  \nUtilisez le lien suivant pour télécharger la version Mac OS de cette simulation : <a href=\"https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/mac\" style=\"overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -ms-hyphens: auto; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;\" target=\"_blank\">https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/mac</a>  \nUne fois téléchargé, décompressez le fichier et ouvrez « SinSim.app » pour lancer votre simulation autonome.\n\n<b>Sur iPad :</b>\n\n<ol><li>Installez l’application SinSim sur votre iPad : </li>\n<li>Téléchargez et installez la simulation en utilisant l’option de votre choix :\n<ul>\n<li>Option 1 : ouvrez ce lien dans un navigateur web depuis votre iPad pour télécharger et installer automatiquement la simulation : sinsim://download?code=o0j86</li>\n<li>Option 2 : utilisez un lecteur de QR code sur votre iPad et scannez ce QR code : <br/><img src=\"https://staging.qigu.app/services/qrcode?code=sinsim://download?code=o0j86\" width=\"100\" height=\"100\" style=\"display: table; margin-left: auto; margin-right: auto; margin-top: 10px;\" /></li>\n<li>Option 3 : ouvrez l’application SinSim sur votre iPad et saisissez le code suivant pour télécharger la simulation : o0j86</li></ul></li></ol>\n\n<b>Note importante :</b>  \nPour des raisons de sécurité, les simulations autonomes sont protégées par une clé. Veuillez utiliser le code ci-dessous pour déverrouiller et lancer cette simulation :\n\nCode live (valide du 29 avril 2026 au 06 mai 2026) :  {simKey}\nCode démo (uniquement pour démonstration et toujours valide) : {trialKey}  \n\nSi vous rencontrez des problèmes pour accéder à votre simulation, veuillez nous contacter en créant un ticket ici : <a href=\"https://staging.qigu.app/auth/get-help\">https://staging.qigu.app/auth/get-help</a>\n\nNous espérons que vous apprécierez votre expérience !\n\nCordialement,<br />\nLeo <br />\nAssistant digital de Qigu<br />\n<br />\nPour toute question ou pour une assistance humaine, veuillez vous rendre sur https://staging.qigu.app/auth/get-help."
       }
+    },
+    "detach-company": {
+      "title": "Détacher l'espace de travail",
+      "description": "Détacher un espace de travail est une action irréversible. Êtes-vous sûr de vouloir continuer ?",
+      "action": "Détacher"
     }
   },
   "primitives": {
@@ -289,6 +294,31 @@
           "loading": "Envoi du nouveau mot de passe à \"{email}\"...",
           "success": "Nouveau mot de passe envoyé à \"{email}\" !",
           "error": "Erreur lors de l'envoi du nouveau mot de passe à \"{email}\"."
+        }
+      },
+      "companies": {
+        "create": {
+          "success": "L'espace de travail \"{name}\" a été créé.",
+          "error": "Erreur lors de la création de l'espace de travail."
+        },
+        "save": {
+          "success": "L'espace de travail \"{name}\" a été enregistré.",
+          "error": "Erreur lors de l'enregistrement de l'espace de travail."
+        },
+        "detach": {
+          "loading": "Détachement de l'espace de travail \"{name}\"...",
+          "success": "L'espace de travail \"{name}\" a été détaché.",
+          "error": "Erreur lors du détachement de l'espace de travail."
+        },
+        "disable": {
+          "loading": "Désactivation de l'espace de travail \"{name}\"...",
+          "success": "L'espace de travail \"{name}\" a été désactivé.",
+          "error": "Erreur lors de la désactivation de l'espace de travail."
+        },
+        "enable": {
+          "loading": "Activation de l'espace de travail \"{name}\"...",
+          "success": "L'espace de travail \"{name}\" a été activé.",
+          "error": "Erreur lors de l'activation de l'espace de travail."
         }
       }
     },
@@ -749,6 +779,21 @@
           "detach": "Détacher",
           "disable": "Désactiver",
           "enable": "Activer"
+        }
+      },
+      "dialog": {
+        "title": {
+          "new": "Nouvel espace de travail",
+          "edit": "Édition de l'espace de travail"
+        },
+        "fields": {
+          "name": "Nom de l'espace de travail",
+          "contact": {
+            "first-name": "Prénom du contact",
+            "last-name": "Nom du contact",
+            "email": "Adresse email du contact"
+          },
+          "send-new-password": "Envoyer un nouveau mot de passe"
         }
       }
     },

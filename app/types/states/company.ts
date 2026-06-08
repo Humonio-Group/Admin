@@ -16,6 +16,7 @@ export interface CompanyState {
   users: CompanyUsers;
   totalUsers: number;
   companies: Companies;
+  totalCompanies: number;
   countries: Listed<LocationCountry>;
   invitationPageSettings: Nullable<CompanyInvitationPageSettings>;
   storeSettings: Nullable<CompanyStoreSettings>;
@@ -46,6 +47,7 @@ export interface CompanyState {
       terms: boolean;
       location: boolean;
       user: boolean;
+      company: boolean;
     };
     saving: {
       terms: boolean;
@@ -72,6 +74,7 @@ export const defaults: CompanyState = {
   users: [],
   totalUsers: -1,
   companies: [],
+  totalCompanies: -1,
   countries: [],
   invitationPageSettings: null,
   storeSettings: null,
@@ -102,6 +105,7 @@ export const defaults: CompanyState = {
       terms: false,
       location: false,
       user: false,
+      company: false,
     },
     saving: {
       terms: false,
