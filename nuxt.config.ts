@@ -50,6 +50,9 @@ export default defineNuxtConfig({
     },
   },
   srcDir: "app/",
+  imports: {
+    dirs: ["composables/**"],
+  },
   compatibilityDate: "2025-07-15",
   postcss: {
     plugins: {
