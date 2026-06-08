@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Edit2, MoreVertical, RectangleEllipsis, Trash } from "lucide-vue-next";
+import { Edit2, MoreVertical, RectangleEllipsis } from "lucide-vue-next";
 import type { UserActionsProps } from "~/components/administration/settings/users/index";
 import UserDialog from "~/components/administration/settings/users/UserDialog.vue";
 import ConfirmDialog from "~/components/primitives/ConfirmDialog.vue";
