@@ -18,7 +18,7 @@ export function usePagination(cb: (val: number) => Promise<unknown> | unknown) {
   }, { immediate: true });
 
   async function reload() {
-    cb(activePage.value);
+    await cb(activePage.value);
   }
 
   return { activePage, reload };
