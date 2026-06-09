@@ -1,1 +1,1047 @@
-{}
+{
+  "btn": {
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "back": "Retour",
+    "change": "Changer",
+    "close": "Fermer",
+    "advanced-settings": "Paramètres avancés",
+    "new": {
+      "default": "Nouveau | Nouvelle",
+      "condition": "Nouvelle condition",
+      "company": "Nouvel espace de travail",
+      "location": "Nouvelle adresse",
+      "user": "Nouvel utilisateur"
+    },
+    "create": {
+      "default": "Créer",
+      "user": "Créer l'utilisateur"
+    },
+    "add": {
+      "default": "Ajouter",
+      "entry": "Ajouter une entrée",
+      "program": "Créer un programme",
+      "team": "Ajouter une équipe",
+      "participant": "Ajouter un participant"
+    },
+    "import": {
+      "default": "Importer",
+      "participants": "Importer des participants"
+    },
+    "export": {
+      "default": "Exporter"
+    },
+    "send": {
+      "default": "Envoyer",
+      "mail": "Envoyer l'email",
+      "by-mail": "Envoyer par email"
+    },
+    "push": "Pousser",
+    "un-push": "Dé-pousser",
+    "see-results": "Voir le résultat",
+    "navigate": {
+      "next": "Suivant",
+      "previous": "Précédent"
+    }
+  },
+  "dialogs": {
+    "image-crop": {
+      "title": "Recadrer l'image",
+      "description": "Ajustez le cadrage de votre image avant de valider.",
+      "confirm": "Valider"
+    },
+    "delete-team": {
+      "title": "Supprimer l'équipe",
+      "description": "Supprimer l'équipe \"{name}\" est une action irréversible. Êtes-vous sûr de vouloir poursuivre ?",
+      "action": "Supprimer"
+    },
+    "move-participants": {
+      "title": "Déplacer {name} | Déplacer {count} participants",
+      "field": "Nouvelle équipe",
+      "action": "Appliquer"
+    },
+    "delete-participants": {
+      "title": "Supprimer {name} | Supprimer {count} participants",
+      "description": "Supprimer {name} supprimera la trace de sa participation à cette distribution. Toutefois, ses résultats seront conservés. Voulez-vous continuer ? | Supprimer les participants supprimera la trace de leur participation à cette distribution. Toutefois, leurs résultats seront conservés. Voulez-vous continuer ?",
+      "action": "Supprimer"
+    },
+    "update-team-leader": {
+      "title": "Changer de chef d'équipe",
+      "description": "L'équipe \"{teamName}\" a déjà {name} pour chef. Changer de chef d'équipe aura pour incidence de retirer les contenus distribués au chef d'équipe à {name} et les distribuer à {newName}. Êtes-vous sûr ?",
+      "action": "Appliquer"
+    },
+    "export-simulation": {
+      "title": "Exporter la simulation",
+      "fields": {
+        "scorm-version": {
+          "label": "Version SCORM",
+          "options": {
+            "scorm-1_2": "Scorm 1.2",
+            "scorm-2004": "Scorm 2004 (1.3)"
+          }
+        },
+        "main-score": {
+          "label": "Score principal",
+          "description": "La notation étant limitée, seul un score sera pris en compte dans l'exportation SCORM.",
+          "default-option": "Aucun score"
+        }
+      }
+    },
+    "share-simulation": {
+      "title": "Partager la simulation",
+      "description": "Vous pouvez partager cette simulation avec toute personne participant à cette distribution. Elle recevra un email contenant des instructions sur la manière de télécharger et d'installer la simulation sur l'application Qigu Play de son iPad.",
+      "fields": {
+        "to": {
+          "label": "Destinataire(s)",
+          "facilitators": "Tous les facilitateurs",
+          "coaches": "Tous les coachs",
+          "participants": "Tous les participants"
+        },
+        "subject": "Sujet",
+        "body": "Corps"
+      },
+      "errors": {
+        "at-least-one-to": "Ajoutez au moins 1 destinataire."
+      },
+      "defaults": {
+        "subject": "Votre accès à la simulation \"Simulation\" Qigu simulation sur iPad !",
+        "body": "Bonjour [[user_name]],\n\n{name} vient de partager avec vous la « {simName} » du parcours « {journeyName} » !\nVous pourrez télécharger et installer cette simulation en version autonome sur plusieurs appareils, afin de l’utiliser n’importe où et à tout moment (même hors ligne).\n\n<b>Sur un appareil Windows :</b>  \nUtilisez le lien suivant pour télécharger la version Windows de cette simulation : <a href=\"https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/windows\" style=\"overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -ms-hyphens: auto; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;\" target=\"_blank\">https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/windows</a>  \nUne fois téléchargé, décompressez le fichier et ouvrez « SinSim.exe » pour lancer votre simulation autonome.\n\n<b>Sur un appareil Mac :</b>  \nUtilisez le lien suivant pour télécharger la version Mac OS de cette simulation : <a href=\"https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/mac\" style=\"overflow-wrap: break-word; word-wrap: break-word; -ms-word-break: break-all; word-break: break-all; word-break: break-word; -ms-hyphens: auto; -moz-hyphens: auto; -webkit-hyphens: auto; hyphens: auto;\" target=\"_blank\">https://staging.qigu.app/develop/download-simulation/cee2091cad2e2b0f/[[requesterKey]]/qjkc9gg6fi0af8lkey16ngq7yb5us8o0ji1opj1exruqwz14tj7lmo713rlx66lb/7ng1ttdtdudlfg9afu8lfk8veg0pitew4jywfahaub6pur2f5btsj0tmyugi7mn5/mac</a>  \nUne fois téléchargé, décompressez le fichier et ouvrez « SinSim.app » pour lancer votre simulation autonome.\n\n<b>Sur iPad :</b>\n\n<ol><li>Installez l’application SinSim sur votre iPad : </li>\n<li>Téléchargez et installez la simulation en utilisant l’option de votre choix :\n<ul>\n<li>Option 1 : ouvrez ce lien dans un navigateur web depuis votre iPad pour télécharger et installer automatiquement la simulation : sinsim://download?code=o0j86</li>\n<li>Option 2 : utilisez un lecteur de QR code sur votre iPad et scannez ce QR code : <br/><img src=\"https://staging.qigu.app/services/qrcode?code=sinsim://download?code=o0j86\" width=\"100\" height=\"100\" style=\"display: table; margin-left: auto; margin-right: auto; margin-top: 10px;\" /></li>\n<li>Option 3 : ouvrez l’application SinSim sur votre iPad et saisissez le code suivant pour télécharger la simulation : o0j86</li></ul></li></ol>\n\n<b>Note importante :</b>  \nPour des raisons de sécurité, les simulations autonomes sont protégées par une clé. Veuillez utiliser le code ci-dessous pour déverrouiller et lancer cette simulation :\n\nCode live (valide du 29 avril 2026 au 06 mai 2026) :  {simKey}\nCode démo (uniquement pour démonstration et toujours valide) : {trialKey}  \n\nSi vous rencontrez des problèmes pour accéder à votre simulation, veuillez nous contacter en créant un ticket ici : <a href=\"https://staging.qigu.app/auth/get-help\">https://staging.qigu.app/auth/get-help</a>\n\nNous espérons que vous apprécierez votre expérience !\n\nCordialement,<br />\nLeo <br />\nAssistant digital de Qigu<br />\n<br />\nPour toute question ou pour une assistance humaine, veuillez vous rendre sur https://staging.qigu.app/auth/get-help."
+      }
+    },
+    "detach-company": {
+      "title": "Détacher l'espace de travail",
+      "description": "Détacher un espace de travail est une action irréversible. Êtes-vous sûr de vouloir continuer ?",
+      "action": "Détacher"
+    }
+  },
+  "primitives": {
+    "image-dropzone": {
+      "label": "Ajouter"
+    }
+  },
+  "default": "Défaut",
+  "labels": {
+    "translations": "Traductions",
+    "search": "Rechercher",
+    "optional": "Facultatif",
+    "all": "Tous | Toutes",
+    "languages": {
+      "french": "Français"
+    },
+    "state": {
+      "enabled": {
+        "m": "Activé | Activés",
+        "f": "Activée | Activées"
+      },
+      "disabled": {
+        "m": "Désactivé | Désactivés",
+        "f": "Désactivée | Désactivées"
+      },
+      "active": {
+        "m": "Actif | Actifs",
+        "f": "Active | Actives"
+      },
+      "inactive": {
+        "m": "Inactif | Inactifs",
+        "f": "Inactive | Inactives"
+      },
+      "confirmed": {
+        "m": "Confirmé | Confirmés",
+        "f": "Confirmée | Confirmées"
+      },
+      "unconfirmed": {
+        "m": "Non confirmé | Non confirmés",
+        "f": "Non confirmée | Non confirmées"
+      },
+      "cancelled": {
+        "m": "Annulé | Annulés",
+        "f": "Annulée | Annulées"
+      },
+      "closed": {
+        "m": "Fermé | Fermés",
+        "f": "Fermée | Fermées"
+      }
+    },
+    "miss-you": "Vous ne pouvez pas partir comme ça... 😓",
+    "plan": {
+      "free": "Gratuit"
+    },
+    "other-products": "Autres produits",
+    "other-workspaces": "Autres espaces de travail",
+    "time": {
+      "created-at": "Créé le {date} | Créée le {date}",
+      "last-update": "Dernière mise à jour le {date}",
+      "days": "{count} jour | {count} jours",
+      "minutes": "{count} minute | {count} minutes"
+    },
+    "dates": {
+      "months": {
+        "january": "Janvier",
+        "february": "Février",
+        "march": "Mars",
+        "april": "Avril",
+        "may": "Mai",
+        "june": "Juin",
+        "july": "Juillet",
+        "august": "Août",
+        "september": "Septembre",
+        "october": "Octobre",
+        "november": "Novembre",
+        "december": "Décembre"
+      }
+    },
+    "roles": {
+      "3": "Administrateur",
+      "4": "Analyste",
+      "5": "Facilitateur",
+      "6": "Participant",
+      "7": "Coach",
+      "8": "Support",
+      "9": "Mentor",
+      "10": "Créateur"
+    },
+    "fields": {
+      "first-name": "Prénom",
+      "last-name": "Nom",
+      "email": "Adresse email",
+      "language": "Langue"
+    },
+    "archives": "Archives",
+    "sessions": "{count} session | {count} sessions",
+    "participants": "{count} participant | {count} participants",
+    "facilitators": "{count} facilitateur | {count} facilitateurs",
+    "modalities": {
+      "e-learning": "E-Learning",
+      "on-site": "Présentiel",
+      "videoconference": "Visioconférence",
+      "multimodale": "Multimodale"
+    },
+    "content-state": {
+      "accessible": "Accessible",
+      "hidden": "Caché",
+      "locked": "Bloqué"
+    },
+    "content-progress": {
+      "not-started": "Pas commencé",
+      "viewed": "Vu",
+      "completed": "Complété"
+    }
+  },
+  "navigation": {
+    "user-menu": {
+      "profile": "Mon profil",
+      "settings": "Paramètres",
+      "log-out": "Déconnexion"
+    },
+    "deployment": {
+      "label": "Déploiement",
+      "programs": "Programmes",
+      "courses": "Distributions",
+      "actions": "Actions"
+    },
+    "support": {
+      "label": "Support",
+      "tickets": "Tickets",
+      "abuses": "Abus"
+    },
+    "analytics": {
+      "label": "Analyse",
+      "usage": "Utilisation",
+      "ai": "Intelligence artificielle"
+    },
+    "administration": {
+      "label": "Administration",
+      "content-library": "Bibliothèque de contenus",
+      "settings": "Paramètres"
+    }
+  },
+  "toasts": {
+    "error": {
+      "default": "Une erreur est survenue."
+    },
+    "settings": {
+      "general": {
+        "saved": "Paramètres généraux enregistrés."
+      },
+      "branding": {
+        "saved": "Paramètres de marque enregistrés."
+      },
+      "shop": {
+        "saved": "Paramètres de la boutique en ligne enregistrés.",
+        "saved-price": "Nouveau prix enregistré."
+      },
+      "sso": {
+        "saved": "Paramètres d'authentification unique enregistrés."
+      },
+      "smtp": {
+        "saved": "Paramètres de mail enregistrés."
+      },
+      "lrs": {
+        "saved": "Paramètres de stockage LRS enregistrés."
+      },
+      "developer": {
+        "save": "Paramètres de développement sauvegardés.",
+        "token-refreshed": "Le jeton a été régénéré."
+      },
+      "users": {
+        "create": {
+          "success": "\"{name}\" a été créé !",
+          "error": "Erreur lors de la création de \"{name}\"."
+        },
+        "save": {
+          "success": "Les informations de \"{name}\" ont été enregistrées !",
+          "error": "Erreur lors de l'enregistrement des informations de \"{name}\"."
+        },
+        "send-new-password": {
+          "loading": "Envoi du nouveau mot de passe à \"{email}\"...",
+          "success": "Nouveau mot de passe envoyé à \"{email}\" !",
+          "error": "Erreur lors de l'envoi du nouveau mot de passe à \"{email}\"."
+        }
+      },
+      "companies": {
+        "create": {
+          "success": "L'espace de travail \"{name}\" a été créé.",
+          "error": "Erreur lors de la création de l'espace de travail."
+        },
+        "save": {
+          "success": "L'espace de travail \"{name}\" a été enregistré.",
+          "error": "Erreur lors de l'enregistrement de l'espace de travail."
+        },
+        "detach": {
+          "loading": "Détachement de l'espace de travail \"{name}\"...",
+          "success": "L'espace de travail \"{name}\" a été détaché.",
+          "error": "Erreur lors du détachement de l'espace de travail."
+        },
+        "disable": {
+          "loading": "Désactivation de l'espace de travail \"{name}\"...",
+          "success": "L'espace de travail \"{name}\" a été désactivé.",
+          "error": "Erreur lors de la désactivation de l'espace de travail."
+        },
+        "enable": {
+          "loading": "Activation de l'espace de travail \"{name}\"...",
+          "success": "L'espace de travail \"{name}\" a été activé.",
+          "error": "Erreur lors de l'activation de l'espace de travail."
+        }
+      }
+    },
+    "journeys": {
+      "update-group": {
+        "adding": "Ajout du groupe \"{groupName}\" à {memberName}...",
+        "removing": "Retrait du groupe \"{groupName}\" à {memberName}...",
+        "added": "Groupe \"{groupName}\" ajouté à {memberName}.",
+        "removed": "Groupe \"{groupName}\" retiré à {memberName}.",
+        "error-while-adding": "Erreur lors de l'ajout du group {name}.",
+        "error-while-removing": "Erreur lors du retrait du groupe {name}."
+      },
+      "team-added": "L'équipe \"{name}\" a été ajoutée !",
+      "delete-team": {
+        "loading": "Suppression de l'équipe \"{name}\"...",
+        "success": "Équipe \"{name}\" supprimée.",
+        "error": "Erreur lors de la suppression de l'équipe \"{name}\"."
+      },
+      "add-participant": {
+        "success": "Le participant {memberName} a été ajouté à l'équipe \"{teamName}\".",
+        "error": "Erreur lors de l'ajout du participant {name}."
+      },
+      "members-moved": {
+        "success": "{name} déplacé dans l'équipe \"{teamName}\". | {count} participants déplacés dans l'équipe \"{teamName}\".",
+        "error": "Erreur lors du déplacement de {name}. | Erreur lors du déplacement de {count} participants."
+      },
+      "archiving-participants": {
+        "loading": "Désactivation de {name}... | Désactivation de {count} participants...",
+        "success": "{name} désactivé. | {count} participants désactivés.",
+        "error": "Erreur lors de la désactivation de {name}. | Erreur lors de la désactivation de {count} participants."
+      },
+      "restoring-participants": {
+        "loading": "Activation de {name}... | Activation de {count} participants...",
+        "success": "{name} activé. | {count} participants activés.",
+        "error": "Erreur lors de l'activation de {name}. | Erreur lors de l'activation de {count} participants."
+      },
+      "deleting-participants": {
+        "loading": "Suppression de {name}... | Suppression de {count} participants...",
+        "success": "{name} supprimé. | {count} participants supprimés.",
+        "error": "Erreur lors de la suppression de {name}. | Erreur lors de la suppression de {count} participants."
+      },
+      "leader-update": {
+        "success": "{name} est maintenant le chef d'équipe de \"{teamName}\".",
+        "error": "Une erreur est survenue lors de l'enregistrement de {name} comme chef d'équipe."
+      },
+      "remove-leader": {
+        "success": "{name} n'est maintenant plus le chef d'équipe de \"{teamName}\".",
+        "error": "Une erreur est survenue lors du retrait du statut de chef d'équipe de {name}."
+      },
+      "simulations": {
+        "key-copied": "La clé de simulation a été copiée.",
+        "trial-copied": "La clé d'essaie a été copiée.",
+        "shared": "L'email a été envoyé. | Les emails ont étés envoyés à {count} destinataires."
+      }
+    },
+    "programs": {
+      "create": {
+        "success": "Le programme \"{name}\" a été créé.",
+        "error": "Erreur lors de la création du programme."
+      },
+      "save": {
+        "success": "Le programme \"{name}\" a été enregistré.",
+        "error": "Erreur lors de l'enregistrement du programme."
+      },
+      "duplicate": {
+        "loading": "Duplication du programme \"{name}\"...",
+        "success": "Le programme \"{name}\" a été dupliqué",
+        "error": "Erreur lors de la duplication du programme."
+      },
+      "disable": {
+        "loading": "Désactivation du programme \"{name}\"...",
+        "success": "Le programme \"{name}\" a été désactivé.",
+        "error": "Erreur lors de la désactivation du programme."
+      },
+      "enable": {
+        "loading": "Activation du programme \"{name}\"...",
+        "success": "Le programme \"{name}\" a été activé.",
+        "error": "Erreur lors de l'activation du programme."
+      }
+    }
+  },
+
+  "profile": {
+    "details": {
+      "first-name": "Prénom",
+      "last-name": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "linked-in": "LinkedIn",
+      "created-at": "Créé le {date}"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "account": {
+        "fields": {
+          "first-name": "Prénom",
+          "last-name": "Nom",
+          "email": "Email",
+          "phone": "Téléphone",
+          "linked-in": "LinkedIn",
+          "avatar": "Avatar"
+        },
+        "avatar": {
+          "change": "Changer"
+        }
+      },
+      "interface": {
+        "title": "Interface",
+        "main-language": {
+          "name": "Langue de l'interface",
+          "description": "Sélectionnez la langue dans laquelle vous souhaitez utiliser la plateforme. Celle-ci sera la langue sélectionnée par défaut pour la lecture des contenus."
+        },
+        "theme": {
+          "name": "Thème général",
+          "description": "Sélectionnez le thème d'affichage de l'interface. Celui-ci sera synchronisé sur tous les appareils connecté à ce compte.",
+          "options": {
+            "system": "Automatique",
+            "light": "Clair",
+            "dark": "Sombre"
+          }
+        }
+      },
+      "terms": {
+        "title": "Conditions",
+        "actions": {
+          "read": "Lire",
+          "revoke": "Révoquer"
+        }
+      }
+    }
+  },
+
+  "deployment": {
+    "programs": {
+      "title": "Programmes",
+      "card": {
+        "actions": {
+          "go-to": "Ouvrir",
+          "duplicate": "Dupliquer",
+          "config": "Configurer",
+          "build": "Construire",
+          "activate": "Activer",
+          "deactivate": "Désactiver",
+          "download": {
+            "label": "Télécharger",
+            "formation-plan": "Plan de formation",
+            "progress-report": "Rapport de progression"
+          }
+        }
+      },
+      "navigation": {
+        "overview": "Vue d'ensemble",
+        "journeys": "Distributions",
+        "events": "Événements",
+        "contents": "Contenus",
+        "people": "Participants",
+        "reports": "Rapports"
+      },
+      "dialog": {
+        "title": {
+          "new": "Nouveau programme",
+          "edit": "Modifier le programme"
+        },
+        "all-translations-required": "Toutes les traductions n'ont pas été renseignées.",
+        "fields": {
+          "more-options": "Configuration avancée",
+          "languages": "Langues",
+          "default-language": "Langue par défaut",
+          "name": "Titre",
+          "description": "Description",
+          "min-facilitators": "Minimum de facilitateurs",
+          "min-participants": "Nombre de participants attendus",
+          "cohorte": {
+            "label": "Taille de la cohorte",
+            "maximum": "Maximum",
+            "minimum": "Minimum"
+          },
+          "num-teams": "Maximum de participants par équipe"
+        }
+      }
+    },
+    "journeys": {
+      "title": "Distributions",
+      "table": {
+        "headers": {
+          "info": "Informations",
+          "facilitators": "Facilitateurs",
+          "participants": "Participants",
+          "time-lapse": "Période"
+        },
+        "formats": {
+          "dates": "d MMMM yyyy, HH:mm"
+        }
+      },
+      "actions": {
+        "open": "Ouvrir",
+        "config": "Configurer",
+        "send-emails": "Envoyer des emails",
+        "participants-config": "Configurer les participants",
+        "watch-results": "Consulter les résultats",
+        "download": {
+          "label": "Télécharger",
+          "progress-report": "Rapport de progression"
+        },
+        "cancel": "Annuler",
+        "table": {
+          "headers": {
+            "description": "Description",
+            "author": "Auteur",
+            "status": "Statut",
+            "template": "Modèle",
+            "created-at": "Créée le"
+          },
+          "date-format": "d MMMM yyyy",
+          "status": {
+            "late": "En retard",
+            "on-track": "En cours",
+            "terminated": "Terminée"
+          }
+        },
+        "details-dialog": {
+          "deadline": "Date buttoir",
+          "task-list": "Liste de tâches"
+        }
+      },
+      "navigation": {
+        "overview": "Vue d'ensemble",
+        "participants": "Participants",
+        "actions": "Actions",
+        "contents": "Contenus",
+        "results": "Résultats"
+      },
+      "teams": {
+        "actions": {
+          "set-as-team-leader": "Définir comme chef d'équipe",
+          "remove-team-leader": "Retirer le statut de chef d'équipe",
+          "move": "Déplacer",
+          "disable": "Désactiver",
+          "enable": "Activer",
+          "delete": "Supprimer"
+        }
+      },
+      "overview": {
+        "evaluation": {
+          "title": "Evaluation de l'atelier",
+          "experience": "Expérience",
+          "facilitators": "Facilitateurs"
+        },
+        "next-events": {
+          "title": "Prochains événements",
+          "tooltips": {
+            "location": "Localisation",
+            "period": "Période"
+          },
+          "links": {
+            "open-video": "Ouvrir la visioconférence",
+            "open-map": "Ouvrir la carte",
+            "add-to-calendar": "Ajouter au calendrier"
+          }
+        },
+        "team-progress": {
+          "title": "Progression de l'équipe",
+          "options": {
+            "access-rate": "Taux d'accès",
+            "average-scores-participants": "Moyenne des scores des participants",
+            "average-scores-team": "Moyenne des scores de l'équipe"
+          },
+          "empty": "Aucun score n'est configuré pour le moment."
+        },
+        "facilitators": {
+          "title": "Facilitateurs",
+          "empty": "Cette distribution n'a pas de facilitateur attitré."
+        },
+        "simulations": {
+          "title": "Simulations",
+          "empty": "Cette distribution n'a pas de simulation.",
+          "actions": {
+            "import": {
+              "default": "Importer",
+              "for-participant": "Pour un participant",
+              "for-team": "Pour une équipe"
+            },
+            "export": "Exporter",
+            "share": "Partager",
+            "copy-key": "Copier la clé",
+            "copy-trial": "Copier la clé d'essai"
+          }
+        }
+      },
+      "results": {
+        "navigation": {
+          "completion": "Complétion",
+          "graphs": "Graphiques"
+        },
+        "graphs": {
+          "roles": {
+            "label": "Voir les graphiques",
+            "auto": "automatiques",
+            "participant": "participant",
+            "facilitator": "facilitateur",
+            "coach": "coach",
+            "client": "analyste"
+          },
+          "empty": {
+            "title": "C'est vide par ici...",
+            "description": "Il n'y a aucun graphique à afficher pour ce rôle.",
+            "action": "Voir les graphiques automatiques"
+          }
+        }
+      }
+    }
+  },
+
+  "analytics": {
+    "ai": {
+      "navigation": {
+        "text": "Texte",
+        "audio": "Audio",
+        "video": "Vidéo"
+      },
+      "stats": {
+        "simulations": "Simulations jouées",
+        "tokens-remaining": "Crédits restants",
+        "tokens-available": "Crédits inclus",
+        "minutes-remaining": "Minutes restantes",
+        "minutes-available": "Minutes inclues",
+        "hours-remaining": "Heures restantes",
+        "hours-available": "Heures inclues"
+      },
+      "graph": {
+        "title": "Consommation en {year}",
+        "text": "Total : {count} crédits",
+        "audio": "Total In : {in} minutes | Total Out : {out} minutes",
+        "video": "Total : {count} minutes"
+      }
+    }
+  },
+
+  "settings": {
+    "title": "Paramètres",
+    "navigation": {
+      "general": "Général",
+      "brand": {
+        "identity": "Identité",
+        "conditions": "Conditions"
+      },
+      "management": {
+        "label": "Gestion",
+        "locations": "Adresses",
+        "users": "Utilisateurs",
+        "companies": "Espaces de travail"
+      },
+      "public": {
+        "label": "Publique",
+        "invitation": "Page d'invitation",
+        "shop": "Boutique en ligne"
+      },
+      "advanced": {
+        "label": "Avancée",
+        "sso": "Authentification unique",
+        "mailing": "SMTP",
+        "data-storage": "Stockage",
+        "developer": "Développeur"
+      }
+    },
+    "general": {
+      "title": "Paramètres généraux",
+      "fields": {
+        "tld": {
+          "label": "TLD",
+          "description": "Limiter l'ajout de participants aux noms de domaines inclus dans la liste.",
+          "placeholder": "example.com"
+        },
+        "mentor-invite": {
+          "label": "Inviter le mentor",
+          "description": "Autoriser le participant à inviter son mentor sur la plateforme."
+        },
+        "force-mentor-invite": {
+          "label": "Forcer l'invitation du mentor",
+          "description": "Forcer le participant à inviter son mentor sur la plateforme."
+        },
+        "share-results": {
+          "label": "Partager les résultats",
+          "description": "Automatiquement partager les résultat du participant à son mentor."
+        },
+        "share-results-scope": {
+          "label": "Niveau de résultats",
+          "description": "Sélectionnez le niveau des résultats à partager au mentor.",
+          "options": {
+            "by-participant": "Déterminé par le participant",
+            "by-workspace": "Déterminé par l'espace de travail"
+          }
+        },
+        "auto-assign-admin-to-tickets": {
+          "label": "Assignation automatique",
+          "description": "Affectez automatiquement l’administrateur de l’espace de travail aux tickets"
+        },
+        "videoconference-button": {
+          "label": "Visioconférence instantanée",
+          "description": "Autoriser le participant à lancer une visioconférence instantanée."
+        }
+      }
+    },
+    "branding": {
+      "title": "Identité de l'espace de travail",
+      "fields": {
+        "name": "Nom de l'espace",
+        "alias": {
+          "label": "Alias",
+          "description": "Seulement caractères alphanumériques et tiret (\"-\")"
+        },
+        "icon": {
+          "label": "Icône",
+          "description": "L’image ne doit pas dépasser 80 pixels de hauteur ni peser plus de 400 ko."
+        },
+        "logo": "Logo",
+        "light": "Thème clair",
+        "dark": "Thème sombre"
+      }
+    },
+    "conditions": {
+      "title": "Conditions",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "last-update": "Dernière mise à jour"
+        },
+        "actions": {
+          "overview": "Aperçu",
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        }
+      },
+      "dialog": {
+        "delete-confirm": {
+          "title": "Supprimer la condition",
+          "description": "Cette action est irréversible. Si vous supprimez cette condition, vous ne pourrez plus revenir en arrière. Êtes-vous sûr de vouloir continuer ?",
+          "action": "Supprimer"
+        }
+      }
+    },
+    "locations": {
+      "title": "Adresses",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "city": "Ville",
+          "country": "Pays"
+        },
+        "actions": {
+          "edit": "Modifier",
+          "delete": "Supprimer"
+        }
+      },
+      "dialog": {
+        "delete-confirm": {
+          "title": "Supprimer l'adresse",
+          "description": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer cette adresse ?",
+          "action": "Supprimer"
+        }
+      }
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "email": "Email",
+          "roles": "Rôles"
+        },
+        "actions": {
+          "edit": "Modifier",
+          "send-new-password": "Envoyer un nouveau mot de passe",
+          "delete": "Supprimer"
+        }
+      },
+      "dialog": {
+        "new": {
+          "title": "Nouvel utilisateur",
+          "description": "Ajouter un utilisateur afin de lui donner accès à la plateforme."
+        },
+        "edit": {
+          "title": "Édition",
+          "description": "Modifier les informations de votre utilisateur."
+        },
+        "fields": {
+          "first-name": "Prénom",
+          "last-name": "Nom",
+          "email": "Email",
+          "roles": "Rôles"
+        }
+      }
+    },
+    "companies": {
+      "title": "Espaces de travail",
+      "table": {
+        "headers": {
+          "name": "Nom",
+          "main-contact": "Contact principal",
+          "next-participants": "Prochains participants actifs (estimés)",
+          "created-at": "Créé le"
+        },
+        "actions": {
+          "edit": "Modifier",
+          "detach": "Détacher",
+          "disable": "Désactiver",
+          "enable": "Activer"
+        }
+      },
+      "dialog": {
+        "title": {
+          "new": "Nouvel espace de travail",
+          "edit": "Édition de l'espace de travail"
+        },
+        "fields": {
+          "name": "Nom de l'espace de travail",
+          "contact": {
+            "first-name": "Prénom du contact",
+            "last-name": "Nom du contact",
+            "email": "Adresse email du contact"
+          },
+          "send-new-password": "Envoyer un nouveau mot de passe"
+        }
+      }
+    },
+    "invitation": {
+      "title": "Page d'invitation",
+      "state": {
+        "enable": "Activer la page d'invitation",
+        "disable": "Désactiver la page d'invitation"
+      },
+      "labels": {
+        "title": "Titre",
+        "description": "Description",
+        "banner": "Bannière",
+        "date": {
+          "label": "Affichage de la date",
+          "description": "Choisissez quelle date doit être visible dans la page d'invitation.",
+          "options": {
+            "no": "Ne pas afficher",
+            "event": "Date de début de la formation",
+            "workshop": "Date du prochain événement"
+          }
+        },
+        "show-journeys": "Afficher les distributions",
+        "show-teams": "Afficher les équipes",
+        "programs": "Programmes",
+        "add-program": "Ajouter un programme"
+      },
+      "remove-program": "Retirer le programme",
+      "dialog": {
+        "title": "Paramètres avancés",
+        "description": "Configurez votre page d'invitation."
+      },
+      "new-program": {
+        "title": "Ajouter un programme",
+        "description": "Ajoute un programme dans la liste de programmes disponible dans la page d'invitation.",
+        "placeholder": "Sélectionner un programme"
+      }
+    },
+    "shop": {
+      "title": "Boutique en ligne",
+      "state": {
+        "enable": "Activer la boutique en ligne",
+        "disable": "Désactiver la boutique en ligne"
+      },
+      "labels": {
+        "catalogue": "Catalogue",
+        "add-program": "Ajouter un programme"
+      },
+      "dialogs": {
+        "advanced-settings": {
+          "title": "Paramètres avancées",
+          "description": "Configurer les données légales de votre entreprise et les informations de votre boutique en ligne.",
+          "store-access": "Votre boutique est accessible au :",
+          "actions": {
+            "link-account": "Lier votre compte Stripe",
+            "remove-password": "Supprimer le mot de passe"
+          },
+          "tooltips": {
+            "copy-url": "Copier le lien",
+            "open-store": "Ouvrir le catalogue",
+            "random-password": "Générer un mot de passe",
+            "copy-password": "Copier le mot de passe"
+          },
+          "fields": {
+            "legal-form": "Statut juridique",
+            "address": "Adresse postale"
+          },
+          "sections": {
+            "stripe": {
+              "title": "Votre compte vendeur",
+              "description": "Lier votre compte Stripe vous permettra de pércevoir un virement dès qu'un programme est acheté sur votre catalogue."
+            },
+            "access": {
+              "title": "Sécuriser l'accès",
+              "description": "Si aucun mot de passe n'est défini, votre catalogue sera accessible par tout le monde."
+            }
+          }
+        },
+        "new-program": {
+          "title": "Ajouter un programme",
+          "description": "Ajouter un programme à votre boutique en ligne pour configurer son prix.",
+          "placeholder": "Sélectionner un programme"
+        }
+      }
+    },
+    "sso": {
+      "title": "Authentification unique (SSO)",
+      "labels": {
+        "alias": "Alias",
+        "issuer": "URL de l'émetteur du fournisseur d'accès",
+        "slo-endpoint": "URL de déconnexion",
+        "certificate": "Certificat public du fournisseur d'identité",
+        "saml": {
+          "endpoint": "URL de connexion",
+          "signature-algorithm": "Algorithme de signature SAML"
+        },
+        "mapping": {
+          "label": "Mapping des attributs SAML",
+          "attribute-name": "Nom de l'attribut",
+          "user-field": {
+            "default": "Champ utilisateur",
+            "email": "Adresse e-mail",
+            "mobile": "Téléphone",
+            "firstname": "Prénom",
+            "lastname": "Nom",
+            "username": "Nom d'utilisateur",
+            "info_year_of_birth": "Année de naissance",
+            "job_title": "Poste occupé",
+            "linkedin": "LinkedIn",
+            "skype": "Skype",
+            "department": "Service",
+            "biography": "Biographie",
+            "long_biography": "Biographie longue"
+          }
+        }
+      },
+      "placeholders": {
+        "attribute-name": "Entrez le nom d'un attribut",
+        "user-field": "Choisissez un champ utilisateur"
+      },
+      "actions": {
+        "edit": "Modifier",
+        "delete": "Supprimer"
+      }
+    },
+    "smtp": {
+      "title": "Serveur Mail (SMTP)",
+      "fields": {
+        "host": {
+          "label": "Hôte",
+          "placeholder": "smtp.ovh.net"
+        },
+        "port": {
+          "label": "Port",
+          "placeholder": "465"
+        },
+        "username": {
+          "label": "Nom d'utilisateur",
+          "placeholder": "your_email{'@'}example.xyz"
+        },
+        "password": {
+          "label": "Mot de passe",
+          "placeholder": "············"
+        },
+        "encryption": "Méthode de chiffrement",
+        "from": {
+          "name": {
+            "label": "Nom d'usage",
+            "placeholder": "John DOE"
+          },
+          "address": {
+            "label": "Adresse email",
+            "placeholder": "your_email{'@'}example.xyz"
+          }
+        }
+      },
+      "sections": {
+        "server": "Serveur SMTP",
+        "sender": "Expéditeur",
+        "encryption": "Chiffrement"
+      },
+      "invalid-configuration": {
+        "title": "Erreur de configuration",
+        "description": "Le test de la connexion à votre serveur mail a échouée."
+      }
+    },
+    "lrs": {
+      "title": "Stockage (LRS)",
+      "fields": {
+        "url": {
+          "label": "URL",
+          "placeholder": ""
+        },
+        "mode": {
+          "label": "Mode d'authentification",
+          "placeholder": ""
+        },
+        "login": {
+          "label": "Identifiant",
+          "placeholder": ""
+        },
+        "password": {
+          "label": "Mot de passe",
+          "placeholder": ""
+        }
+      }
+    },
+    "developer": {
+      "title": "Développeur",
+      "labels": {
+        "id": "Identifiant",
+        "auth-token": "Jeton d'authentification",
+        "webhook": "Webhook"
+      },
+      "placeholders": {
+        "webhook": "https://webhook.com/event"
+      },
+      "warning": "Vous pouvez consulter notre {documentation}.",
+      "documentation": "documentation"
+    }
+  }
+}

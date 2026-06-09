@@ -1,64 +1,44 @@
-import type { Nullable } from "~/types/primitives/objects";
-import type { Company } from "~/types/entities/company";
-
-interface CompanyState {
-  company: Nullable<Company>;
-}
-
-function buildCompanyEntity(data: any): Company {
-  return {
-    id: data.id,
-    key: data.attributes.key,
-    alias: data.attributes.alias,
-    name: data.attributes.name,
-    drive: data.attributes.isDrive,
-    colors: {
-      first: data.attributes.colors.firstGradient,
-      second: data.attributes.colors.secondGradient,
-    },
-    icon: data.attributes.icon.thumbnail,
-    logo: data.attributes.logo.thumbnail,
-  };
-}
-
-function bindCompanyColors(company: Company) {
-  const style = document.createElement("style");
-  style.id = "company-theme";
-
-  let cssRules = "";
-
-  cssRules += `:root { --primary: #${company.colors.first}; }\n`;
-  cssRules += `.dark { --primary: #${company.colors.second}; }\n`;
-  cssRules += `:root { --sidebar-primary: #${company.colors.first}; }\n`;
-  cssRules += `.dark { --sidebar-primary: #${company.colors.second}; }\n`;
-
-  if (cssRules) {
-    const existingStyle = document.getElementById("company-theme");
-    if (existingStyle)
-      existingStyle.remove();
-
-    style.textContent = cssRules;
-    document.head.appendChild(style);
-  }
-}
-function bindCompanyLogo(company: Company) {
-  useHead({
-    link: [
-      {
-        rel: "icon",
-        href: company.icon,
-      },
-    ],
-  });
-}
+import type { Listed, Nullable } from "~/types/primitives/objects";
+import type {
+  CompanyInvitationPageSettings, CompanyLRSSettings, CompanySMTPSettings, CompanySSOSettings, CompanyStoreProgram,
+  CompanyStoreSettings,
+} from "~/types/entities/company";
+import { EntityType } from "~/types/entities";
+import { buildTermEntity } from "~/lib/terms";
+import { buildCountryEntity, buildLocationEntity } from "~/lib/location";
+import {
+  buildCompanyEntity,
+  bindCompanyColors,
+  bindCompanyLogo,
+  buildCompanyUserEntity,
+  buildCompanySettings,
+} from "~/lib/company";
+import { buildInvitationPageSettings } from "~/lib/invitiation";
+import { buildStoreSettings } from "~/lib/store";
+import { buildDeveloperSettings } from "~/lib/developer";
+import { toast } from "vue-sonner";
+import { buildSSOSettings } from "~/lib/entities/settings/sso";
+import { buildSMTPSettings } from "~/lib/entities/settings/smtp";
+import { buildLRSSettings } from "~/lib/entities/settings/lrs";
+import { type CompanyState, defaults } from "~/types/states/company";
 
 export const useCompanyStore = defineStore("company", {
-  state: (): CompanyState => ({
-    company: null,
-  }),
+  state: (): CompanyState => ({ ...defaults }),
   getters: {
     api: () => useApi(),
+    logger: () => useLogger("[COMPANY]"),
+    translate: () => useNuxtApp().$i18n.t,
+
     isLoaded: state => !!state.company,
+    isCountriesLoaded: state => !!state.countries.length,
+
+    invpSelectedPrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => state.invitationPageSettings?.programs.includes(p.id)) ?? [],
+    invpAvailablePrograms: state => state.invitationPageSettings?.availablePrograms.filter(p => !state.invitationPageSettings?.programs.includes(p.id)) ?? [],
+
+    storeActivePrograms: state => state.storeSettings?.programs.filter(p => p.catalogue.active) ?? [],
+    storeAvailablePrograms: state => state.storeSettings?.programs.filter(p => !p.catalogue.active) ?? [],
+
+    perPage: () => 25,
   },
   actions: {
     async fetchCompany(alias: string) {
@@ -80,6 +60,1336 @@ export const useCompanyStore = defineStore("company", {
       }
       catch (e) {
         useLogger().error(e);
+      }
+    },
+    async saveCompanyInfo(settings: {
+      name: string;
+      alias: string;
+      logo: string;
+      icon: string;
+      colors: {
+        primary: string;
+        secondary: string;
+      };
+    }) {
+      if (!this.company) return;
+      this.loading.saving.company = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                name: settings.name,
+                invitationPage: {
+                  alias: settings.alias,
+                },
+                logo: {
+                  filename: settings.logo.split("/").slice(-1)[0],
+                },
+                icon: {
+                  filename: settings.icon.split("/").slice(-1)[0],
+                },
+                colors: {
+                  firstGradient: settings.colors.primary.replaceAll("#", ""),
+                  secondGradient: settings.colors.secondary.replaceAll("#", ""),
+                },
+              },
+            },
+          },
+        });
+
+        this.company = buildCompanyEntity(response.data);
+        bindCompanyColors(this.company);
+        bindCompanyLogo(this.company);
+        toast.success(this.translate("toasts.settings.branding.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.company = false;
+      }
+    },
+
+    async loadCompanySettings() {
+      if (!this.company) return;
+      this.loading.settings.default = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "default,managerSettings",
+          },
+        });
+        this.companySettings = buildCompanySettings(response.data);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.settings.default = false;
+      }
+    },
+    async uploadIcon(blob: Blob): Promise<Nullable<string>> {
+      this.loading.icon = true;
+
+      let icon: Nullable<string> = null;
+
+      try {
+        const response = await useFileUpload().upload(blob, 4);
+        icon = response.data.attributes.file.thumbnail;
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.icon = false;
+      }
+
+      return icon;
+    },
+    async uploadLogo(blob: Blob): Promise<Nullable<string>> {
+      this.loading.logo = true;
+
+      let logo: Nullable<string> = null;
+
+      try {
+        const response = await useFileUpload().upload(blob, 4);
+        logo = response.data.attributes.file.thumbnail;
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.logo = false;
+      }
+
+      return logo;
+    },
+    async saveCompanySettings(settings: {
+      tld?: Listed<string>;
+      mentorInvite: boolean;
+      forceMentorInvite: boolean;
+      shareResults: boolean;
+      shareResultsScope: number;
+      autoAssignAdminToTickets: boolean;
+      videoconferenceButton: boolean;
+    }) {
+      if (!this.company || !this.companySettings) return;
+      this.loading.saving.default = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "default,managerSettings",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                tlds: settings.tld,
+                allowVideoConferenceRoom: settings.videoconferenceButton,
+                canInviteManager: settings.mentorInvite,
+                handleTickets: settings.autoAssignAdminToTickets,
+                managerSettings: {
+                  forceManager: settings.forceMentorInvite,
+                  shareResults: {
+                    active: settings.shareResults,
+                    mode: {
+                      value: settings.shareResultsScope,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+        console.log(response.data);
+        this.companySettings = buildCompanySettings(response.data);
+        toast.success(this.translate("toasts.settings.general.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.default = false;
+      }
+    },
+
+    async loadTerms() {
+      if (!this.company) return;
+
+      this.loading.settings.terms = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[terms]": "display,dates,permissions",
+            "fields[companies]": "default",
+            "include": "terms",
+          },
+        });
+
+        const terms = response.included.filter((e: any) => e.type === EntityType.TERM);
+        this.terms = terms.map(buildTermEntity);
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.terms = false;
+      }
+    },
+    async createTerm(body: { name: string; description: string }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.creating.terms = true;
+      let state = true;
+
+      try {
+        const response = await this.api.post("/terms", { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              type: EntityType.TERM,
+              attributes: {
+                title: body.name,
+                displayTitle: body.name,
+                description: body.description,
+                displayDescription: body.description,
+              },
+              relationships: {
+                scope: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        this.terms = [...this.terms, buildTermEntity(response.data)];
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.creating.terms = false;
+      }
+
+      return state;
+    },
+    async saveTerm(id: number, body: { name: string; description: string }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.saving.terms = true;
+      let state = true;
+
+      try {
+        const response = await this.api.put(`/terms/${id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id,
+              type: EntityType.TERM,
+              attributes: {
+                title: body.name,
+                displayTitle: body.name,
+                description: body.description,
+                displayDescription: body.description,
+              },
+              relationships: {
+                scope: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        this.terms = this.terms.map(term => term.id === id ? buildTermEntity(response.data) : term);
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.saving.terms = false;
+      }
+
+      return state;
+    },
+    async deleteTerm(id: number) {
+      try {
+        await this.api.delete(`/terms/${id}`, { version: 2, endpointVersion: 1 });
+        this.terms = this.terms.filter(term => term.id !== id);
+      }
+      catch (e) {
+        console.error(e);
+      }
+    },
+
+    async loadLocations() {
+      if (!this.company) return;
+
+      this.loading.settings.locations = true;
+
+      try {
+        const response = await this.api.get("/locations", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "country",
+            "fields[locations]": "default,stats.journeys",
+            "companies": this.company.id,
+            "limit": -1,
+          },
+        });
+
+        const { data, included } = response;
+        this.locations = data.map((loc: any) => buildLocationEntity(loc, included));
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.locations = false;
+      }
+    },
+    async loadCountries() {
+      if (this.countries.length > 0) return;
+      this.loading.settings.countries = true;
+
+      try {
+        const response = await this.api.get("/countries", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            limit: -1,
+            offset: 0,
+          },
+        });
+
+        this.countries = response.data.map((country: any) => buildCountryEntity(country));
+      }
+      catch (e) {
+        console.error(e);
+      }
+      finally {
+        this.loading.settings.countries = false;
+      }
+    },
+    async createLocation(body: {
+      name: string;
+      country: number;
+      city: string;
+      zipcode: string;
+      addressMain: string;
+      addressComp?: string;
+      infos?: string;
+    }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.creating.location = true;
+      let state = true;
+      const { country, ...payload } = body;
+
+      try {
+        const response = await this.api.post("/locations", { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "country",
+            "fields[locations]": "default,stats.journeys",
+          },
+          body: {
+            data: {
+              type: EntityType.LOCATION,
+              attributes: {
+                ...payload,
+                isOwner: true,
+              },
+              relationships: {
+                company: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+                country: {
+                  data: {
+                    type: EntityType.COUNTRY,
+                    id: country,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const { data, included } = response;
+        this.locations = [...this.locations, buildLocationEntity(data, included)];
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.creating.location = false;
+      }
+
+      return state;
+    },
+    async saveLocation(id: number, body: {
+      name: string;
+      country: number;
+      city: string;
+      zipcode: string;
+      addressMain: string;
+      addressComp?: string;
+      infos?: string;
+    }): Promise<boolean> {
+      if (!this.company) return false;
+
+      this.loading.saving.location = true;
+      let state = true;
+
+      const { country, ...payload } = body;
+
+      try {
+        const response = await this.api.put(`/locations/${id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "country",
+            "fields[locations]": "default,stats.journeys",
+          },
+          body: {
+            data: {
+              id,
+              type: EntityType.LOCATION,
+              attributes: {
+                ...payload,
+              },
+              relationships: {
+                company: {
+                  data: {
+                    type: EntityType.COMPANY,
+                    id: this.company.id,
+                  },
+                },
+                country: {
+                  data: {
+                    type: EntityType.COUNTRY,
+                    id: country,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        const { data, included } = response;
+        this.locations = this.locations.map(location => location.id === id ? buildLocationEntity(data, included) : location);
+      }
+      catch (e) {
+        console.error(e);
+        state = false;
+      }
+      finally {
+        this.loading.saving.location = false;
+      }
+
+      return state;
+    },
+    async deleteLocation(id: number) {
+      try {
+        await this.api.delete(`/locations/${id}`, { version: 2, endpointVersion: 1 });
+        this.locations = this.locations.filter(location => location.id !== id);
+      }
+      catch (e) {
+        console.error(e);
+      }
+    },
+
+    async loadUsers(page: number = 1) {
+      if (!this.company) return;
+      if (page < 1) page = 1;
+
+      this.loading.settings.users = true;
+
+      try {
+        const response = await this.api.get("/users", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "interfaceLanguage",
+            "sort": "firstname",
+            "fields[users]": "name,dates,active,recipient,email,picture",
+            "companies": this.company.id,
+            "limit": this.perPage,
+            "offset": (page - 1) * this.perPage,
+          },
+        });
+
+        const { data, included, meta } = response;
+        this.users = data.map((user: any) => buildCompanyUserEntity(user, included));
+        this.totalUsers = meta.total;
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.users = false;
+      }
+    },
+    async createUser(payload: { firstname: string; lastname: string; email: string; roles: Listed<number> }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.creating.user = true;
+
+      let state = true;
+
+      try {
+        const response = await this.api.post("/users", { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "interfaceLanguage",
+            "fields[users]": "name,dates,active,recipient,email,picture",
+          },
+          body: {
+            data: {
+              type: EntityType.USER,
+              attributes: {
+                firstname: payload.firstname,
+                lastname: payload.lastname,
+                email: payload.email,
+                recipient: {
+                  rolesInWorkspace: [
+                    {
+                      id: this.company.id,
+                      name: this.company.name,
+                      escalationLevel: 0,
+                      hasRole: payload.roles.length > 0,
+                      roles: payload.roles,
+                    },
+                  ],
+                },
+              },
+            },
+            sendNewPasswordEmail: false,
+          },
+        });
+
+        const { data, included } = response;
+        const user = buildCompanyUserEntity(data, included);
+        this.users = [...this.users, user];
+        this.totalUsers++;
+
+        toast.success(this.translate("toasts.settings.users.create.success", { name: user.name.full }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.settings.users.create.error", { name: `${payload.firstname} ${payload.lastname}` }));
+      }
+      finally {
+        this.loading.creating.user = false;
+      }
+
+      return state;
+    },
+    async saveUser(id: number, payload: { firstname: string; lastname: string; email: string; roles: Listed<number> }): Promise<boolean> {
+      if (!this.company) return false;
+      this.loading.saving.user = true;
+
+      let state = true;
+
+      try {
+        const response = await this.api.put(`/users/${id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "interfaceLanguage",
+            "fields[users]": "name,dates,active,recipient,email,picture",
+          },
+          body: {
+            data: {
+              id,
+              type: EntityType.USER,
+              attributes: {
+                firstname: payload.firstname,
+                lastname: payload.lastname,
+                email: payload.email,
+                recipient: {
+                  rolesInWorkspace: [
+                    {
+                      id: this.company.id,
+                      name: this.company.name,
+                      escalationLevel: 0,
+                      hasRole: payload.roles.length > 0,
+                      roles: payload.roles,
+                    },
+                  ],
+                },
+              },
+            },
+            sendNewPasswordEmail: false,
+          },
+        });
+
+        const { data, included } = response;
+        const user = buildCompanyUserEntity(data, included);
+        this.users = this.users.map(u => u.id === id ? user : u);
+
+        toast.success(this.translate("toasts.settings.users.save.success", { name: user.name.full }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.settings.users.save.error", { name: `${payload.firstname} ${payload.lastname}` }));
+      }
+      finally {
+        this.loading.saving.user = false;
+      }
+
+      return state;
+    },
+    async sendNewPasswordEmail(id: number, email: string) {
+      toast.promise(this.api.put(`/users/${id}`, { version: 2, endpointVersion: 1 }, {
+        body: {
+          data: {
+            id,
+            type: EntityType.USER,
+          },
+          sendNewPasswordEmail: true,
+        },
+      }), {
+        loading: () => this.translate("toasts.settings.users.send-new-password.loading", { email }),
+        success: () => this.translate("toasts.settings.users.send-new-password.success", { email }),
+        error: () => this.translate("toasts.settings.users.send-new-password.error", { email }),
+      });
+    },
+
+    async loadCompanies(page: number = 1, archived: boolean = false) {
+      if (!this.company) return;
+      if (page < 1) page = 1;
+
+      this.loading.settings.companies = true;
+
+      try {
+        const response = await this.api.get("/companies", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "include": "clientPrimary",
+            "sort": "name",
+            "fields[companies]": "default,name,stats.participants,key,active,logo",
+            "fields[users]": "name,email,picture",
+            "offset": (page - 1) * this.perPage,
+            "limit": this.perPage,
+            "active": archived ? 0 : 1,
+          },
+        });
+
+        const { data, included, meta } = response;
+
+        this.totalCompanies = meta.total;
+        this.companies = data.map((c: any) => buildCompanyEntity(c, included));
+      }
+      catch (e) {
+        this.logger.error(e);
+      }
+      finally {
+        this.loading.settings.companies = false;
+      }
+    },
+    async createCompany(payload: { name: string; contactFirstName: string; contactLastName: string; contactEmail: string; sendNewPassword: boolean }): Promise<boolean> {
+      this.loading.creating.company = true;
+      let state = true;
+
+      try {
+        const response = await this.api.post("/companies", { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "clientPrimary",
+            "fields[companies]": "default,name,stats.participants,key,active,logo",
+            "fields[users]": "name,email,picture",
+          },
+          body: {
+            data: {
+              type: EntityType.COMPANY,
+              attributes: {
+                name: payload.name,
+              },
+              relationships: {
+                clientPrimary: {
+                  data: {
+                    type: EntityType.USER,
+                    attributes: {
+                      firstname: payload.contactFirstName,
+                      lastname: payload.contactLastName,
+                      email: payload.contactEmail,
+                    },
+                  },
+                },
+              },
+            },
+            key: useRuntimeConfig().public.api.key,
+            sendNewPassword: payload.sendNewPassword,
+          },
+        });
+
+        const { data, included } = response;
+        const company = buildCompanyEntity(data, included);
+        this.companies = [...this.companies, company];
+        this.totalCompanies++;
+
+        toast.success(this.translate("toasts.settings.companies.create.success", { name: company.name }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.settings.companies.create.error"));
+      }
+      finally {
+        this.loading.creating.company = false;
+      }
+
+      return state;
+    },
+    async saveCompany(id: number, payload: { name: string; contactFirstName: string; contactLastName: string; contactEmail: string; sendNewPassword: boolean }) {
+      this.loading.saving.company = true;
+      let state = true;
+
+      try {
+        const response = await this.api.put(`/companies/${id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "clientPrimary",
+            "fields[companies]": "default,name,stats.participants,key,active,logo",
+            "fields[users]": "name,email,picture",
+          },
+          body: {
+            data: {
+              id,
+              type: EntityType.COMPANY,
+              attributes: {
+                name: payload.name,
+              },
+            },
+          },
+        });
+
+        const { data, included } = response;
+        const company = buildCompanyEntity(data, included);
+        this.companies = this.companies.map(c => c.id === id ? company : c);
+
+        toast.success(this.translate("toasts.settings.companies.save.success", { name: company.name }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.settings.companies.save.error"));
+      }
+      finally {
+        this.loading.saving.company = false;
+      }
+
+      return state;
+    },
+    async detachCompany(id: number) {
+      toast.promise(this.api.put(`/companies/${id}`, { version: 2, endpointVersion: 1 }, {
+        query: {
+          "include": "clientPrimary",
+          "fields[companies]": "default,name,stats.participants,key,active,logo",
+          "fields[users]": "name,email,picture",
+        },
+        body: {
+          data: {
+            id,
+            type: EntityType.COMPANY,
+            relationships: {
+              parentCompany: {
+                data: null,
+              },
+            },
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.settings.companies.detach.loading", { name: this.companies.find(c => c.id === id)?.name ?? "" }),
+        success: (response: any) => {
+          const company = buildCompanyEntity(response.data, response.included);
+          this.companies = this.companies.filter(c => c.id !== id);
+          this.totalCompanies--;
+
+          return this.translate("toasts.settings.companies.detach.success", { name: company.name });
+        },
+        error: () => this.translate("toasts.settings.companies.detach.error"),
+      });
+    },
+    async enableCompany(id: number) {
+      toast.promise(this.api.put(`/companies/${id}`, { version: 2, endpointVersion: 1 }, {
+        query: {
+          "include": "clientPrimary",
+          "fields[companies]": "default,name,stats.participants,key,active,logo",
+          "fields[users]": "name,email,picture",
+        },
+        body: {
+          data: {
+            id,
+            type: EntityType.COMPANY,
+            attributes: {
+              active: true,
+            },
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.settings.companies.enable.loading", { name: this.companies.find(c => c.id === id)?.name ?? "" }),
+        success: (response: any) => {
+          const company = buildCompanyEntity(response.data, response.included);
+          if (this.companies.every(c => c.active)) {
+            this.companies = [...this.companies, company];
+            this.totalCompanies++;
+          }
+          else {
+            this.companies = this.companies.filter(c => c.id !== id);
+            this.totalCompanies--;
+          }
+
+          return this.translate("toasts.settings.companies.enable.success", { name: company.name });
+        },
+        error: () => this.translate("toasts.settings.companies.enable.error"),
+      });
+    },
+    async disableCompany(id: number) {
+      toast.promise(this.api.put(`/companies/${id}`, { version: 2, endpointVersion: 1 }, {
+        query: {
+          "include": "clientPrimary",
+          "fields[companies]": "default,name,stats.participants,key,active,logo",
+          "fields[users]": "name,email,picture",
+        },
+        body: {
+          data: {
+            id,
+            type: EntityType.COMPANY,
+            attributes: {
+              active: false,
+            },
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.settings.companies.disable.loading", { name: this.companies.find(c => c.id === id)?.name ?? "" }),
+        success: (response: any) => {
+          const company = buildCompanyEntity(response.data, response.included);
+          this.companies = this.companies.map(c => c.id === id ? company : c);
+          if (this.companies.every(c => !c.active)) {
+            this.companies = [...this.companies, company];
+            this.totalCompanies++;
+          }
+          else {
+            this.companies = this.companies.filter(c => c.id !== id);
+            this.totalCompanies--;
+          }
+
+          return this.translate("toasts.settings.companies.disable.success", { name: company.name });
+        },
+        error: () => this.translate("toasts.settings.companies.disable.error"),
+      });
+    },
+
+    async loadInvitationPageSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.invitation = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "invitationPage",
+            "include": "programs",
+          },
+        });
+
+        const { data, included } = response;
+
+        this.invitationPageSettings = buildInvitationPageSettings(data, included);
+      }
+      catch (e) {
+        useLogger().error(e);
+      }
+      finally {
+        this.loading.settings.invitation = false;
+      }
+    },
+    async saveInvitationPageSettings(settings: CompanyInvitationPageSettings) {
+      if (!this.company || !this.invitationPageSettings) return;
+      this.loading.saving.invitation = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "invitationPage",
+            "include": "programs",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                invitationPage: {
+                  active: settings.active,
+                  alias: this.company.alias,
+                  title: settings.title,
+                  description: settings.description,
+                  programs: settings.programs,
+                  displayJourneys: settings.display.journeys,
+                  displayTeams: settings.display.teams,
+                  journeyDateMode: {
+                    value: settings.dateMode,
+                  },
+                },
+              },
+            },
+          },
+        });
+        this.invitationPageSettings = buildInvitationPageSettings(response.data, response.included);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.invitation = false;
+      }
+    },
+    async uploadBanner(blob: Blob) {
+      if (!this.company || !this.invitationPageSettings) return;
+      this.loading.saving.invitation = true;
+
+      try {
+        const fileResponse = await useFileUpload().upload(blob, 4);
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "invitationPage",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                invitationPage: {
+                  banner: fileResponse.data.attributes.file.filename,
+                },
+              },
+            },
+          },
+        });
+        this.invitationPageSettings = {
+          ...this.invitationPageSettings,
+          banner: fileResponse.data.attributes.file.thumbnail,
+        };
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.invitation = false;
+      }
+    },
+    async clearBanner() {
+      if (!this.company || !this.invitationPageSettings) return;
+      this.loading.saving.invitation = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "invitationPage",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                invitationPage: {
+                  banner: null,
+                },
+              },
+            },
+          },
+        });
+        this.invitationPageSettings = {
+          ...this.invitationPageSettings,
+          banner: null,
+        };
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.invitation = false;
+      }
+    },
+
+    async loadShopSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.shop = true;
+
+      try {
+        const [settings, programs] = await Promise.all([
+          this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+            query: {
+              "fields[companies]": "lmsCatalogue",
+            },
+          }),
+          this.api.get("/programs", { version: 2, endpointVersion: 1, vanilla: true }, {
+            query: {
+              "offset": 0,
+              "limit": -1,
+              "creator": 1,
+              "default": 0,
+              "active": 1,
+              "companies": this.company.id,
+              "fields[programs]": "name,description,design,lmsCatalogue",
+            },
+          }),
+        ]);
+
+        this.storeSettings = buildStoreSettings(settings.data, programs.data);
+        this.logger.log(this.storeSettings);
+      }
+      catch {
+        this.logger.error("Nope");
+      }
+      finally {
+        this.loading.settings.shop = false;
+      }
+    },
+    async saveShopSettings(settings: CompanyStoreSettings) {
+      if (!this.company) return;
+
+      this.loading.saving.storeSettings = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                lmsCatalogue: {
+                  legalForm: settings.legal.type,
+                  postalAddress: settings.legal.address,
+                  lmsCatalogueActivated: settings.active,
+                  lmsCataloguePassword: settings.access.password,
+                },
+              },
+            },
+          },
+        });
+        this.storeSettings = { ...settings };
+        toast.success(this.translate("toasts.settings.shop.saved"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.saving.storeSettings = false;
+      }
+    },
+    async saveProgramPrice(program: CompanyStoreProgram) {
+      if (!this.company || this.loading.saving.price.includes(program.id)) return;
+
+      this.loading.saving.price.push(program.id);
+      const { public: config } = useRuntimeConfig();
+
+      try {
+        await Promise.all([
+          this.api.post("/stripe/price", { version: 2, endpointVersion: 1 }, {
+            body: {
+              company_id: this.company.id,
+              key: config.api.key,
+              program_id: program.id,
+              program_price: program.catalogue.price,
+              return_url: config.urls.stripePriceCallback.replaceAll("{alias}", this.company.alias),
+            },
+          }),
+          this.api.put(`/programs/${program.id}`, { version: 2, endpointVersion: 1 }, {
+            body: {
+              data: {
+                type: EntityType.PROGRAM,
+                attributes: {
+                  lmsCatalogue: {
+                    isActivatedForLmsCatalogue: program.catalogue.active,
+                    lmsCatalogueDescription: program.catalogue.description || null,
+                    price: program.catalogue.price || 0,
+                  },
+                },
+              },
+            },
+          }),
+        ]);
+        toast.success(this.translate("toasts.settings.shop.saved-price"));
+      }
+      catch {
+        this.logger.error("Nope");
+      }
+      finally {
+        this.loading.saving.price.splice(this.loading.saving.price.indexOf(program.id), 1);
+      }
+    },
+
+    async loadSSOSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.sso = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "sso",
+          },
+        });
+
+        this.ssoSettings = buildSSOSettings(response.data);
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.settings.sso = false;
+      }
+    },
+    async saveSSOSettings(settings: CompanySSOSettings) {
+      if (!this.company || !this.ssoSettings) return;
+
+      this.loading.saving.sso = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                sso: {
+                  active: settings.active,
+                  alias: settings.alias,
+                  certificate: settings.certificate,
+                  issuerUrl: settings.issuer,
+                  sloEndpoint: settings.slo.endpoint,
+                  samlEndpoint: settings.saml.endpoint,
+                  samlSignatureAlgorithm: settings.saml.signatureAlgorithm,
+                  mapping: settings.mapping,
+                },
+              },
+            },
+          },
+          query: {
+            "fields[companies]": "sso",
+          },
+        });
+        this.ssoSettings = { ...settings };
+
+        toast.success(this.translate("toasts.settings.sso.saved"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.saving.sso = false;
+      }
+    },
+
+    async loadSMTPSettings() {
+      if (!this.company) return;
+      this.loading.settings.smtp = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "smtp",
+          },
+        });
+
+        this.smtpSettings = buildSMTPSettings(response.data);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.settings.smtp = false;
+      }
+    },
+    async saveSMTPSettings(settings: CompanySMTPSettings) {
+      if (!this.company || !this.smtpSettings) return;
+      this.loading.saving.smtp = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "smtp",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                smtp: {
+                  active: settings.active,
+                  settings: {
+                    host: settings.host,
+                    port: settings.port,
+                    username: settings.auth.username,
+                    password: settings.auth.password,
+                    encryption: settings.encryption,
+                    from: settings.from,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        this.smtpSettings = buildSMTPSettings(response.data);
+        toast.success(this.translate("toasts.settings.smtp.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.smtp = false;
+      }
+    },
+
+    async loadLRSSettings() {
+      if (!this.company) return;
+      this.loading.settings.lrs = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "fields[companies]": "lrs",
+          },
+        });
+        this.lrsSettings = buildLRSSettings(response.data);
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.settings.lrs = false;
+      }
+    },
+    async saveLRSSettings(settings: CompanyLRSSettings) {
+      if (!this.company || !this.lrsSettings) return;
+      this.loading.saving.lrs = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "lrs",
+          },
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                lrs: {
+                  active: settings.active,
+                  url: settings.url,
+                  authentication: {
+                    mode: {
+                      value: settings.mode,
+                    },
+                    settings: {
+                      basicAuthLogin: settings.auth?.login || "",
+                      basicAuthPassword: settings.auth?.password || "",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+        this.lrsSettings = buildLRSSettings(response.data);
+        toast.success(this.translate("toasts.settings.lrs.saved"));
+      }
+      catch {
+        toast.error(this.translate("toasts.error.default"));
+      }
+      finally {
+        this.loading.saving.lrs = false;
+      }
+    },
+
+    async loadDeveloperSettings() {
+      if (!this.company) return;
+
+      this.loading.settings.developer = true;
+
+      try {
+        const response = await this.api.get(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "fields[companies]": "api",
+          },
+        });
+        this.developerSettings = buildDeveloperSettings(response.data);
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.settings.developer = false;
+      }
+    },
+    async saveDeveloperSettings(webhook: string) {
+      if (!this.company || !this.developerSettings) return;
+
+      this.loading.saving.developer = true;
+
+      try {
+        await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                api: {
+                  webhookUrl: webhook || null,
+                },
+              },
+            },
+          },
+          query: {
+            "fields[companies]": "api",
+          },
+        });
+        toast.success(this.translate("toasts.settings.developer.save"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.saving.developer = false;
+      }
+    },
+    async refreshToken() {
+      if (!this.company || !this.developerSettings) return;
+
+      this.loading.settings.refreshApiToken = true;
+
+      try {
+        const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              id: Number(this.company.id),
+              type: EntityType.COMPANY,
+              attributes: {
+                api: {
+                  refreshAuthToken: true,
+                },
+              },
+            },
+          },
+          query: {
+            "fields[companies]": "api",
+          },
+        });
+        this.developerSettings = {
+          ...this.developerSettings,
+          token: response.data.attributes.api.authToken,
+        };
+        toast.success(this.translate("toasts.settings.developer.token-refreshed"));
+      }
+      catch {
+        this.logger.error("nope");
+      }
+      finally {
+        this.loading.settings.refreshApiToken = false;
       }
     },
   },

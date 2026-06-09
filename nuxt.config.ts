@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@pinia/nuxt",
     "shadcn-nuxt",
+    "@nuxt/image",
   ],
   ssr: false,
   devtools: { enabled: true },
@@ -29,8 +30,18 @@ export default defineNuxtConfig({
         2: "",
         key: "",
       },
+      sinsim: {
+        api: "",
+        key: "",
+        token: "",
+      },
       urls: {
         auth: "",
+        product: "",
+        gps: "",
+        stripePriceCallback: "",
+        sso: "",
+        builder: "",
       },
       platform: "",
       brand: {
@@ -39,6 +50,9 @@ export default defineNuxtConfig({
     },
   },
   srcDir: "app/",
+  imports: {
+    dirs: ["composables/**"],
+  },
   compatibilityDate: "2025-07-15",
   postcss: {
     plugins: {
@@ -71,6 +85,10 @@ export default defineNuxtConfig({
     ],
     defaultLocale: "fr",
     strategy: "no_prefix",
+    vueI18n: "./i18n.config.ts",
+    compilation: {
+      strictMessage: false,
+    },
   },
   shadcn: {
     prefix: "Ui",

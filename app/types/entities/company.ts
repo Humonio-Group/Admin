@@ -1,13 +1,185 @@
+import type { UserRole } from "~/types/entities/user";
+import type { Listed, Nullable } from "~/types/primitives/objects";
+
 export interface Company {
   id: number;
   key: string;
   alias: string;
   name: string;
   drive: boolean;
+  active: boolean;
   colors: {
     first: string;
     second: string;
   };
+  dates?: {
+    createdAt: Date;
+  };
   icon: string;
   logo: string;
+
+  mainContact?: {
+    avatar: string;
+    name: {
+      first: string;
+      last: string;
+      full: string;
+    };
+    email: string;
+  };
+}
+export type Companies = Listed<Company>;
+
+export interface CompanySettings {
+  tlds: Listed<string>;
+  permissions: {
+    inviteManager: boolean;
+    forceInvite: boolean;
+    shareResults: boolean;
+    resultsLevels: number;
+    autoAssignTickets: boolean;
+    videoConference: boolean;
+  };
+}
+
+export interface CompanyUser {
+  id: number;
+  avatar: string;
+  name: {
+    first: string;
+    last: string;
+    full: string;
+  };
+  email: string;
+  language: Nullable<number>;
+  workspaces: {
+    id: number;
+    name: string;
+    roles: UserRole[];
+  }[];
+}
+export type CompanyUsers = Listed<CompanyUser>;
+
+export interface CompanyInvitationPageProgram {
+  id: number;
+  key: string;
+  name: string;
+  picture: Nullable<string>;
+}
+export interface CompanyInvitationPageSettings {
+  active: boolean;
+  title: string;
+  description: string;
+  banner: Nullable<string>;
+  programs: Listed<number>;
+  availablePrograms: Listed<CompanyInvitationPageProgram>;
+  dateMode: number;
+  display: {
+    journeys: boolean;
+    teams: boolean;
+  };
+}
+
+export interface CompanyStoreProgram {
+  id: number;
+  name: string;
+  description: string;
+  picture: Nullable<string>;
+  catalogue: {
+    active: boolean; // transfer to a number for api calls
+    description: Nullable<string>;
+    price: Nullable<number>;
+  };
+}
+export interface CompanyStoreSettings {
+  active: boolean; // transfer to a number for the API requests
+  access: {
+    password: Nullable<string>;
+    url: string;
+  };
+  legal: {
+    type: string;
+    address: string;
+  };
+  stripe: Nullable<string>;
+  programs: Listed<CompanyStoreProgram>;
+}
+
+export const SSOAlgorithms = [
+  "SHA-1",
+  "SHA-256",
+  "SHA-384",
+  "SHA-512",
+] as const;
+export type SSOAlgorithm = (typeof SSOAlgorithms[number]);
+export const SSOUserFields = [
+  "firstname",
+  "lastname",
+  "email",
+  "mobile",
+  "info_year_of_birth",
+  "job_title",
+  "linkedin",
+  "skype",
+  "department",
+  "biography",
+  "long_biography",
+  "username",
+] as const;
+export type SSOUserField = (typeof SSOUserFields[number]);
+export interface CompanySSOSettings {
+  active: boolean;
+  alias: string;
+  issuer: string;
+  certificate: string;
+  slo: {
+    endpoint: string;
+  };
+  saml: {
+    endpoint: string;
+    signatureAlgorithm: SSOAlgorithm;
+  };
+  mapping: Listed<{
+    key: string;
+    userField: SSOUserField;
+    attributeName: string;
+  }>;
+}
+
+export const SMTPProtocols = [
+  "TLS",
+  "SSL",
+  "STARTTLS",
+] as const;
+export type SMTPProtocol = (typeof SMTPProtocols[number]);
+export interface CompanySMTPSettings {
+  active: boolean;
+  valid: boolean;
+  encryption: SMTPProtocol;
+  from: {
+    name: string;
+    address: string;
+  };
+  host: string;
+  port: number;
+  auth: {
+    username: string;
+    password: string;
+  };
+}
+
+export interface CompanyLRSSettings {
+  active: boolean;
+  mode: number;
+  url: string;
+  auth: Nullable<{
+    login: string;
+    password: string;
+  }>;
+}
+
+export interface CompanyDeveloperSettings {
+  id: number;
+  token: string;
+  webhook: Nullable<string>;
 }

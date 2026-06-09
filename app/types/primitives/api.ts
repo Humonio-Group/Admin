@@ -14,13 +14,13 @@ export interface FetchBody {
 export interface ApiResponseData<T = any> {
   attributes: T;
   type: string;
-  id: number;
+  id: number | string;
   relationships: any[];
 }
 
 export interface ApiResponse<T = any> {
   data: ApiResponseData<T> | ApiResponseData<T>[];
-  included: any[];
+  included?: any[];
   links?: any[];
   meta: any;
 }
