@@ -76,7 +76,8 @@ const edit = ref<boolean>(false);
                   <Map />
                   {{ $t("deployment.programs.card.actions.download.formation-plan") }}
                 </UiDropdownMenuItem>
-                <UiDropdownMenuItem>
+                <UiDropdownMenuItem v-if="false">
+                  <!-- todo: setup download program progress report - @loicmaes -->
                   <ChartArea />
                   {{ $t("deployment.programs.card.actions.download.progress-report") }}
                 </UiDropdownMenuItem>
@@ -88,11 +89,17 @@ const edit = ref<boolean>(false);
         <UiDropdownMenuSeparator />
 
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem v-if="program.active">
+          <UiDropdownMenuItem
+            v-if="program.active"
+            @click="store.disableProgram(program)"
+          >
             <X />
             {{ $t("deployment.programs.card.actions.deactivate") }}
           </UiDropdownMenuItem>
-          <UiDropdownMenuItem v-else>
+          <UiDropdownMenuItem
+            v-else
+            @click="store.enableProgram(program)"
+          >
             <Power />
             {{ $t("deployment.programs.card.actions.activate") }}
           </UiDropdownMenuItem>

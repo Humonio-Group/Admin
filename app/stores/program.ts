@@ -18,6 +18,7 @@ export const useProgramStore = defineStore("programs", {
   getters: {
     api: () => useApi(),
     translate: () => useNuxtApp().$i18n.t,
+    locale: () => useNuxtApp().$i18n.locale,
 
     company: () => storeToRefs(useCompanyStore()).company.value,
     perPage: () => PER_PAGE,
@@ -429,6 +430,72 @@ export const useProgramStore = defineStore("programs", {
       }
 
       return state;
+    },
+    async enableProgram(program: Program | ProgramListEntity) {
+      toast.promise(this.api.put(`/programs/${program.id}`, { version: 2, endpointVersion: 1 }, {
+        query: {
+          "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation,translations",
+          "include": "defaultLanguage,languages,defaultFacilitator",
+        },
+        body: {
+          data: {
+            id: program.id,
+            type: EntityType.PROGRAM,
+            attributes: {
+              active: true,
+            },
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.programs.enable.loading", { name: program.name[this.locale.value] || program.name[program.defaultLanguage.code] }),
+        success: (response: ApiResponse) => {
+          if (!this.company) return;
+
+          const { data, included } = response;
+          const newProgram = buildProgramEntity(data, included);
+          this.programs = this.programs.map(p => p.id === newProgram.id ? newProgram : p);
+          if (this.selectedProgram?.id === newProgram.id) this.selectedProgram = {
+            ...this.selectedProgram,
+            ...newProgram,
+          };
+
+          return this.translate("toasts.programs.enable.success", { name: program.name[this.locale.value] || program.name[program.defaultLanguage.code] });
+        },
+        error: () => this.translate("toasts.programs.enable.error"),
+      });
+    },
+    async disableProgram(program: Program | ProgramListEntity) {
+      toast.promise(this.api.put(`/programs/${program.id}`, { version: 2, endpointVersion: 1 }, {
+        query: {
+          "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation,translations",
+          "include": "defaultLanguage,languages,defaultFacilitator",
+        },
+        body: {
+          data: {
+            id: program.id,
+            type: EntityType.PROGRAM,
+            attributes: {
+              active: false,
+            },
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.programs.disable.loading", { name: program.name[this.locale.value] || program.name[program.defaultLanguage.code] }),
+        success: (response: ApiResponse) => {
+          if (!this.company) return;
+
+          const { data, included } = response;
+          const newProgram = buildProgramEntity(data, included);
+          this.programs = this.programs.map(p => p.id === newProgram.id ? newProgram : p);
+          if (this.selectedProgram?.id === newProgram.id) this.selectedProgram = {
+            ...this.selectedProgram,
+            ...newProgram,
+          };
+
+          return this.translate("toasts.programs.disable.success", { name: program.name[this.locale.value] || program.name[program.defaultLanguage.code] });
+        },
+        error: () => this.translate("toasts.programs.disable.error"),
+      });
     },
   },
 });

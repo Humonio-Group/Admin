@@ -389,6 +389,16 @@
         "loading": "Duplication du programme \"{name}\"...",
         "success": "Le programme \"{name}\" a été dupliqué",
         "error": "Erreur lors de la duplication du programme."
+      },
+      "disable": {
+        "loading": "Désactivation du programme \"{name}\"...",
+        "success": "Le programme \"{name}\" a été désactivé.",
+        "error": "Erreur lors de la désactivation du programme."
+      },
+      "enable": {
+        "loading": "Activation du programme \"{name}\"...",
+        "success": "Le programme \"{name}\" a été activé.",
+        "error": "Erreur lors de l'activation du programme."
       }
     }
   },
