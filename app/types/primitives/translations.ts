@@ -1,1 +1,1 @@
-export type Translation = { [key: string]: string };
+export type Translation = Record<string, string>;

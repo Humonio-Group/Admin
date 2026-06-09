@@ -3,6 +3,7 @@ import { Search, Plus, X } from "lucide-vue-next";
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramCard from "~/components/deployment/programs/ProgramCard.vue";
 import type { Nullable } from "~/types/primitives/objects";
+import ProgramDialog from "~/components/deployment/programs/ProgramDialog.vue";
 
 const store = useProgramStore();
 const { programs, tags, hasFirstLoaded, loading: _loading, totalEntities, perPage } = storeToRefs(store);
@@ -133,10 +134,12 @@ store.loadTags();
           </UiButton>
         </div>
 
-        <UiButton>
-          <Plus />
-          {{ $t("btn.add.program") }}
-        </UiButton>
+        <ProgramDialog trigger>
+          <UiButton>
+            <Plus />
+            {{ $t("btn.add.program") }}
+          </UiButton>
+        </ProgramDialog>
       </div>
     </header>
 

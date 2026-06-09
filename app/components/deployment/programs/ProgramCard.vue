@@ -4,6 +4,8 @@ import type { ProgramCardProps } from "~/components/deployment/programs/index";
 import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
 
+const { locale } = useI18n();
+
 const props = defineProps<ProgramCardProps>();
 
 const { company } = storeToRefs(useCompanyStore());
@@ -41,12 +43,12 @@ const participants = computed(() => props.program.stats.participants ?? 0);
 
     <UiCardHeader>
       <UiCardTitle class="line-clamp-2">
-        {{ program.name }}
+        {{ program.name[locale] || program.name[program.defaultLanguage.code]! }}
       </UiCardTitle>
       <UiCardDescription>
         <MarkdownRenderer
           class="line-clamp-1 overflow-hidden"
-          :content="program.description"
+          :content="program.description[locale] || program.name[program.defaultLanguage.code]!"
         />
       </UiCardDescription>
 

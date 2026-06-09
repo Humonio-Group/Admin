@@ -2,6 +2,7 @@
 import type { ProgramActionsProps } from "~/components/deployment/programs/index";
 import { MoreVertical, Download, Copy, Settings, Wrench, X, Power, ChartArea, Map, Eye } from "lucide-vue-next";
 import { cn } from "~/lib/utils";
+import ProgramDialog from "~/components/deployment/programs/ProgramDialog.vue";
 
 const props = withDefaults(defineProps<ProgramActionsProps>(), {
   showProgramShortcuts: true,
@@ -12,23 +13,28 @@ const builderPath = () => useRuntimeConfig().public.urls.builder
   .replaceAll("{programId}", `${props.program.id}`)
   .replaceAll("{key}", company.value?.key ?? "")
 ;
+
+const edit = ref<boolean>(false);
 </script>
 
 <template>
-  <UiDropdownMenu>
-    <UiDropdownMenuTrigger as-child>
-      <UiButton
-        variant="outline"
-        size="icon-sm"
-        :class="cn('', props.class)"
-      >
-        <MoreVertical />
-      </UiButton>
-    </UiDropdownMenuTrigger>
-    <UiDropdownMenuContent align="end">
-      <template v-if="showProgramShortcuts">
+  <div>
+    <UiDropdownMenu>
+      <UiDropdownMenuTrigger as-child>
+        <UiButton
+          variant="outline"
+          size="icon-sm"
+          :class="cn('', props.class)"
+        >
+          <MoreVertical />
+        </UiButton>
+      </UiDropdownMenuTrigger>
+      <UiDropdownMenuContent align="end">
         <UiDropdownMenuGroup>
-          <NuxtLinkLocale :to="`/${company?.alias}/deployment/programs/${program.id}`">
+          <NuxtLinkLocale
+            v-if="showProgramShortcuts"
+            :to="`/${company?.alias}/deployment/programs/${program.id}`"
+          >
             <UiDropdownMenuItem>
               <Eye />
               {{ $t("deployment.programs.card.actions.go-to") }}
@@ -41,55 +47,60 @@ const builderPath = () => useRuntimeConfig().public.urls.builder
         </UiDropdownMenuGroup>
 
         <UiDropdownMenuSeparator />
-      </template>
 
-      <UiDropdownMenuGroup>
-        <UiDropdownMenuItem>
-          <Settings />
-          {{ $t("deployment.programs.card.actions.config") }}
-        </UiDropdownMenuItem>
-        <NuxtLink
-          :to="builderPath()"
-          target="_blank"
-          external
-        >
-          <UiDropdownMenuItem>
-            <Wrench />
-            {{ $t("deployment.programs.card.actions.build") }}
+        <UiDropdownMenuGroup>
+          <UiDropdownMenuItem @click="edit = true">
+            <Settings />
+            {{ $t("deployment.programs.card.actions.config") }}
           </UiDropdownMenuItem>
-        </NuxtLink>
-        <UiDropdownMenuSub>
-          <UiDropdownMenuSubTrigger>
-            <Download />
-            {{ $t("deployment.programs.card.actions.download.label") }}
-          </UiDropdownMenuSubTrigger>
-          <UiDropdownMenuPortal>
-            <UiDropdownMenuSubContent>
-              <UiDropdownMenuItem>
-                <Map />
-                {{ $t("deployment.programs.card.actions.download.formation-plan") }}
-              </UiDropdownMenuItem>
-              <UiDropdownMenuItem>
-                <ChartArea />
-                {{ $t("deployment.programs.card.actions.download.progress-report") }}
-              </UiDropdownMenuItem>
-            </UiDropdownMenuSubContent>
-          </UiDropdownMenuPortal>
-        </UiDropdownMenuSub>
-      </UiDropdownMenuGroup>
+          <NuxtLink
+            :to="builderPath()"
+            target="_blank"
+            external
+          >
+            <UiDropdownMenuItem>
+              <Wrench />
+              {{ $t("deployment.programs.card.actions.build") }}
+            </UiDropdownMenuItem>
+          </NuxtLink>
+          <UiDropdownMenuSub>
+            <UiDropdownMenuSubTrigger>
+              <Download />
+              {{ $t("deployment.programs.card.actions.download.label") }}
+            </UiDropdownMenuSubTrigger>
+            <UiDropdownMenuPortal>
+              <UiDropdownMenuSubContent>
+                <UiDropdownMenuItem>
+                  <Map />
+                  {{ $t("deployment.programs.card.actions.download.formation-plan") }}
+                </UiDropdownMenuItem>
+                <UiDropdownMenuItem>
+                  <ChartArea />
+                  {{ $t("deployment.programs.card.actions.download.progress-report") }}
+                </UiDropdownMenuItem>
+              </UiDropdownMenuSubContent>
+            </UiDropdownMenuPortal>
+          </UiDropdownMenuSub>
+        </UiDropdownMenuGroup>
 
-      <UiDropdownMenuSeparator />
+        <UiDropdownMenuSeparator />
 
-      <UiDropdownMenuGroup>
-        <UiDropdownMenuItem v-if="program.active">
-          <X />
-          {{ $t("deployment.programs.card.actions.deactivate") }}
-        </UiDropdownMenuItem>
-        <UiDropdownMenuItem v-else>
-          <Power />
-          {{ $t("deployment.programs.card.actions.activate") }}
-        </UiDropdownMenuItem>
-      </UiDropdownMenuGroup>
-    </UiDropdownMenuContent>
-  </UiDropdownMenu>
+        <UiDropdownMenuGroup>
+          <UiDropdownMenuItem v-if="program.active">
+            <X />
+            {{ $t("deployment.programs.card.actions.deactivate") }}
+          </UiDropdownMenuItem>
+          <UiDropdownMenuItem v-else>
+            <Power />
+            {{ $t("deployment.programs.card.actions.activate") }}
+          </UiDropdownMenuItem>
+        </UiDropdownMenuGroup>
+      </UiDropdownMenuContent>
+    </UiDropdownMenu>
+
+    <ProgramDialog
+      v-model:open="edit"
+      :program
+    />
+  </div>
 </template>

@@ -121,6 +121,7 @@
   },
   "default": "Défaut",
   "labels": {
+    "translations": "Traductions",
     "search": "Rechercher",
     "optional": "Facultatif",
     "all": "Tous | Toutes",
@@ -202,7 +203,8 @@
     "fields": {
       "first-name": "Prénom",
       "last-name": "Nom",
-      "email": "Adresse email"
+      "email": "Adresse email",
+      "language": "Langue"
     },
     "archives": "Archives",
     "sessions": "{count} session | {count} sessions",
@@ -373,6 +375,16 @@
         "trial-copied": "La clé d'essaie a été copiée.",
         "shared": "L'email a été envoyé. | Les emails ont étés envoyés à {count} destinataires."
       }
+    },
+    "programs": {
+      "create": {
+        "success": "Le programme \"{name}\" a été créé.",
+        "error": "Erreur lors de la création du programme."
+      },
+      "save": {
+        "success": "Le programme \"{name}\" a été enregistré.",
+        "error": "Erreur lors de l'enregistrement du programme."
+      }
     }
   },
 
@@ -451,6 +463,28 @@
         "contents": "Contenus",
         "people": "Participants",
         "reports": "Rapports"
+      },
+      "dialog": {
+        "title": {
+          "new": "Nouveau programme",
+          "edit": "Modifier le programme"
+        },
+        "all-translations-required": "Toutes les traductions n'ont pas été renseignées.",
+        "fields": {
+          "more-options": "Configuration avancée",
+          "languages": "Langues",
+          "default-language": "Langue par défaut",
+          "name": "Titre",
+          "description": "Description",
+          "min-facilitators": "Minimum de facilitateurs",
+          "min-participants": "Nombre de participants attendus",
+          "cohorte": {
+            "label": "Taille de la cohorte",
+            "maximum": "Maximum",
+            "minimum": "Minimum"
+          },
+          "num-teams": "Maximum de participants par équipe"
+        }
       }
     },
     "journeys": {

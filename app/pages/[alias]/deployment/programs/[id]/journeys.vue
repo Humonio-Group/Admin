@@ -6,12 +6,7 @@ import type { Listed } from "~/types/primitives/objects";
 import type { Journey } from "~/types/entities/journey";
 import { computeStatus, parseStatus } from "~/lib/entities/lifecycle/journey";
 
-const { t } = useI18n();
-useBreadcrumb([
-  { label: t("deployment.programs.title"), to: "/deployment/programs" },
-  { label: `${useRoute().params.id}`, to: `/deployment/programs/${useRoute().params.id}` },
-  { label: t("deployment.programs.navigation.journeys") },
-]);
+const { t, locale } = useI18n();
 
 const store = useProgramStore();
 const { selectedProgram: program, loading: _loading } = storeToRefs(store);
@@ -30,6 +25,14 @@ watch(statuses, async (val) => {
     }, replace: true });
   await store.loadJourneys(val);
 });
+
+watch(program, () => {
+  useBreadcrumb([
+    { label: t("deployment.programs.title"), to: "/deployment/programs" },
+    { label: `${program.value?.name[locale.value] || program.value?.name[program.value?.defaultLanguage.code]}`, to: `/deployment/programs/${useRoute().params.id}` },
+    { label: t("deployment.programs.navigation.journeys") },
+  ]);
+}, { deep: true });
 
 function selectStatus(val?: Journey["status"]) {
   if (val === undefined) statuses.value = [-1, 0, 1, 2];

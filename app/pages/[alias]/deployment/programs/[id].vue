@@ -3,7 +3,7 @@ import PageRoot from "~/components/composing/PageRoot.vue";
 import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const store = useProgramStore();
 const { company } = storeToRefs(useCompanyStore());
@@ -20,7 +20,7 @@ watch(programId, async (val) => {
 
   useBreadcrumb([
     { label: t("deployment.programs.title"), to: "/deployment/programs" },
-    { label: `${program.value?.name}` },
+    { label: `${program.value?.name[locale.value] || program.value?.name[program.value?.defaultLanguage.code]}` },
   ]);
 }, { immediate: true });
 </script>
@@ -52,10 +52,10 @@ watch(programId, async (val) => {
 
         <div class="flex-1 flex flex-col gap-1.5 py-4">
           <h1 class="text-3xl font-bold">
-            {{ program.name }}
+            {{ program.name[locale] || program.name[program.defaultLanguage.code]! }}
           </h1>
           <MarkdownRenderer
-            :content="program.description"
+            :content="program.description[locale] || program.name[program.defaultLanguage.code]!"
             class="*:text-base! line-clamp-4"
           />
 

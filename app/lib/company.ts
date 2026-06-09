@@ -52,7 +52,7 @@ export function buildCompanyUserEntity(data: any, included: any): CompanyUser {
       last: data.attributes.lastname,
       full: data.attributes.name,
     },
-    workspaces: data.attributes.recipient.rolesInWorkspace.map((workspace: any) => ({
+    workspaces: data.attributes.recipient?.rolesInWorkspace?.map((workspace: any) => ({
       id: workspace.id,
       name: workspace.name,
       roles: workspace.roles,
