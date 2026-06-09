@@ -6,9 +6,11 @@ import { buildCompanyUserEntity } from "~/lib/company";
 export function buildProgramListEntity(data: any, included: any): ProgramListEntity {
   const { id, attributes, relationships } = data;
 
-  const defaultLanguage = buildQiguLanguageEntity(included.find((entity: any) => entity.type === EntityType.LANGUAGE && entity.id === relationships.defaultLanguage.data[0]!.id)!);
+  const defaultLanguage = buildQiguLanguageEntity(included.find((entity: any) => entity.type === EntityType.LANGUAGE && entity.id === relationships.defaultLanguage.data[0]?.id)!);
   const languages = included.filter((entity: any) => entity.type === EntityType.LANGUAGE && relationships.languages.data.map((l: any) => l.id).includes(entity.id)).map(buildQiguLanguageEntity);
-  const defaultFacilitator = buildCompanyUserEntity(included.find((entity: any) => entity.type === EntityType.USER && entity.id === relationships.defaultFacilitator.data[0]!.id), included);
+
+  const defaultFacilitatorData = included.find((entity: any) => entity.type === EntityType.USER && entity.id === relationships.defaultFacilitator.data[0]?.id);
+  const defaultFacilitator = defaultFacilitatorData ? buildCompanyUserEntity(defaultFacilitatorData, included) : null;
 
   return {
     id,
@@ -40,9 +42,11 @@ export function buildProgramListEntity(data: any, included: any): ProgramListEnt
 export function buildProgramEntity(data: any, included: any): Program {
   const { id, attributes, relationships } = data;
 
-  const defaultLanguage = buildQiguLanguageEntity(included.find((entity: any) => entity.type === EntityType.LANGUAGE && entity.id === relationships.defaultLanguage.data[0]!.id)!);
+  const defaultLanguage = buildQiguLanguageEntity(included.find((entity: any) => entity.type === EntityType.LANGUAGE && entity.id === relationships.defaultLanguage.data[0]?.id)!);
   const languages = included.filter((entity: any) => entity.type === EntityType.LANGUAGE && relationships.languages.data.map((l: any) => l.id).includes(entity.id)).map(buildQiguLanguageEntity);
-  const defaultFacilitator = buildCompanyUserEntity(included.find((entity: any) => entity.type === EntityType.USER && entity.id === relationships.defaultFacilitator.data[0]!.id), included);
+
+  const defaultFacilitatorData = included.find((entity: any) => entity.type === EntityType.USER && entity.id === relationships.defaultFacilitator.data[0]?.id);
+  const defaultFacilitator = defaultFacilitatorData ? buildCompanyUserEntity(defaultFacilitatorData, included) : null;
 
   return {
     id,

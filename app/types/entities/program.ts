@@ -30,7 +30,7 @@ export interface Program {
   stats: ProgramStats;
   defaultLanguage: QiguLanguage;
   languages: Listed<QiguLanguage>;
-  defaultFacilitator: CompanyUser;
+  defaultFacilitator: Nullable<CompanyUser>;
 }
 export type ProgramListEntity = Pick<Program, "id" | "key" | "active" | "duration" | "default" | "name" | "description" | "picture" | "stats" | "defaultLanguage" | "defaultFacilitator" | "languages" | "config">;
 

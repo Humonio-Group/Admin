@@ -97,7 +97,7 @@ function resetForm() {
         name: props.program?.name ?? undefined,
         description: props.program?.description ?? undefined,
       },
-      defaultFacilitator: props.program?.defaultFacilitator.id ?? undefined,
+      defaultFacilitator: props.program?.defaultFacilitator?.id ?? undefined,
       minFacilitators: props.program?.config.minFacilitators ?? undefined,
       minPartPerJourney: props.program?.config.minPartPerJourney ?? undefined,
       minParticipants: props.program?.config.minParticipants ?? undefined,
