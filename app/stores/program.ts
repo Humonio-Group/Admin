@@ -10,6 +10,8 @@ import { buildJourneyEntity } from "~/lib/entities/lifecycle/journey";
 import { buildQiguLanguageEntity } from "~/lib/entities/lifecycle/language";
 import type { Listed } from "~/types/primitives/objects";
 import { EntityType } from "~/types/entities";
+import type { Program, ProgramListEntity } from "~/types/entities/program";
+import type { ApiResponse } from "~/types/primitives/api";
 
 export const useProgramStore = defineStore("programs", {
   state: (): ProgramState => ({ ...defaults }),
@@ -241,6 +243,86 @@ export const useProgramStore = defineStore("programs", {
       }
 
       return state;
+    },
+    async duplicateProgram(program: Program | ProgramListEntity) {
+      if (!this.company) return;
+
+      toast.promise(this.api.post("/programs", { version: 2, endpointVersion: 1 }, {
+        query: {
+          "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation,translations",
+          "include": "defaultLanguage,languages,defaultFacilitator",
+        },
+        body: {
+          data: {
+            type: EntityType.PROGRAM,
+            attributes: {
+              config: {
+                minFacilitators: program.config.minFacilitators ?? null,
+                minPartPerJourney: program.config.minPartPerJourney ?? null,
+                minParticipants: program.config.minParticipants ?? null,
+                numParticipants: program.config.numParticipants ?? null,
+                numTeams: program.config.numTeams ?? null,
+              },
+              name: program.name[program.defaultLanguage.code],
+              description: program.description[program.defaultLanguage.code],
+              translations: {
+                name: program.name,
+                description: program.description,
+              },
+              type: {
+                value: 1,
+              },
+            },
+            relationships: {
+              copyExistingProgram: {
+                data: {
+                  type: EntityType.PROGRAM,
+                  id: program.id,
+                },
+              },
+              company: {
+                data: {
+                  type: EntityType.COMPANY,
+                  id: this.company.id,
+                },
+              },
+              defaultFacilitator: {
+                data: {
+                  type: EntityType.USER,
+                  id: program.defaultFacilitator.id,
+                },
+              },
+              defaultLanguage: {
+                data: {
+                  type: EntityType.LANGUAGE,
+                  id: program.defaultLanguage.id,
+                },
+              },
+              languages: {
+                data: program.languages.map(language => ({
+                  type: EntityType.LANGUAGE,
+                  id: language.id,
+                })),
+              },
+              tags: {
+                data: [],
+              },
+            },
+          },
+        },
+      }), {
+        loading: () => this.translate("toasts.programs.duplicate.loading", { name: program.name[useNuxtApp().$i18n.locale.value] || program.name[program.defaultLanguage.code] }),
+        success: (response: ApiResponse) => {
+          if (!this.company) return;
+
+          const { data, included } = response;
+          const newProgram = buildProgramEntity(data, included);
+          navigateTo(`/${this.company.alias}/deployment/programs/${newProgram.id}/journeys`);
+
+          return this.translate("toasts.programs.duplicate.success", { name: newProgram.name[useNuxtApp().$i18n.locale.value] || newProgram.name[newProgram.defaultLanguage.code] });
+        },
+        error: () => this.translate("toasts.programs.duplicate.error"),
+      });
     },
     async saveProgram(id: number, payload: {
       languages: Listed<string>;

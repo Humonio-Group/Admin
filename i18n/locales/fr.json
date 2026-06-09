@@ -384,6 +384,11 @@
       "save": {
         "success": "Le programme \"{name}\" a été enregistré.",
         "error": "Erreur lors de l'enregistrement du programme."
+      },
+      "duplicate": {
+        "loading": "Duplication du programme \"{name}\"...",
+        "success": "Le programme \"{name}\" a été dupliqué",
+        "error": "Erreur lors de la duplication du programme."
       }
     }
   },

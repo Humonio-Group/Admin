@@ -14,6 +14,8 @@ const builderPath = () => useRuntimeConfig().public.urls.builder
   .replaceAll("{key}", company.value?.key ?? "")
 ;
 
+const store = useProgramStore();
+
 const edit = ref<boolean>(false);
 </script>
 
@@ -40,7 +42,7 @@ const edit = ref<boolean>(false);
               {{ $t("deployment.programs.card.actions.go-to") }}
             </UiDropdownMenuItem>
           </NuxtLinkLocale>
-          <UiDropdownMenuItem>
+          <UiDropdownMenuItem @click="store.duplicateProgram(program)">
             <Copy />
             {{ $t("deployment.programs.card.actions.duplicate") }}
           </UiDropdownMenuItem>
