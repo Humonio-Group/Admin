@@ -288,10 +288,12 @@ export const useProgramStore = defineStore("programs", {
                 },
               },
               defaultFacilitator: {
-                data: {
-                  type: EntityType.USER,
-                  id: program.defaultFacilitator.id,
-                },
+                data: program.defaultFacilitator
+                  ? {
+                      type: EntityType.USER,
+                      id: program.defaultFacilitator.id,
+                    }
+                  : null,
               },
               defaultLanguage: {
                 data: {

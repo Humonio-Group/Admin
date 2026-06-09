@@ -4,6 +4,8 @@ import { MoreVertical, Download, Copy, Settings, Wrench, X, Power, ChartArea, Ma
 import { cn } from "~/lib/utils";
 import ProgramDialog from "~/components/deployment/programs/ProgramDialog.vue";
 
+const { locale } = useI18n();
+
 const props = withDefaults(defineProps<ProgramActionsProps>(), {
   showProgramShortcuts: true,
 });
@@ -72,15 +74,26 @@ const edit = ref<boolean>(false);
             </UiDropdownMenuSubTrigger>
             <UiDropdownMenuPortal>
               <UiDropdownMenuSubContent>
-                <UiDropdownMenuItem>
-                  <Map />
-                  {{ $t("deployment.programs.card.actions.download.formation-plan") }}
-                </UiDropdownMenuItem>
-                <UiDropdownMenuItem v-if="false">
-                  <!-- todo: setup download program progress report - @loicmaes -->
-                  <ChartArea />
-                  {{ $t("deployment.programs.card.actions.download.progress-report") }}
-                </UiDropdownMenuItem>
+                <NuxtLink
+                  :to="`${useRuntimeConfig().public.api['2']}/v1/export?type=2&format=pdf&program=${program.id}&lang=${locale}&platform=25&key=${useRuntimeConfig().public.api.key}`"
+                  external
+                  :download="`${program.name[locale] || program.name[program.defaultLanguage.code]}.formation-plan.pdf`"
+                >
+                  <UiDropdownMenuItem>
+                    <Map />
+                    {{ $t("deployment.programs.card.actions.download.formation-plan") }}
+                  </UiDropdownMenuItem>
+                </NuxtLink>
+                <NuxtLink
+                  :to="`${useRuntimeConfig().public.api['2']}/v2/programs/${program.id}/completion-export?key=${useRuntimeConfig().public.api.key}&platform=${useRuntimeConfig().public.platform}&xcompany=${company?.key}`"
+                  external
+                  :download="`${program.name[locale] || program.name[program.defaultLanguage.code]}.completion-report.xlsx`"
+                >
+                  <UiDropdownMenuItem>
+                    <ChartArea />
+                    {{ $t("deployment.programs.card.actions.download.progress-report") }}
+                  </UiDropdownMenuItem>
+                </NuxtLink>
               </UiDropdownMenuSubContent>
             </UiDropdownMenuPortal>
           </UiDropdownMenuSub>
