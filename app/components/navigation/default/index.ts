@@ -56,7 +56,7 @@ export const sidebarContent = computed<NavigationGroup[]>(() => {
         },
       ],
     },
-    {
+    /* {
       type: "group",
       label: t("navigation.support.label"),
       children: [
@@ -73,17 +73,17 @@ export const sidebarContent = computed<NavigationGroup[]>(() => {
           icon: MessageCircleWarning,
         },
       ],
-    },
+    }, */
     {
       type: "group",
       label: t("navigation.administration.label"),
       children: [
-        {
+        /* {
           type: "item",
           label: t("navigation.administration.content-library"),
           path: "/administration/content-library",
           icon: LibraryBig,
-        },
+        }, */
         {
           type: "item",
           label: t("navigation.administration.settings"),

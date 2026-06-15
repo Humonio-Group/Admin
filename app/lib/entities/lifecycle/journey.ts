@@ -53,7 +53,7 @@ export function buildJourneyEntity(data: any, included: any): Journey {
       avatar: p.attributes.picture.thumbnail,
     })),
 
-    relatedProgram: relatedProgram ? buildProgramEntity(relatedProgram) : undefined,
+    relatedProgram: relatedProgram ? buildProgramEntity(relatedProgram, included) : undefined,
   };
 }
 

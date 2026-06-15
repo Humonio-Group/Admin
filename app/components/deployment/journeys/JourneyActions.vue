@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { MoreVertical, Eye, Settings, Users, ChartArea, ChartLine, DoorClosed, Download, MailPlus } from "lucide-vue-next";
 import type { JourneyActionsProps } from "~/components/deployment/journeys/index";
+import JourneyDialog from "~/components/deployment/journeys/JourneyDialog.vue";
 
 withDefaults(defineProps<JourneyActionsProps>(), {
   showJourneyShortcuts: true,
 });
 
 const { company } = storeToRefs(useCompanyStore());
+
+const edit = ref<boolean>(false);
 </script>
 
 <template>
@@ -31,7 +34,7 @@ const { company } = storeToRefs(useCompanyStore());
               {{ $t("deployment.journeys.actions.open") }}
             </UiDropdownMenuItem>
           </NuxtLinkLocale>
-          <UiDropdownMenuItem>
+          <UiDropdownMenuItem @click="edit = true">
             <Settings />
             {{ $t("deployment.journeys.actions.config") }}
           </UiDropdownMenuItem>
@@ -81,5 +84,11 @@ const { company } = storeToRefs(useCompanyStore());
         </UiDropdownMenuGroup>
       </UiDropdownMenuContent>
     </UiDropdownMenu>
+
+    <JourneyDialog
+      v-model:open="edit"
+      :journey
+      :selected-program="journey.relatedProgram"
+    />
   </div>
 </template>

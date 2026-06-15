@@ -30,6 +30,8 @@ const forwardedProps = useForwardProps(delegatedProps);
       'data-[unavailable]:text-destructive-foreground data-[unavailable]:line-through',
       // Outside months
       'data-[outside-view]:text-muted-foreground',
+      // Highlighted (range between start and end)
+      'data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[highlighted]:rounded-none',
       props.class,
     )"
     v-bind="forwardedProps"

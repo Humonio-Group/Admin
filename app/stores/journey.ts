@@ -20,6 +20,7 @@ import { type Group, GroupAction } from "~/types/entities/group";
 import { buildActionEntity } from "~/lib/entities/lifecycle/action";
 import type { UserRole } from "~/types/entities/user";
 import type { ApiResponse, ApiResponseData } from "~/types/primitives/api";
+import type { Content, Stage } from "~/types/entities/config/journey";
 
 export const useJourneyStore = defineStore("journeys", {
   state: (): JourneyState => ({ ...defaults }),
@@ -28,10 +29,7 @@ export const useJourneyStore = defineStore("journeys", {
     translate: () => useNuxtApp().$i18n.t,
     logger: () => useLogger("[JOURNEY]"),
 
-    company: () => {
-      const { company } = storeToRefs(useCompanyStore());
-      return company.value;
-    },
+    company: () => storeToRefs(useCompanyStore()).company.value,
     perPage: () => PER_PAGE,
 
     hasFirstLoaded: state => state.totalEntities >= 0,
@@ -56,12 +54,12 @@ export const useJourneyStore = defineStore("journeys", {
           query: {
             "limit": keywords?.length ? -1 : limit,
             "offset": keywords?.length ? 0 : offset,
-            "include": "facilitators,mainFacilitator,participants,program",
+            "include": "facilitators,mainFacilitator,participants,program,program.defaultLanguage,program.languages,program.defaultFacilitator",
             "companies": Number(this.company.id),
             "fields[users]": "name,picture",
             "status": status.join(","),
             "fields[journeys]": "default,displayName,stats.participants",
-            "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
+            "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation,config,translations",
             ...(keywords?.length ? { keyword: keywords } : {}),
           },
         });
@@ -86,11 +84,11 @@ export const useJourneyStore = defineStore("journeys", {
       try {
         const response = await this.api.get(`/journeys/${id}`, { version: 2, endpointVersion: 1, vanilla: true }, {
           query: {
-            "include": "facilitators,mainFacilitator,participants,program",
+            "include": "facilitators,mainFacilitator,participants,program,program.languages,program.defaultLanguage",
             "companies": Number(this.company.id),
             "fields[users]": "name,picture",
             "fields[journeys]": "default,displayName,stats.participants,stats.evaluation",
-            "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation",
+            "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation,translations",
           },
         });
 
@@ -99,12 +97,344 @@ export const useJourneyStore = defineStore("journeys", {
         const journey = buildJourneyEntity(data, included);
         this.selectedJourney = extendToSelectedJourney(journey);
       }
-      catch {
+      catch (e) {
+        console.error(e);
         toast.error(this.translate("toasts.error.default", { code: 500 }));
       }
       finally {
         this.loading.specimen = false;
       }
+    },
+
+    async create(payload: {
+      program: number;
+
+      name: string;
+      mainFacilitator?: number;
+      startDate: Date;
+      endDate: Date;
+
+      stages: Stage[];
+
+      confirmed: boolean;
+      test: boolean;
+      hide: boolean;
+      language: number;
+      timezone: number;
+      timezoneReference: number;
+    }): Promise<boolean> {
+      this.loading.create = true;
+      let state = true;
+
+      try {
+        const response = await this.api.post("/journeys", { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              type: EntityType.JOURNEY,
+              attributes: {
+                dates: {
+                  start: payload.startDate,
+                  end: payload.endDate,
+                },
+                displayName: payload.name,
+                description: payload.name,
+                excludeFromInvitationPortal: payload.hide,
+                forProduction: payload.confirmed,
+                status: {
+                  value: payload.confirmed ? 1 : 0,
+                },
+                timezoneReference: payload.timezoneReference,
+              },
+              relationships: {
+                facilitators: {
+                  data: [
+                    ...(payload.mainFacilitator
+                      ? [{
+                          type: EntityType.USER,
+                          id: payload.mainFacilitator,
+                        }]
+                      : []),
+                  ],
+                },
+                journeyStages: {
+                  data: payload.stages.map((stage: Stage) => {
+                    return {
+                      id: stage.id,
+                      ...(stage.date
+                        ? {
+                            attributes: {
+                              activation: {
+                                datetime: `${stage.date.getFullYear()}-${stage.date.getMonth() + 1}-${stage.date.getDate()} ${String(stage.date.getHours()).padStart(2, "0")}:${String(stage.date.getMinutes()).padStart(2, "0")}`,
+                              },
+                            },
+                          }
+                        : {}),
+                      relationships: {
+                        programStage: {
+                          data: {
+                            type: EntityType.PROGRAM_STAGE,
+                            id: stage.id,
+                          },
+                        },
+                        ...(stage.contents.length
+                          ? {
+                              contents: {
+                                data: stage.contents.map((content: Content) => {
+                                  return {
+                                    type: EntityType.CONTENT,
+                                    id: content.id,
+                                    attributes: {
+                                      ...(content.date
+                                        ? {
+                                            activation: {
+                                              datetime: `${content.date.getFullYear()}-${content.date.getMonth() + 1}-${content.date.getDate()} ${String(content.date.getHours()).padStart(2, "0")}:${String(content.date.getMinutes()).padStart(2, "0")}`,
+                                            },
+                                          }
+                                        : {}),
+                                      ...(content.startDate && content.endDate
+                                        ? {
+                                            blended: {
+                                              start: `${content.startDate.getFullYear()}-${content.startDate.getMonth() + 1}-${content.startDate.getDate()} ${String(content.startDate.getHours()).padStart(2, "0")}:${String(content.startDate.getMinutes()).padStart(2, "0")}`,
+                                              end: `${content.endDate.getFullYear()}-${content.endDate.getMonth() + 1}-${content.endDate.getDate()} ${String(content.endDate.getHours()).padStart(2, "0")}:${String(content.endDate.getMinutes()).padStart(2, "0")}`,
+                                            },
+                                          }
+                                        : {}),
+                                    },
+                                    relationships: {
+                                      ...(content.facilitators
+                                        ? {
+                                            facilitators: {
+                                              data: content.facilitators.map((fac: number) => ({
+                                                type: EntityType.USER,
+                                                id: fac,
+                                              })),
+                                            },
+                                          }
+                                        : {}),
+                                      ...(content.location
+                                        ? {
+                                            location: {
+                                              data: {
+                                                type: EntityType.LOCATION,
+                                                id: content.location,
+                                              },
+                                            },
+                                          }
+                                        : {}),
+                                    },
+                                  };
+                                }),
+                              },
+                            }
+                          : {}),
+                      },
+                    };
+                  }),
+                },
+                language: {
+                  data: {
+                    type: EntityType.LANGUAGE,
+                    id: payload.language,
+                  },
+                },
+                timezone: {
+                  data: {
+                    type: EntityType.TIME_ZONE,
+                    id: payload.timezone,
+                  },
+                },
+                program: {
+                  data: {
+                    type: EntityType.PROGRAM,
+                    id: payload.program,
+                  },
+                },
+              },
+            },
+            key: useRuntimeConfig().public.api.key,
+          },
+        });
+
+        navigateTo(`/${this.company?.alias}/deployment/journeys/${response.data.id}`);
+      }
+      catch (e) {
+        state = false;
+        console.error(e);
+      }
+      finally {
+        this.loading.create = false;
+      }
+
+      return state;
+    },
+    async save(id: number, payload: {
+      program: number;
+
+      name: string;
+      mainFacilitator?: number;
+      startDate: Date;
+      endDate: Date;
+
+      stages: Stage[];
+
+      confirmed: boolean;
+      test: boolean;
+      hide: boolean;
+      language: number;
+      timezone: number;
+      timezoneReference: number;
+    }): Promise<boolean> {
+      this.loading.save = true;
+      let state = true;
+
+      try {
+        const response = await this.api.put(`/journeys/${id}`, { version: 2, endpointVersion: 1 }, {
+          query: {
+            "include": "facilitators,mainFacilitator,participants,program,program.languages,program.defaultLanguage",
+            "fields[users]": "name,picture",
+            "fields[journeys]": "default,displayName,stats.participants,stats.evaluation",
+            "fields[programs]": "default,stats.journeys,stats.participants,stats.facilitators,stats.evaluation,translations",
+          },
+          body: {
+            data: {
+              id,
+              type: EntityType.JOURNEY,
+              attributes: {
+                dates: {
+                  start: payload.startDate,
+                  end: payload.endDate,
+                },
+                displayName: payload.name,
+                description: payload.name,
+                excludeFromInvitationPortal: payload.hide,
+                forProduction: payload.confirmed,
+                status: {
+                  value: payload.confirmed ? 1 : 0,
+                },
+                timezoneReference: payload.timezoneReference,
+              },
+              relationships: {
+                facilitators: {
+                  data: [
+                    ...(payload.mainFacilitator
+                      ? [{
+                          type: EntityType.USER,
+                          id: payload.mainFacilitator,
+                        }]
+                      : []),
+                  ],
+                },
+                journeyStages: {
+                  data: payload.stages.map((stage: Stage) => {
+                    return {
+                      id: stage.id,
+                      ...(stage.date
+                        ? {
+                            attributes: {
+                              activation: {
+                                datetime: `${stage.date.getFullYear()}-${stage.date.getMonth() + 1}-${stage.date.getDate()} ${String(stage.date.getHours()).padStart(2, "0")}:${String(stage.date.getMinutes()).padStart(2, "0")}`,
+                              },
+                            },
+                          }
+                        : {}),
+                      relationships: {
+                        programStage: {
+                          data: {
+                            type: EntityType.PROGRAM_STAGE,
+                            id: stage.id,
+                          },
+                        },
+                        ...(stage.contents.length
+                          ? {
+                              contents: {
+                                data: stage.contents.map((content: Content) => {
+                                  return {
+                                    type: EntityType.CONTENT,
+                                    id: content.id,
+                                    attributes: {
+                                      ...(content.date
+                                        ? {
+                                            activation: {
+                                              datetime: `${content.date.getFullYear()}-${content.date.getMonth() + 1}-${content.date.getDate()} ${String(content.date.getHours()).padStart(2, "0")}:${String(content.date.getMinutes()).padStart(2, "0")}`,
+                                            },
+                                          }
+                                        : {}),
+                                      ...(content.startDate && content.endDate
+                                        ? {
+                                            blended: {
+                                              start: `${content.startDate.getFullYear()}-${content.startDate.getMonth() + 1}-${content.startDate.getDate()} ${String(content.startDate.getHours()).padStart(2, "0")}:${String(content.startDate.getMinutes()).padStart(2, "0")}`,
+                                              end: `${content.endDate.getFullYear()}-${content.endDate.getMonth() + 1}-${content.endDate.getDate()} ${String(content.endDate.getHours()).padStart(2, "0")}:${String(content.endDate.getMinutes()).padStart(2, "0")}`,
+                                            },
+                                          }
+                                        : {}),
+                                    },
+                                    relationships: {
+                                      ...(content.facilitators
+                                        ? {
+                                            facilitators: {
+                                              data: content.facilitators.map((fac: number) => ({
+                                                type: EntityType.USER,
+                                                id: fac,
+                                              })),
+                                            },
+                                          }
+                                        : {}),
+                                      ...(content.location
+                                        ? {
+                                            location: {
+                                              data: {
+                                                type: EntityType.LOCATION,
+                                                id: content.location,
+                                              },
+                                            },
+                                          }
+                                        : {}),
+                                    },
+                                  };
+                                }),
+                              },
+                            }
+                          : {}),
+                      },
+                    };
+                  }),
+                },
+                language: {
+                  data: {
+                    type: EntityType.LANGUAGE,
+                    id: payload.language,
+                  },
+                },
+                timezone: {
+                  data: {
+                    type: EntityType.TIME_ZONE,
+                    id: payload.timezone,
+                  },
+                },
+                program: {
+                  data: {
+                    type: EntityType.PROGRAM,
+                    id: payload.program,
+                  },
+                },
+              },
+            },
+            key: useRuntimeConfig().public.api.key,
+          },
+        });
+
+        if (this.selectedJourney?.id === id) this.selectedJourney = { ...this.selectedJourney, ...buildJourneyEntity(response.data, response.included) };
+        else navigateTo(`/${this.company?.alias}/deployment/journeys/${response.data.id}`);
+      }
+      catch (e) {
+        state = false;
+        console.error(e);
+      }
+      finally {
+        this.loading.save = false;
+      }
+
+      return state;
     },
 
     removeParticipants(...ids: Listed<number>) {
@@ -749,10 +1079,13 @@ export const useJourneyStore = defineStore("journeys", {
 
         const { included } = response;
         const journeyStages = included.filter((entity: any) => entity.type === EntityType.JOURNEY_STAGE && entity.relationships.timebasedContents?.data.length);
+        console.log(journeyStages);
         const timeBasedContents = journeyStages
           .map((js: any) => [...js.attributes.timebasedContents])
           .reduce((acc: Listed<any>, curr: Listed<any>) => [...acc, ...curr], [] as Listed<any>)
           .filter((content: any) => {
+            if (!content.attributes.blended) return false;
+
             const start = new Date(content.attributes.blended.start).getTime();
             const end = new Date(content.attributes.blended.end).getTime();
 

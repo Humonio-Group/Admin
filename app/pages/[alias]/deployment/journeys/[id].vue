@@ -58,7 +58,7 @@ watch(journeyId, async (val) => {
             as-child
           >
             <NuxtLinkLocale :to="`/${company?.alias}/deployment/programs/${journey.relatedProgram.id}`">
-              {{ journey.relatedProgram.name }}
+              {{ journey.relatedProgram.name[locale] || journey.relatedProgram.name[journey.relatedProgram.defaultLanguage.code] }}
             </NuxtLinkLocale>
           </UiButton>
           <h1 class="text-3xl font-bold">

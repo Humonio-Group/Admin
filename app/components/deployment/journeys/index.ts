@@ -40,7 +40,7 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
     id: "program",
     header: () => h("div", t("Programme")),
     cell: ({ row }) => {
-      const link = h(NuxtLinkLocale, { class: "truncate", to: `/${company.value?.alias}/deployment/programs/${row.original.relatedProgram?.id}` }, () => row.original.relatedProgram?.name);
+      const link = h(NuxtLinkLocale, { class: "truncate", to: `/${company.value?.alias}/deployment/programs/${row.original.relatedProgram?.id}` }, () => row.original.relatedProgram?.name[locale.value] || row.original.relatedProgram?.name[row.original.relatedProgram?.defaultLanguage?.code]);
       const button = h(Button, { asChild: true, variant: "link", class: "text-foreground! px-0! overflow-hidden" }, link);
 
       return h("div", { class: "max-w-xs overflow-hidden" }, button);

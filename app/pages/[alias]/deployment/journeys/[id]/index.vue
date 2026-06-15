@@ -49,13 +49,19 @@ store.loadSimulations();
             />
           </UiCardContent>
         </UiCard>
-        <UiCard class="gap-3">
+        <UiCard
+          v-if="journey.nextEvents.totalEntities === -1 || journey.nextEvents.totalEntities > 0"
+          class="gap-3"
+        >
           <UiCardHeader>
             <UiCardTitle>
               {{ $t("deployment.journeys.overview.next-events.title") }}
             </UiCardTitle>
           </UiCardHeader>
-          <UiCardContent v-if="journey.nextEvents.totalEntities === -1 || journey.nextEvents.totalEntities > 0 || loading.nextEvents">
+          <UiCardContent
+            v-if="journey.nextEvents.totalEntities === -1 || journey.nextEvents.totalEntities > 0 || loading.nextEvents"
+            class="flex flex-col gap-3"
+          >
             <div
               v-if="loading.nextEvents && journey.nextEvents.totalEntities === -1"
               class="h-16 grid place-items-center"
@@ -189,7 +195,10 @@ store.loadSimulations();
             </p>
           </UiCardContent>
         </UiCard>
-        <UiCard class="gap-3">
+        <UiCard
+          v-if="journey.simulations.totalEntities === -1 || journey.simulations.totalEntities > 0"
+          class="gap-3"
+        >
           <UiCardHeader>
             <UiCardTitle>{{ $t("deployment.journeys.overview.simulations.title") }}</UiCardTitle>
           </UiCardHeader>

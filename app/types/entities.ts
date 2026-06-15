@@ -25,4 +25,6 @@ export enum EntityType {
   SCORE = "scores",
 
   SIMULATION_EVOLUTION = "simulationEvolutions",
+
+  TIME_ZONE = "timezones",
 }

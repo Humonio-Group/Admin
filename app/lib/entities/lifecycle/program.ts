@@ -2,6 +2,7 @@ import type { Program, ProgramListEntity, ProgramTag, SelectedProgram } from "~/
 import { buildQiguLanguageEntity } from "~/lib/entities/lifecycle/language";
 import { EntityType } from "~/types/entities";
 import { buildCompanyUserEntity } from "~/lib/company";
+import type { Listed } from "~/types/primitives/objects";
 
 export function buildProgramListEntity(data: any, included: any): ProgramListEntity {
   const { id, attributes, relationships } = data;
