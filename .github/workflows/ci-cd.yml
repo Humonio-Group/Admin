@@ -36,10 +36,9 @@ jobs:
         run: yarn install
 
       - name: Create .env file from secret
-        run: echo "${{ secrets.ENV_FILE }}" > .env
-
-      - name: Debug .env    # ← ajouter ça temporairement
-        run: cat .env
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: echo "$ENV_FILE" > .env
 
       - name: Build for staging
         run: yarn generate
