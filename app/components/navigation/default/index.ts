@@ -1,5 +1,5 @@
 import type { NavigationGroup, NavigationItem } from "~/types/primitives/sidebar";
-import { Folder, Flag, Zap, Gauge, Brain, Ticket, MessageCircleWarning, LibraryBig, Settings } from "lucide-vue-next";
+import { Folder, Flag, Zap, Gauge, Brain, Settings } from "lucide-vue-next"; // Ticket, MessageCircleWarning, LibraryBig,
 
 export interface DefaultSidebarItemProps {
   index: number;
