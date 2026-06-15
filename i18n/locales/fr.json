@@ -166,6 +166,10 @@
     "plan": {
       "free": "Gratuit"
     },
+    "timezone-references": {
+      "distribution": "Fuseau horaire de la distribution",
+      "participant": "Fuseau horaire du participant"
+    },
     "other-products": "Autres produits",
     "other-workspaces": "Autres espaces de travail",
     "time": {
@@ -374,6 +378,10 @@
         "key-copied": "La clé de simulation a été copiée.",
         "trial-copied": "La clé d'essaie a été copiée.",
         "shared": "L'email a été envoyé. | Les emails ont étés envoyés à {count} destinataires."
+      },
+      "create": {
+        "success": "",
+        "error": "Erreur lors de la création "
       }
     },
     "programs": {
@@ -504,6 +512,53 @@
     },
     "journeys": {
       "title": "Distributions",
+      "dialog": {
+        "title": {
+          "new": "Nouvelle distribution",
+          "edit": "Modifier la distribution"
+        },
+        "navigation": {
+          "info": "Informations",
+          "stages": "Étapes",
+          "settings": "Paramètres"
+        },
+        "fields": {
+          "program": "Programme",
+          "no-main-facilitator": "Pas de facilitateur principal",
+
+          "name": "Nom",
+          "main-facilitator": "Facilitateur principal",
+          "time-lapse": "Étendue",
+
+          "stages": {
+            "contents": {
+              "unlock-date": "Déblocage du contenu le",
+              "workshop-time-lapse": "Étendue de l'événement",
+              "facilitators": "Facilitateurs",
+              "location": "Lieu"
+            }
+          },
+
+          "confirmed": {
+            "label": "Confirmée",
+            "description": "Une fois la distribution confirmée, elle est déployée automatiquement."
+          },
+          "test": {
+            "label": "Distribution de test",
+            "description": "Les résultats et les intéractions sociales n'ont pas d'impacts sur les statistiques du programme."
+          },
+          "hide": {
+            "label": "Cacher du portail d'invitation",
+            "description": "La distribution ne sera pas visible sur le portail d'invitation et sur les pages d'inscription."
+          },
+
+          "language": "Langue",
+          "timezone": "Fuseau horaire",
+          "timezone-reference": {
+            "label": "Fuseau horaire de référence"
+          }
+        }
+      },
       "table": {
         "headers": {
           "info": "Informations",

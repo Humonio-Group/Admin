@@ -5,6 +5,7 @@ import type { Listed } from "~/types/primitives/objects";
 import type { Journey } from "~/types/entities/journey";
 import { computeStatus, parseStatus } from "~/lib/entities/lifecycle/journey";
 import { Plus, Search, X } from "lucide-vue-next";
+import JourneyDialog from "~/components/deployment/journeys/JourneyDialog.vue";
 
 const { t } = useI18n();
 
@@ -128,10 +129,12 @@ const { activePage } = usePagination(async (page) => {
           </UiButton>
         </div>
 
-        <UiButton>
-          <Plus />
-          {{ $t("btn.add.default") }}
-        </UiButton>
+        <JourneyDialog trigger>
+          <UiButton>
+            <Plus />
+            {{ $t("btn.add.default") }}
+          </UiButton>
+        </JourneyDialog>
       </div>
     </header>
 

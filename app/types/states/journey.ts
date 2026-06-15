@@ -15,6 +15,9 @@ export interface JourneyState {
     groups: boolean;
     updatingTeamMembers: Listed<number>;
 
+    create: boolean;
+    save: boolean;
+
     team: {
       adding: boolean;
       updating: number;
@@ -58,6 +61,9 @@ export const defaults: JourneyState = {
     specimen: false,
     groups: false,
     updatingTeamMembers: [],
+
+    create: false,
+    save: false,
 
     team: {
       adding: false,

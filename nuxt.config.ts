@@ -11,6 +11,9 @@ export default defineNuxtConfig({
     "@nuxt/image",
   ],
   ssr: false,
+  imports: {
+    dirs: ["composables/**"],
+  },
   devtools: { enabled: true },
   app: {
     baseURL: process.env.APP_BASE_URL || "/",
@@ -50,9 +53,6 @@ export default defineNuxtConfig({
     },
   },
   srcDir: "app/",
-  imports: {
-    dirs: ["composables/**"],
-  },
   compatibilityDate: "2025-07-15",
   postcss: {
     plugins: {
