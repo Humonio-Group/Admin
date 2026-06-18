@@ -5,6 +5,7 @@ import { columns } from "~/components/deployment/journeys";
 import type { Listed } from "~/types/primitives/objects";
 import type { Journey } from "~/types/entities/journey";
 import { computeStatus, parseStatus } from "~/lib/entities/lifecycle/journey";
+import JourneyDialog from "~/components/deployment/journeys/JourneyDialog.vue";
 
 const { t, locale } = useI18n();
 
@@ -102,10 +103,16 @@ store.loadJourneys(statuses.value);
           <Search class="absolute top-2.5 left-2.5 text-muted-foreground size-4" />
         </div>
 
-        <UiButton>
-          <Plus />
-          {{ $t("btn.add.default") }}
-        </UiButton>
+        <JourneyDialog
+          v-if="program"
+          :selected-program="program"
+          trigger
+        >
+          <UiButton :disabled="!program.active">
+            <Plus />
+            {{ $t("btn.add.default") }}
+          </UiButton>
+        </JourneyDialog>
       </div>
     </header>
 

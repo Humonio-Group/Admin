@@ -3,14 +3,14 @@ import type { Journey } from "~/types/entities/journey";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
-import type { Program } from "~/types/entities/program";
+import type { Program, SelectedProgram } from "~/types/entities/program";
 import FlagIcon from "~/components/icons/FlagIcon.vue";
 import StageConfig from "~/components/deployment/journeys/journey-dialog/fields/StageConfig.vue";
 import { stageSchema, type Stage, type Content } from "~/types/entities/config/journey";
 
 const { locale } = useI18n();
 
-const props = defineProps<{ selectedProgram?: Program; journey?: Journey; trigger?: boolean }>();
+const props = defineProps<{ selectedProgram?: Program | SelectedProgram; journey?: Journey; trigger?: boolean }>();
 
 const { loadingPrograms, loadingProgram, programs, program, hasEditableStages, list: loadPrograms, entity: loadProgram } = useProgramProvider();
 const { loadingFacilitators, facilitators, list: loadFacilitators } = useFacilitatorsProvider();

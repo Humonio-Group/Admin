@@ -20,6 +20,7 @@ export function useProgramProvider() {
         query: {
           limit: -1,
           offset: 0,
+          active: 1,
         },
       });
 
