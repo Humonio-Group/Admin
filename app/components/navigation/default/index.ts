@@ -1,5 +1,6 @@
 import type { NavigationGroup, NavigationItem } from "~/types/primitives/sidebar";
-import { Folder, Flag, Zap, Gauge, Brain, Settings } from "lucide-vue-next"; // Ticket, MessageCircleWarning, LibraryBig,
+import { Folder, Flag, Zap, Gauge, Brain, Settings, MessageCircleWarning, Ticket } from "@lucide/vue";
+import { LibraryBig } from "lucide-vue-next";
 
 export interface DefaultSidebarItemProps {
   index: number;
@@ -12,6 +13,65 @@ export interface DefaultSidebarProps {
 
 export const sidebarContent = computed<NavigationGroup[]>(() => {
   const { t } = useNuxtApp().$i18n;
+
+  const support: NavigationGroup[] = [{
+    type: "group",
+    label: t("navigation.support.label"),
+    children: [
+      {
+        type: "item",
+        label: t("navigation.support.tickets"),
+        path: "/support/tickets",
+        icon: Ticket,
+      },
+      {
+        type: "item",
+        label: t("navigation.support.abuses"),
+        path: "/support/abuses",
+        icon: MessageCircleWarning,
+      },
+    ],
+  }];
+
+  const contentLibrary: NavigationItem[] = [{
+    type: "item",
+    label: t("navigation.administration.content-library"),
+    path: "/administration/content-library",
+    icon: LibraryBig,
+  }];
+  const settings: NavigationItem[] = [{
+    type: "item",
+    label: t("navigation.administration.settings"),
+    path: "/administration/settings",
+    icon: Settings,
+  }];
+  const admin: NavigationGroup[] = [{
+    type: "group",
+    label: t("navigation.administration.label"),
+    children: [
+      ...(useHasRole("coordinator").value ? contentLibrary : []),
+      ...(useHasRole("admin").value ? settings : []),
+    ],
+  }];
+
+  const analytics: NavigationGroup[] = [{
+    type: "group",
+    label: t("navigation.analytics.label"),
+    children: [
+      {
+        type: "item",
+        label: t("navigation.analytics.usage"),
+        path: "/analytics/usage",
+        icon: Gauge,
+      },
+      {
+        type: "item",
+        label: t("navigation.analytics.ai"),
+        path: "/analytics/ai",
+        icon: Brain,
+      },
+    ],
+  }];
 
   return [
     {
@@ -38,59 +98,8 @@ export const sidebarContent = computed<NavigationGroup[]>(() => {
         },
       ],
     },
-    {
-      type: "group",
-      label: t("navigation.analytics.label"),
-      children: [
-        {
-          type: "item",
-          label: t("navigation.analytics.usage"),
-          path: "/analytics/usage",
-          icon: Gauge,
-        },
-        {
-          type: "item",
-          label: t("navigation.analytics.ai"),
-          path: "/analytics/ai",
-          icon: Brain,
-        },
-      ],
-    },
-    /* {
-      type: "group",
-      label: t("navigation.support.label"),
-      children: [
-        {
-          type: "item",
-          label: t("navigation.support.tickets"),
-          path: "/support/tickets",
-          icon: Ticket,
-        },
-        {
-          type: "item",
-          label: t("navigation.support.abuses"),
-          path: "/support/abuses",
-          icon: MessageCircleWarning,
-        },
-      ],
-    }, */
-    {
-      type: "group",
-      label: t("navigation.administration.label"),
-      children: [
-        /* {
-          type: "item",
-          label: t("navigation.administration.content-library"),
-          path: "/administration/content-library",
-          icon: LibraryBig,
-        }, */
-        {
-          type: "item",
-          label: t("navigation.administration.settings"),
-          path: "/administration/settings",
-          icon: Settings,
-        },
-      ],
-    },
+    ...(useHasRole("admin").value || useHasRole("analyst").value ? analytics : []),
+    ...(useHasRole("support").value ? support : []),
+    ...(useHasRole("admin").value || useHasRole("coordinator").value ? admin : []),
   ];
 });
