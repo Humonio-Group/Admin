@@ -2,9 +2,12 @@
 import PageRoot from "~/components/composing/PageRoot.vue";
 import { columns } from "~/components/deployment/journeys/actions";
 import { Search, X } from "lucide-vue-next";
+import PaginationProvider from "~/components/primitives/PaginationProvider.vue";
+
+const { t } = useI18n();
 
 const store = useActionStore();
-const { actions, loading, hasLoaded } = storeToRefs(store);
+const { actions, totalEntities, perPage, loading, hasLoaded } = storeToRefs(store);
 
 const status = ref<number | undefined>(undefined);
 watch(status, (val) => {
@@ -12,6 +15,13 @@ watch(status, (val) => {
 }, { immediate: true });
 
 const { search, clear } = useDebounceSearch(async (val: string) => await store.load(undefined, val));
+
+useBreadcrumb([
+  { label: t("deployment.actions.title") },
+]);
+
+const { activePage } = usePagination(async page => await store.load(status.value, undefined, page));
+provide("activePage", activePage);
 </script>
 
 <template>
@@ -20,37 +30,38 @@ const { search, clear } = useDebounceSearch(async (val: string) => await store.l
     class="grid gap-6"
   >
     <header class="flex flex-col gap-3">
-      <h1 class="text-3xl font-bold">
-        Actions
-      </h1>
-
       <div class="flex items-center justify-between gap-2">
         <UiButtonGroup>
           <UiButton
+            size="sm"
             :variant="status === undefined ? 'secondary' : 'outline'"
             @click="status = undefined"
           >
-            Toutes
+            {{ $t("deployment.actions.filters.all") }}
           </UiButton>
           <UiButton
+            size="sm"
             :variant="status === 1 ? 'secondary' : 'outline'"
             @click="status = 1"
           >
-            Terminée
+            {{ $t("deployment.actions.filters.done") }}
           </UiButton>
           <UiButton
+            size="sm"
             :variant="status === 0 ? 'secondary' : 'outline'"
             @click="status = 0"
           >
-            En cours
+            {{ $t("deployment.actions.filters.in-progress") }}
           </UiButton>
           <UiButton
+            size="sm"
             :variant="status === -2 ? 'secondary' : 'outline'"
             @click="status = -2"
           >
-            En retard
+            {{ $t("deployment.actions.filters.late") }}
           </UiButton>
         </UiButtonGroup>
+
         <div class="relative">
           <UiInput
             v-model="search"
@@ -78,10 +89,17 @@ const { search, clear } = useDebounceSearch(async (val: string) => await store.l
     >
       <UiSpinner />
     </div>
-    <UiDataTable
-      v-else
-      :columns="columns()"
-      :data="actions"
-    />
+    <template v-else>
+      <UiDataTable
+        :columns="columns()"
+        :data="actions"
+      />
+      <footer v-if="totalEntities > perPage">
+        <PaginationProvider
+          :total="totalEntities"
+          :per-page="perPage"
+        />
+      </footer>
+    </template>
   </PageRoot>
 </template>

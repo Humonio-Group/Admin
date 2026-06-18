@@ -689,6 +689,15 @@
           }
         }
       }
+    },
+    "actions": {
+      "title": "Actions",
+      "filters": {
+        "all": "Toutes",
+        "done": "Terminée",
+        "in-progress": "En cours",
+        "late": "En retard"
+      }
     }
   },
 
