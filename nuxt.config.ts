@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "shadcn-nuxt",
     "@nuxt/image",
+    "@nuxtjs/mdc",
   ],
   ssr: false,
   imports: {

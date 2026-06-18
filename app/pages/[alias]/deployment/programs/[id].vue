@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
-import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
 
 const { t, locale } = useI18n();
@@ -54,7 +53,7 @@ watch(programId, async (val) => {
           <h1 class="text-3xl font-bold">
             {{ program.name[locale] || program.name[program.defaultLanguage.code]! }}
           </h1>
-          <MarkdownRenderer
+          <UiEditorRenderer
             :content="program.description[locale] || program.name[program.defaultLanguage.code]!"
             class="*:text-base! line-clamp-4"
           />

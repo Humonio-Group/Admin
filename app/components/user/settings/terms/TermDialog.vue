@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import type { Term } from "~/types/entities/terms";
 
 const { locale } = useI18n();
@@ -27,10 +26,7 @@ const open = defineModel<boolean>("open", { default: false });
       <slot />
     </UiDialogTrigger>
     <UiDialogContent class="max-h-[80dvh] max-w-4xl! overflow-y-auto">
-      <MarkdownRenderer
-        :content="term.description"
-        use-markdown
-      />
+      <UiEditorRenderer :content="term.description" />
 
       <UiDialogFooter>
         <p class="text-sm text-muted-foreground">
