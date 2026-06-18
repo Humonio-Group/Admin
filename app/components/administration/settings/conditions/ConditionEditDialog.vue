@@ -69,11 +69,7 @@ const submit = form.handleSubmit(async (values) => {
           <UiFormItem>
             <UiFormLabel>Description</UiFormLabel>
             <UiFormControl>
-              <UiMarkdownEditor
-                v-bind="componentField"
-                use-markdown
-                :show-menu-bar="false"
-              />
+              <UiEditor v-bind="componentField" />
             </UiFormControl>
           </UiFormItem>
         </UiFormField>
