@@ -47,14 +47,18 @@ const edit = ref<boolean>(false);
             <MailPlus />
             {{ $t("deployment.journeys.actions.send-emails") }}
           </UiDropdownMenuItem>
-          <UiDropdownMenuItem v-if="showJourneyShortcuts">
-            <Users />
-            {{ $t("deployment.journeys.actions.participants-config") }}
-          </UiDropdownMenuItem>
-          <UiDropdownMenuItem v-if="showJourneyShortcuts">
-            <ChartLine />
-            {{ $t("deployment.journeys.actions.watch-results") }}
-          </UiDropdownMenuItem>
+          <NuxtLinkLocale :to="`/${company?.alias}/deployment/journeys/${journey.id}/people/teams`">
+            <UiDropdownMenuItem v-if="showJourneyShortcuts">
+              <Users />
+              {{ $t("deployment.journeys.actions.participants-config") }}
+            </UiDropdownMenuItem>
+          </NuxtLinkLocale>
+          <NuxtLinkLocale :to="`/${company?.alias}/deployment/journeys/${journey.id}/results?role=participant`">
+            <UiDropdownMenuItem v-if="showJourneyShortcuts">
+              <ChartLine />
+              {{ $t("deployment.journeys.actions.watch-results") }}
+            </UiDropdownMenuItem>
+          </NuxtLinkLocale>
           <UiDropdownMenuSub>
             <UiDropdownMenuSubTrigger>
               <Download />
