@@ -981,6 +981,10 @@
           "description": "Ajouter un programme à votre boutique en ligne pour configurer son prix.",
           "placeholder": "Sélectionner un programme"
         }
+      },
+      "empty": {
+        "title": "La boutique est vide",
+        "description": "Vous n'avez ajouté aucun programme à votre catalogue."
       }
     },
     "sso": {

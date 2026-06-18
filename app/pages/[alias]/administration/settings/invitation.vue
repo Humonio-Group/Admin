@@ -189,7 +189,7 @@ store.loadInvitationPageSettings();
         <UiTooltip v-if="settings.active">
           <UiTooltipTrigger as-child>
             <UiButton @click="toggleState(false)">
-              {{ $t("labels.state.enabled", 2) }}
+              {{ $t("labels.state.enabled.f") }}
             </UiButton>
           </UiTooltipTrigger>
           <UiTooltipContent side="bottom">
@@ -202,7 +202,7 @@ store.loadInvitationPageSettings();
               variant="secondary"
               @click="toggleState(true)"
             >
-              {{ $t("labels.state.disabled", 2) }}
+              {{ $t("labels.state.disabled.f") }}
             </UiButton>
           </UiTooltipTrigger>
           <UiTooltipContent side="bottom">
