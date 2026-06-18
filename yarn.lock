@@ -1313,10 +1313,10 @@
   resolved "https://registry.yarnpkg.com/@kwsites/promise-deferred/-/promise-deferred-1.1.1.tgz#8ace5259254426ccef57f3175bc64ed7095ed919"
   integrity sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==
 
-"@lucide/vue@^1.17.0":
-  version "1.17.0"
-  resolved "https://registry.yarnpkg.com/@lucide/vue/-/vue-1.17.0.tgz#63d2a7e61f6fb180bdcbaf0446a81aaffd995482"
-  integrity sha512-6Q1ZHgr5FbmJzKWe5BxlNdjLj2lbmuH1zwDtVzUJofX0w9UREwKgq4F4jwKqFYyyIS4Rj3FiJvDi2k6djukmmw==
+"@lucide/vue@^1.20.0":
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/@lucide/vue/-/vue-1.20.0.tgz#22770c88e15035242190c6ec9e3aca189531c4c7"
+  integrity sha512-fy0XKdMPSGhhmfTp6evMN69ts7AJnopqflzbYM60a6vbnINhD5H/PbT+VeO9EQCHfSxQQiYBwUcBflbfKU57ng==
 
 "@mapbox/node-pre-gyp@^2.0.0":
   version "2.0.3"
@@ -1330,6 +1330,11 @@
     nopt "^8.0.0"
     semver "^7.5.3"
     tar "^7.4.0"
+
+"@mixmark-io/domino@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@mixmark-io/domino/-/domino-2.2.0.tgz#4e8ec69bf1afeb7a14f0628b7e2c0f35bdb336c3"
+  integrity sha512-Y28PR25bHXUg88kCV7nivXrP2Nj2RueZ3/l/jdx6J9f8J4nsEGcgX0Qe6lt7Pa+J79+kPiJU3LguR6O/6zrLOw==
 
 "@miyaneee/rollup-plugin-json5@^1.2.0":
   version "1.2.0"
@@ -3143,6 +3148,26 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-strike/-/extension-strike-3.20.0.tgz#a1ec09a1a56aad98d6e7dc493d77547cad4403ee"
   integrity sha512-0vcTZRRAiDfon3VM1mHBr9EFmTkkUXMhm0Xtdtn0bGe+sIqufyi+hUYTEw93EQOD9XNsPkrud6jzQNYpX2H3AQ==
 
+"@tiptap/extension-table-cell@^3.27.0":
+  version "3.27.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-cell/-/extension-table-cell-3.27.0.tgz#c8de8a97f52511a080b17970e4daa832d54afc54"
+  integrity sha512-e0JO0qz0jvI2BNrlw/CoOrD0zD8gpgM3cCS/gp/LCLRsHxzNJewEx8lKrjjyH4c0jvQfeqMX+HeDsglntGF8pg==
+
+"@tiptap/extension-table-header@^3.27.0":
+  version "3.27.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-header/-/extension-table-header-3.27.0.tgz#c77f73659371a561410648b3cb0db4e50e4a5a35"
+  integrity sha512-CrZ4HJB0N3ekIiHvOee1CU+cm4EXn5vfOSPzMRAoUsocBSXuDKnzjoKt5TQMHohns0y241JJqsdFOnwN7EV4TA==
+
+"@tiptap/extension-table-row@^3.27.0":
+  version "3.27.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table-row/-/extension-table-row-3.27.0.tgz#4c9536fe79952cfdb10b40d767b0f9eaea111ea2"
+  integrity sha512-dhmMuoMGJ0RI3Ad5CqLto1vRy67yM671cIZQaFjtqhTJhI9Ja/E+AFgzliU/pYN4BhmbX08Y3VQS/Y59fsblxQ==
+
+"@tiptap/extension-table@^3.27.0":
+  version "3.27.0"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-table/-/extension-table-3.27.0.tgz#a862a450279deb16f734666cec74a3596c2404d6"
+  integrity sha512-p4QGpX5qVbvaM+AyZrzk/1GhPX7fe14otTmgGsV4MBRMZTU26bfXYerKhadnuYUee7CAfUJKMsNXzfx0gzLbGQ==
+
 "@tiptap/extension-task-item@^3.17.1":
   version "3.20.0"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-task-item/-/extension-task-item-3.20.0.tgz#1ed91d29792af4711527d4d978b0061ebdabed57"
@@ -3348,6 +3373,11 @@
   version "1.20.2"
   resolved "https://registry.yarnpkg.com/@types/resolve/-/resolve-1.20.2.tgz#97d26e00cd4a0423b4af620abecf3e6f442b7975"
   integrity sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==
+
+"@types/turndown@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@types/turndown/-/turndown-5.0.6.tgz#42a27397298a312d6088f29c0ff4819c518c1ecb"
+  integrity sha512-ru00MoyeeouE5BX4gRL+6m/BsDfbRayOskWqUvh7CLGW+UXxHQItqALa38kKnOiZPqJrtzJUgAC2+F0rL1S4Pg==
 
 "@types/web-bluetooth@^0.0.20":
   version "0.0.20"
@@ -6900,6 +6930,11 @@ markdown-it@^14.0.0, markdown-it@^14.1.0:
     punycode.js "^2.3.1"
     uc.micro "^2.1.0"
 
+marked@^18.0.5:
+  version "18.0.5"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-18.0.5.tgz#c229c0ac6ad1e275ae8e5037c6168f76d2f42e61"
+  integrity sha512-S6GcvALHg6K4ohtu4E7x0a1AqhAjp6cV8KhLSyN9qVapnzJkusVBxZRcIU9AeYsbe6P1hKDusSbEOzGyyuce6w==
+
 mdn-data@2.0.28:
   version "2.0.28"
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.28.tgz#5ec48e7bef120654539069e1ae4ddc81ca490eba"
@@ -8451,10 +8486,10 @@ reka-ui@^2.0.0:
     defu "^6.1.4"
     ohash "^2.0.11"
 
-reka-ui@^2.9.9:
-  version "2.9.9"
-  resolved "https://registry.yarnpkg.com/reka-ui/-/reka-ui-2.9.9.tgz#8e667637d06c1b296f16a34b8cff0565f55200bc"
-  integrity sha512-/e+hdF9vP8E2kPrKR4RdgMQQsfpCr8l436Zn8GRWM3jKT9EG1lOO/UFMGBVEnrMLOVoJSjjmIFrej4tMOb+6qQ==
+reka-ui@^2.9.10:
+  version "2.9.10"
+  resolved "https://registry.yarnpkg.com/reka-ui/-/reka-ui-2.9.10.tgz#bc9766dfac7c81dd413098c3d712f0f8f68553ff"
+  integrity sha512-yuvZVTp4fWH2G3qk+ze/x6YYlyc2Xl1d+eMUlIYrKqzTowBKteoDoN17fitURmqSUck3mc7JbcYgp49DnGu2EQ==
   dependencies:
     "@floating-ui/dom" "^1.6.13"
     "@floating-ui/vue" "^1.1.6"
@@ -9419,6 +9454,13 @@ tsx@^4.21.0:
     get-tsconfig "^4.7.5"
   optionalDependencies:
     fsevents "~2.3.3"
+
+turndown@^7.2.4:
+  version "7.2.4"
+  resolved "https://registry.yarnpkg.com/turndown/-/turndown-7.2.4.tgz#42d98202aefa8c188c997b586bc6da78bdf27ea2"
+  integrity sha512-I8yFsfRzmzK0WV1pNNOA4A7y4RDfFxPRxb3t+e3ui14qSGOxGtiSP6GjeX+Y6CHb7HYaFj7ECUD7VE5kQMZWGQ==
+  dependencies:
+    "@mixmark-io/domino" "^2.2.0"
 
 tw-animate-css@^1.4.0:
   version "1.4.0"
