@@ -9,6 +9,7 @@ const preview = ref<string>();
 const store = useCompanyStore();
 const { invitationPageSettings, invpAvailablePrograms, invpSelectedPrograms, loading: _loading } = storeToRefs(store);
 const loading = computed(() => _loading.value.settings.invitation);
+const saving = computed(() => _loading.value.saving.invitation);
 
 watch(invitationPageSettings, (val) => {
   if (!val) return;
@@ -35,6 +36,7 @@ const settings = ref<CompanyInvitationPageSettings>({
 });
 const newProgram = ref<number | undefined>();
 const newProgramOpen = ref<boolean>(false);
+const settingsOpen = ref<boolean>(false);
 
 async function onCrop(blob: Blob) {
   if (!invitationPageSettings.value) return;
@@ -56,6 +58,10 @@ async function toggleState(state: boolean) {
   settings.value.active = state;
   await store.saveInvitationPageSettings(settings.value);
 }
+async function saveSettings() {
+  if (!await store.saveInvitationPageSettings(settings.value)) return;
+  settingsOpen.value = false;
+}
 
 store.loadInvitationPageSettings();
 </script>
@@ -74,15 +80,17 @@ store.loadInvitationPageSettings();
         v-if="settings"
         class="flex items-center gap-1"
       >
-        <UiDialog>
+        <UiDialog v-model:open="settingsOpen">
           <UiTooltip>
             <UiTooltipTrigger>
               <UiDialogTrigger as-child>
                 <UiButton
                   variant="outline"
                   size="icon"
+                  :disabled="saving"
                 >
-                  <Settings />
+                  <UiSpinner v-if="saving" />
+                  <Settings v-else />
                 </UiButton>
               </UiDialogTrigger>
             </UiTooltipTrigger>
@@ -179,8 +187,12 @@ store.loadInvitationPageSettings();
                   {{ $t("btn.close") }}
                 </UiButton>
               </UiDialogClose>
-              <UiButton @click="store.saveInvitationPageSettings(settings)">
+              <UiButton
+                :disabled="saving"
+                @click="saveSettings"
+              >
                 {{ $t("btn.save") }}
+                <UiSpinner v-if="saving" />
               </UiButton>
             </UiDialogFooter>
           </UiDialogContent>
@@ -188,7 +200,10 @@ store.loadInvitationPageSettings();
 
         <UiTooltip v-if="settings.active">
           <UiTooltipTrigger as-child>
-            <UiButton @click="toggleState(false)">
+            <UiButton
+              :disabled="saving"
+              @click="toggleState(false)"
+            >
               {{ $t("labels.state.enabled.f") }}
             </UiButton>
           </UiTooltipTrigger>
@@ -200,6 +215,7 @@ store.loadInvitationPageSettings();
           <UiTooltipTrigger as-child>
             <UiButton
               variant="secondary"
+              :disabled="saving"
               @click="toggleState(true)"
             >
               {{ $t("labels.state.disabled.f") }}

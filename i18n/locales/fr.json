@@ -270,6 +270,9 @@
       "branding": {
         "saved": "Paramètres de marque enregistrés."
       },
+      "invitation": {
+        "saved": "Les paramètres de la page d'invitation ont été enregistrés"
+      },
       "shop": {
         "saved": "Paramètres de la boutique en ligne enregistrés.",
         "saved-price": "Nouveau prix enregistré."
