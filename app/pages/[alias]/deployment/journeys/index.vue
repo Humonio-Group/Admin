@@ -6,6 +6,7 @@ import type { Journey } from "~/types/entities/journey";
 import { computeStatus, parseStatus } from "~/lib/entities/lifecycle/journey";
 import { Plus, Search, X } from "lucide-vue-next";
 import JourneyDialog from "~/components/deployment/journeys/JourneyDialog.vue";
+import PaginationProvider from "~/components/primitives/PaginationProvider.vue";
 
 const { t } = useI18n();
 
@@ -56,6 +57,7 @@ const { activePage } = usePagination(async (page) => {
   await store.loadJourneys(undefined, statuses.value, page);
   shouldShowLoader.value = false;
 });
+provide("activePage", activePage);
 </script>
 
 <template>
@@ -153,33 +155,10 @@ const { activePage } = usePagination(async (page) => {
       </main>
 
       <footer v-if="totalEntities > perPage">
-        <UiPagination
-          v-model:page="activePage"
-          :items-per-page="perPage"
+        <PaginationProvider
           :total="totalEntities"
-          :default-page="1"
-          :sibling-count="2"
-        >
-          <UiPaginationContent v-slot="{ items }">
-            <UiPaginationPrevious />
-
-            <template
-              v-for="item in items"
-              :key="item.type === 'page' ? item.value : item.type"
-            >
-              <UiPaginationItem
-                v-if="item.type === 'page'"
-                :value="item.value"
-                :is-active="item.value === activePage"
-              >
-                {{ item.value }}
-              </UiPaginationItem>
-              <UiPaginationEllipsis v-else />
-            </template>
-
-            <UiPaginationNext />
-          </uipaginationcontent>
-        </UiPagination>
+          :per-page="perPage"
+        />
       </footer>
     </template>
   </PageRoot>

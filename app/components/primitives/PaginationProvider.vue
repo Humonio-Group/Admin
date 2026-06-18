@@ -30,6 +30,7 @@ const activePage = inject<Ref<number>>("activePage")!;
         <UiPaginationItem
           v-if="item.type === 'page'"
           :value="index + 1"
+          :is-active="index + 1 === activePage"
         >
           {{ index + 1 }}
         </UiPaginationItem>
