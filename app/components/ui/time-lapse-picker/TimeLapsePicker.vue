@@ -24,17 +24,17 @@ import { NativeSelect, NativeSelectOption } from "~/components/ui/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
 
+const { locale } = useI18n();
+
 interface Props {
   startName: string;
   endName: string;
-  locale?: string;
   withTime?: boolean;
   withRecalculation?: { start: number; end: number };
   class?: HTMLAttributes["class"];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  locale: "fr",
   withTime: false,
 });
 const emit = defineEmits<{
@@ -172,6 +172,7 @@ function emitRecalculation(type: "start" | "end") {
             <RangeCalendarRoot
               v-slot="{ grid, weekDays }"
               v-model:placeholder="startPlaceholder"
+              :locale="locale"
               :model-value="rangeValue"
               @update:model-value="handleRangeUpdate"
             >
@@ -310,6 +311,7 @@ function emitRecalculation(type: "start" | "end") {
             <RangeCalendarRoot
               v-slot="{ grid, weekDays }"
               v-model:placeholder="endPlaceholder"
+              :locale="locale"
               :model-value="rangeValue"
               @update:model-value="handleRangeUpdate"
             >

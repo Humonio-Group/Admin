@@ -11,9 +11,10 @@ import { cn } from "~/lib/utils";
 import { Calendar } from "~/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 
+const { locale } = useI18n();
+
 interface Props {
   name: string;
-  locale?: string;
   withTime?: boolean;
   withRecalculation?: number;
   placeholder?: string;
@@ -21,7 +22,6 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  locale: "fr",
   withTime: false,
   placeholder: "Sélectionner une date",
 });
@@ -106,6 +106,7 @@ function emitRecalculation() {
       >
         <Calendar
           layout="month-and-year"
+          :locale="locale"
           :model-value="dateValue"
           @update:model-value="handleDateUpdate($event as DateValue)"
         />
