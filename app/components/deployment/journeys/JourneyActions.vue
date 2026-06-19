@@ -9,6 +9,10 @@ withDefaults(defineProps<JourneyActionsProps>(), {
 
 const { company } = storeToRefs(useCompanyStore());
 
+const { platform, api } = useRuntimeConfig().public;
+const apiUrl = api["2"];
+const apiKey = api.key;
+
 const edit = ref<boolean>(false);
 </script>
 
@@ -23,6 +27,7 @@ const edit = ref<boolean>(false);
           <MoreVertical />
         </UiButton>
       </UiDropdownMenuTrigger>
+
       <UiDropdownMenuContent align="end">
         <UiDropdownMenuGroup>
           <NuxtLinkLocale
@@ -43,7 +48,7 @@ const edit = ref<boolean>(false);
         <UiDropdownMenuSeparator />
 
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem>
+          <UiDropdownMenuItem disabled>
             <MailPlus />
             {{ $t("deployment.journeys.actions.send-emails") }}
           </UiDropdownMenuItem>
@@ -66,26 +71,34 @@ const edit = ref<boolean>(false);
             </UiDropdownMenuSubTrigger>
             <UiDropdownMenuPortal>
               <UiDropdownMenuSubContent>
-                <UiDropdownMenuItem>
-                  <ChartArea />
-                  {{ $t("deployment.journeys.actions.download.progress-report") }}
-                </UiDropdownMenuItem>
+                <NuxtLink
+                  :to="`${apiUrl}/v2/journeys/${journey.id}/completion-export?key=${apiKey}&platform=${platform}&xcompany=${company?.key}`"
+                  external
+                  :download="`${journey.name}.xlsx`"
+                >
+                  <UiDropdownMenuItem>
+                    <ChartArea />
+                    {{ $t("deployment.journeys.actions.download.progress-report") }}
+                  </UiDropdownMenuItem>
+                </NuxtLink>
               </UiDropdownMenuSubContent>
             </UiDropdownMenuPortal>
           </UiDropdownMenuSub>
         </UiDropdownMenuGroup>
 
-        <UiDropdownMenuSeparator />
+        <template v-if="false">
+          <UiDropdownMenuSeparator />
 
-        <UiDropdownMenuGroup>
-          <UiDropdownMenuItem
-            variant="destructive"
-            disabled
-          >
-            <DoorClosed />
-            {{ $t("deployment.journeys.actions.cancel") }}
-          </UiDropdownMenuItem>
-        </UiDropdownMenuGroup>
+          <UiDropdownMenuGroup>
+            <UiDropdownMenuItem
+              variant="destructive"
+              disabled
+            >
+              <DoorClosed />
+              {{ $t("deployment.journeys.actions.cancel") }}
+            </UiDropdownMenuItem>
+          </UiDropdownMenuGroup>
+        </template>
       </UiDropdownMenuContent>
     </UiDropdownMenu>
 
