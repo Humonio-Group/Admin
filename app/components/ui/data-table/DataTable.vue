@@ -28,7 +28,7 @@ function serialize(row: TData, template: string) {
 </script>
 
 <template>
-  <div class="border rounded-lg">
+  <div class="border rounded-lg overflow-x-auto">
     <UiTable>
       <UiTableHeader>
         <UiTableRow

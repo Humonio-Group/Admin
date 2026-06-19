@@ -82,7 +82,7 @@ store.loadTags();
       </div>
     </header>
 
-    <main>
+    <main class="overflow-hidden">
       <ContentLibraryTable />
     </main>
 
