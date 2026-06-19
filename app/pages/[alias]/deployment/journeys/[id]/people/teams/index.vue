@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import PageRoot from "~/components/composing/PageRoot.vue";
-</script>
+const store = useJourneyStore();
+const { journey, teams } = storeToRefs(store);
 
-<template>
-  <PageRoot name="journey.details.people.teams.empty">
-    Aucune équipe sélectionnée.
-  </PageRoot>
-</template>
+const { company } = storeToRefs(useCompanyStore());
+
+await navigateTo(`/${company.value?.alias}/deployment/journeys/${journey.value?.id}/people/teams/${teams.value[0]?.id}`);
+</script>

@@ -53,7 +53,10 @@ store.loadTeams();
       </template>
     </aside>
 
-    <main class="flex-1">
+    <main
+      v-if="teams.length"
+      class="flex-1"
+    >
       <NuxtPage />
     </main>
   </PageRoot>
