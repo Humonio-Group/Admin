@@ -121,6 +121,7 @@
   },
   "default": "Défaut",
   "labels": {
+    "wip": "Fonctionnalité à venir...",
     "translations": "Traductions",
     "search": "Rechercher",
     "optional": "Facultatif",
@@ -1117,5 +1118,9 @@
       "warning": "Vous pouvez consulter notre {documentation}.",
       "documentation": "documentation"
     }
+  },
+
+  "content-library": {
+    "title": "Bibliothèque de contenus"
   }
 }

@@ -151,6 +151,7 @@ provide("activePage", activePage);
         <UiDataTable
           :columns="columns(true)"
           :data="journeys"
+          :row-action="{ type: 'link', template: '/{alias}/deployment/journeys/{id}' }"
         />
       </main>
 
