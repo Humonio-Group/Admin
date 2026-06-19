@@ -33,6 +33,7 @@ const edit = ref<boolean>(false);
           <MoreVertical />
         </UiButton>
       </UiDropdownMenuTrigger>
+
       <UiDropdownMenuContent align="end">
         <UiDropdownMenuGroup>
           <NuxtLinkLocale
