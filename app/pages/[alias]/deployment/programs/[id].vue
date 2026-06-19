@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
+import FlagIcon from "~/components/icons/FlagIcon.vue";
 
 const { t, locale } = useI18n();
 
@@ -58,8 +59,59 @@ watch(programId, async (val) => {
             class="*:text-base! line-clamp-4"
           />
 
-          <div class="mt-auto">
-            auto
+          <div class="mt-auto flex items-start gap-4">
+            <div class="grid gap-1.5">
+              <p class="text-sm text-muted-foreground">
+                {{ $t("labels.languages.default", program.languages.length > 1 ? 2 : 1) }}
+              </p>
+              <div class="flex items-center gap-1">
+                <UiTooltip
+                  v-for="language in program.languages"
+                  :key="language.id"
+                >
+                  <UiTooltipTrigger>
+                    <FlagIcon
+                      :country-code="language.code === 'en' ? 'gb' : language.code"
+                      class="text-lg rounded-xs"
+                    />
+                  </UiTooltipTrigger>
+                  <UiTooltipContent>
+                    <p>{{ language.nativeName }}</p>
+                  </UiTooltipContent>
+                </UiTooltip>
+              </div>
+            </div>
+
+            <div
+              v-if="program.languages.length > 1"
+              class="grid gap-1.5"
+            >
+              <p class="text-sm text-muted-foreground">
+                {{ $t("labels.languages.by-default") }}
+              </p>
+              <div class="flex items-center gap-1">
+                <UiTooltip>
+                  <UiTooltipTrigger>
+                    <FlagIcon
+                      :country-code="program.defaultLanguage.code === 'en' ? 'gb' : program.defaultLanguage.code"
+                      class="text-lg rounded-xs"
+                    />
+                  </UiTooltipTrigger>
+                  <UiTooltipContent>
+                    <p>{{ program.defaultLanguage.nativeName }}</p>
+                  </UiTooltipContent>
+                </UiTooltip>
+              </div>
+            </div>
+
+            <div class="grid gap-1.5">
+              <p class="text-sm text-muted-foreground">
+                {{ $t("labels.duration") }}
+              </p>
+              <p class="font-medium">
+                {{ $t("labels.time.days", program.duration, { named: { count: program.duration } }) }}
+              </p>
+            </div>
           </div>
         </div>
 

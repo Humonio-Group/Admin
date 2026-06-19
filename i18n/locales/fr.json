@@ -124,8 +124,11 @@
     "translations": "Traductions",
     "search": "Rechercher",
     "optional": "Facultatif",
+    "duration": "Durée",
     "all": "Tous | Toutes",
     "languages": {
+      "default": "Langue | Langues",
+      "by-default": "Langue par défaut",
       "french": "Français"
     },
     "state": {
