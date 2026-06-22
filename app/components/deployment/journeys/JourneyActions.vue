@@ -2,6 +2,7 @@
 import { MoreVertical, Eye, Settings, Users, ChartArea, ChartLine, DoorClosed, Download, MailPlus } from "lucide-vue-next";
 import type { JourneyActionsProps } from "~/components/deployment/journeys/index";
 import JourneyDialog from "~/components/deployment/journeys/JourneyDialog.vue";
+import JourneySendEmailsDialog from "~/components/deployment/journeys/emails/JourneySendEmailsDialog.vue";
 
 withDefaults(defineProps<JourneyActionsProps>(), {
   showJourneyShortcuts: true,
@@ -14,6 +15,7 @@ const apiUrl = api["2"];
 const apiKey = api.key;
 
 const edit = ref<boolean>(false);
+const emails = ref<boolean>(false);
 </script>
 
 <template>
@@ -48,7 +50,7 @@ const edit = ref<boolean>(false);
         <UiDropdownMenuSeparator />
 
         <UiDropdownMenuGroup>
-          <UiDropdownMenuItem disabled>
+          <UiDropdownMenuItem @click="emails = true">
             <MailPlus />
             {{ $t("deployment.journeys.actions.send-emails") }}
           </UiDropdownMenuItem>
@@ -106,6 +108,10 @@ const edit = ref<boolean>(false);
       v-model:open="edit"
       :journey
       :selected-program="journey.relatedProgram"
+    />
+    <JourneySendEmailsDialog
+      v-model:open="emails"
+      :journey
     />
   </div>
 </template>

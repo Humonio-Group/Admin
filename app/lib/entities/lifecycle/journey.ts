@@ -4,7 +4,7 @@ import type {
   JourneyTeam,
   JourneyTeamMember,
   SelectedJourney, JourneySimulation, JourneyStage, JourneyStageContent, JourneyStageContentAccess,
-  JourneyStageContentGraph,
+  JourneyStageContentGraph, NotificationTemplate,
 } from "~/types/entities/journey";
 import { EntityType } from "~/types/entities";
 import { buildProgramEntity } from "~/lib/entities/lifecycle/program";
@@ -402,5 +402,18 @@ export function buildContentGraph(data: ApiResponseData): JourneyStageContentGra
     description: attributes.description,
     type: attributes.type.value as GraphType,
     config: buildGraphConfig(attributes.type.value as GraphType, attributes.specific),
+  };
+}
+
+export function buildNotificationTemplate(data: any): NotificationTemplate {
+  const { id, attributes } = data;
+
+  return {
+    id,
+    name: attributes.name,
+    title: attributes.translations.title,
+    description: attributes.translations.description,
+    variables: attributes.variables,
+    availableVariables: attributes.availableVariables?.split("\n") ?? [],
   };
 }

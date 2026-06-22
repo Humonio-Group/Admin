@@ -112,6 +112,12 @@
       "title": "Détacher l'espace de travail",
       "description": "Détacher un espace de travail est une action irréversible. Êtes-vous sûr de vouloir continuer ?",
       "action": "Détacher"
+    },
+    "send-journey-mails": {
+      "title": "Envoyer des emails",
+      "errors": {
+        "targets": "Au moins 1 destinataire est requis."
+      }
     }
   },
   "primitives": {
@@ -387,8 +393,12 @@
         "shared": "L'email a été envoyé. | Les emails ont étés envoyés à {count} destinataires."
       },
       "create": {
-        "success": "",
+        "success": "La distribution a été créée.",
         "error": "Erreur lors de la création "
+      },
+      "send-email": {
+        "success": "L'email a été envoyé au destinataire. | L'email a été envoyé à {count} destinataires.",
+        "error": "Une erreur est survenue lors de l'envoi de l'email."
       }
     },
     "programs": {

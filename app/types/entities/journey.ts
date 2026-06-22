@@ -3,6 +3,7 @@ import type { Program } from "~/types/entities/program";
 import type { Group } from "~/types/entities/group";
 import type { Action } from "~/types/entities/action";
 import type { ChartData, GraphType } from "~/types/entities/graph";
+import type { Translation } from "~/types/primitives/translations";
 
 export interface JourneyMember {
   id: number;
@@ -184,4 +185,13 @@ export interface JourneyTeamMember {
   lastName: string;
   email: string;
   groups: Listed<Group>;
+}
+
+export interface NotificationTemplate {
+  id: number;
+  name: string;
+  title: Translation;
+  description: Translation;
+  variables: Record<string, string>;
+  availableVariables: Listed<keyof NotificationTemplate["variables"]>;
 }
