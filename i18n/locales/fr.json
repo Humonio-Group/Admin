@@ -586,6 +586,7 @@
       },
       "table": {
         "headers": {
+          "title": "Titre",
           "info": "Informations",
           "facilitators": "Facilitateurs",
           "participants": "Participants",

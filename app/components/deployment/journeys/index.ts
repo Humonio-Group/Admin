@@ -50,6 +50,7 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
   return [
     {
       id: "info",
+      header: () => headerKey("title"),
       cell: ({ row }) => {
         const title = h("p", { class: "font-medium truncate" }, row.original.name);
 
@@ -88,7 +89,7 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
         const moreFallback = h(AvatarFallback, { class: "text-xs font-medium text-muted-foreground" }, `+${length - users.length}`);
         const more = h(Avatar, { class: "-ml-2 outline-background outline-3" }, moreFallback);
 
-        return h("div", { class: "flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
+        return h("div", { class: "relative z-1 flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
       },
     },
     {
@@ -108,7 +109,7 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
         const moreFallback = h(AvatarFallback, { class: "text-xs font-medium text-muted-foreground" }, `+${length - users.length}`);
         const more = h(Avatar, { class: "-ml-2 outline-background outline-3" }, moreFallback);
 
-        return h("div", { class: "flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
+        return h("div", { class: "relative z-1 flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
       },
     },
     {
