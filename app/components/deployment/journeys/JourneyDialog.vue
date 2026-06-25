@@ -26,6 +26,11 @@ const store = useJourneyStore();
 const { loading } = storeToRefs(store);
 
 const open = defineModel<boolean>("open", { default: false });
+const availableTabs = computed(() => [
+  "info",
+  ...(hasEditableStages.value ? ["stages"] : []),
+  "settings",
+]);
 const tab = ref<"info" | "stages" | "settings">("info");
 
 const form = useForm({
@@ -201,6 +206,12 @@ function rebaseTimings(reference: Date) {
     }
   });
 }
+function navigateToNextTab() {
+  const currentIndex = availableTabs.value.indexOf(tab.value);
+  if (currentIndex === availableTabs.value.length - 1) return;
+
+  tab.value = availableTabs.value[currentIndex + 1];
+}
 </script>
 
 <template>
@@ -267,17 +278,12 @@ function rebaseTimings(reference: Date) {
 
           <UiTabs v-model="tab">
             <UiTabsList>
-              <UiTabsTrigger value="info">
-                {{ $t("deployment.journeys.dialog.navigation.info") }}
-              </UiTabsTrigger>
               <UiTabsTrigger
-                v-if="hasEditableStages"
-                value="stages"
+                v-for="t in availableTabs"
+                :key="t"
+                :value="t"
               >
-                {{ $t("deployment.journeys.dialog.navigation.stages") }}
-              </UiTabsTrigger>
-              <UiTabsTrigger value="settings">
-                {{ $t("deployment.journeys.dialog.navigation.settings") }}
+                {{ $t(`deployment.journeys.dialog.navigation.${t}`) }}
               </UiTabsTrigger>
             </UiTabsList>
 
@@ -354,7 +360,7 @@ function rebaseTimings(reference: Date) {
               </UiFormField>
             </UiTabsContent>
             <UiTabsContent
-              v-if="hasEditableStages"
+              v-if="availableTabs.includes('stages')"
               value="stages"
               class="grid gap-3 auto-rows-min pt-4"
             >
@@ -538,11 +544,19 @@ function rebaseTimings(reference: Date) {
           </UiDialogClose>
 
           <UiButton
+            v-if="tab === 'settings'"
             type="submit"
             :disabled="loading.create || loading.save"
           >
             {{ $t("btn.save") }}
             <UiSpinner v-if="loading.create || loading.save" />
+          </UiButton>
+          <UiButton
+            v-else
+            type="button"
+            @click="navigateToNextTab"
+          >
+            {{ $t("btn.navigate.next") }}
           </UiButton>
         </UiDialogFooter>
       </form>
