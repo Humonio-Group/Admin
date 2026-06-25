@@ -540,8 +540,9 @@ export const useJourneyStore = defineStore("journeys", {
           },
         });
 
-        const { data, included } = response;
-        this.selectedJourney.actions = data.map((action: any) => buildActionEntity(action, included));
+        const { data, included, meta } = response;
+        this.selectedJourney.actions.totalEntities = meta.total;
+        this.selectedJourney.actions.list = data.map((action: any) => buildActionEntity(action, included));
       }
       catch {
         toast.error(this.translate("toasts.error.default", { code: 500 }));

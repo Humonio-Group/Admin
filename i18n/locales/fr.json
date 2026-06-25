@@ -624,6 +624,10 @@
         "details-dialog": {
           "deadline": "Date buttoir",
           "task-list": "Liste de tâches"
+        },
+        "empty": {
+          "title": "C'est vide par ici...",
+          "description": "Les participants n'ont pas encore créé d'actions."
         }
       },
       "navigation": {
