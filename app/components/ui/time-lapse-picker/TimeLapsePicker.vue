@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "vue";
 import { fromDate, getLocalTimeZone, today } from "@internationalized/date";
 import { Calculator, CalendarIcon, ClockIcon } from "lucide-vue-next";
 import { RangeCalendarRoot, useDateFormatter } from "reka-ui";
-import { createYear, createYearRange, toDate } from "reka-ui/date";
+import { createYearRange, toDate } from "reka-ui/date";
 import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { cn } from "~/lib/utils";
@@ -276,13 +276,6 @@ function emitRecalculation(type: "start" | "end") {
               >
             </div>
 
-            <p
-              v-if="startError"
-              class="text-xs text-destructive px-1 mt-1"
-            >
-              {{ startError }}
-            </p>
-
             <footer
               v-if="withRecalculation !== undefined"
               class="mt-2 flex"
@@ -414,13 +407,6 @@ function emitRecalculation(type: "start" | "end") {
                 @change="handleEndTimeChange"
               >
             </div>
-
-            <p
-              v-if="endError"
-              class="text-xs text-destructive px-1 mt-1"
-            >
-              {{ endError }}
-            </p>
 
             <footer
               v-if="withRecalculation !== undefined"

@@ -553,7 +553,10 @@
 
           "name": "Nom",
           "main-facilitator": "Facilitateur principal",
-          "time-lapse": "Étendue",
+          "time-lapse": {
+            "label": "Période",
+            "error": "La période est invalide."
+          },
 
           "stages": {
             "contents": {

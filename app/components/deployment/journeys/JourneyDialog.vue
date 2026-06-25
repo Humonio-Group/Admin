@@ -8,7 +8,7 @@ import FlagIcon from "~/components/icons/FlagIcon.vue";
 import StageConfig from "~/components/deployment/journeys/journey-dialog/fields/StageConfig.vue";
 import { stageSchema, type Stage, type Content } from "~/types/entities/config/journey";
 
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 
 const props = defineProps<{ selectedProgram?: Program | SelectedProgram; journey?: Journey; trigger?: boolean }>();
 
@@ -40,8 +40,8 @@ const form = useForm({
     // info
     name: z.string().min(1),
     mainFacilitator: z.coerce.number().optional(),
-    startDate: z.date(),
-    endDate: z.date(),
+    startDate: z.date({ message: t("deployment.journeys.dialog.fields.time-lapse.error") }),
+    endDate: z.date({ message: t("deployment.journeys.dialog.fields.time-lapse.error") }),
 
     // stages
     stages: z.array(stageSchema),
@@ -279,11 +279,11 @@ function navigateToNextTab() {
           <UiTabs v-model="tab">
             <UiTabsList>
               <UiTabsTrigger
-                v-for="t in availableTabs"
-                :key="t"
-                :value="t"
+                v-for="_tab in availableTabs"
+                :key="_tab"
+                :value="_tab"
               >
-                {{ $t(`deployment.journeys.dialog.navigation.${t}`) }}
+                {{ $t(`deployment.journeys.dialog.navigation.${_tab}`) }}
               </UiTabsTrigger>
             </UiTabsList>
 
@@ -344,7 +344,7 @@ function navigateToNextTab() {
               <UiFormField name="startDate">
                 <UiFormField name="endDate">
                   <UiFormItem>
-                    <UiFormLabel>{{ $t("deployment.journeys.dialog.fields.time-lapse") }}</UiFormLabel>
+                    <UiFormLabel>{{ $t("deployment.journeys.dialog.fields.time-lapse.label") }}</UiFormLabel>
                     <UiFormControl>
                       <UiTimeLapsePicker
                         start-name="startDate"
@@ -355,6 +355,7 @@ function navigateToNextTab() {
                         @recalculate="rebaseTimings($event.value)"
                       />
                     </UiFormControl>
+                    <UiFormMessage />
                   </UiFormItem>
                 </UiFormField>
               </UiFormField>
