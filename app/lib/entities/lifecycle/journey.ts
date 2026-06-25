@@ -260,7 +260,7 @@ export function buildJourneyStageEntity(data: any, existingStage?: JourneyStage)
   return {
     id: journeyStage.id,
     reference: programStage.id,
-    picture: null,
+    picture: programStage.attributes.webportBanner.thumbnail || null,
     name: programStage.attributes.displayName,
     modality: detectModality(programStage.attributes.type.value),
     progress: 0,

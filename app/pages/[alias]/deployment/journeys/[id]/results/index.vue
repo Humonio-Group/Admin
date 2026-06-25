@@ -74,7 +74,10 @@ store.loadResults();
                     :src="stage.picture"
                     class="block aspect-video object-cover h-16 rounded-md"
                   />
-                  <div class="grid place-items-center aspect-video h-16 bg-muted rounded-md">
+                  <div
+                    v-else
+                    class="grid place-items-center aspect-video h-16 bg-muted rounded-md"
+                  >
                     <ImageOff class="size-4 text-muted-foreground" />
                   </div>
 
