@@ -126,6 +126,7 @@ store.loadJourneys(statuses.value);
       <UiDataTable
         :columns="columns()"
         :data="journeys"
+        :row-action="{ type: 'link', template: '/{alias}/deployment/journeys/{id}' }"
       />
     </main>
     <main v-else>
