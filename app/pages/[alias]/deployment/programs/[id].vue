@@ -2,6 +2,7 @@
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
 import FlagIcon from "~/components/icons/FlagIcon.vue";
+import { Wrench } from "lucide-vue-next";
 
 const { t, locale } = useI18n();
 
@@ -9,6 +10,12 @@ const store = useProgramStore();
 const { company } = storeToRefs(useCompanyStore());
 const { selectedProgram: program, loading: _loading } = storeToRefs(store);
 const loading = computed(() => _loading.value.specimen);
+
+const builderPath = () => useRuntimeConfig().public.urls.builder
+  .replaceAll("{alias}", company.value?.alias ?? "")
+  .replaceAll("{programId}", `${program.value?.id}`)
+  .replaceAll("{key}", company.value?.key ?? "")
+;
 
 const { isStuck, observed } = useSticky();
 
@@ -115,11 +122,23 @@ watch(programId, async (val) => {
           </div>
         </div>
 
-        <ProgramActions
-          class="self-start"
-          :program
-          :show-program-shortcuts="false"
-        />
+        <div class="flex items-center self-start gap-2">
+          <UiButton as-child>
+            <NuxtLink
+              :to="builderPath()"
+              external
+              target="_blank"
+            >
+              <Wrench />
+              {{ $t("deployment.programs.card.actions.build") }}
+            </NuxtLink>
+          </UiButton>
+          <ProgramActions
+            class="self-start"
+            :program
+            :show-program-shortcuts="false"
+          />
+        </div>
       </header>
 
       <div class="rounded-3xl border isolate">

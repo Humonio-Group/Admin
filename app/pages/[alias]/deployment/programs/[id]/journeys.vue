@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
-import { Search, Plus } from "lucide-vue-next";
+import { Search, Plus, Flag } from "lucide-vue-next";
 import { columns } from "~/components/deployment/journeys";
 import type { Listed } from "~/types/primitives/objects";
 import type { Journey } from "~/types/entities/journey";
@@ -130,7 +130,30 @@ store.loadJourneys(statuses.value);
     </main>
     <main v-else>
       <UiEmpty>
-        empty
+        <UiEmptyHeader>
+          <UiEmptyMedia variant="icon">
+            <Flag />
+          </UiEmptyMedia>
+          <UiEmptyTitle>
+            {{ $t("deployment.programs.journeys.empty.title") }}
+          </UiEmptyTitle>
+          <UiEmptyDescription>
+            {{ $t("deployment.programs.journeys.empty.description") }}
+          </UiEmptyDescription>
+        </UiEmptyHeader>
+
+        <UiEmptyContent>
+          <JourneyDialog
+            v-if="program"
+            :selected-program="program"
+            trigger
+          >
+            <UiButton :disabled="!program.active">
+              <Plus />
+              {{ $t("deployment.programs.journeys.empty.action") }}
+            </UiButton>
+          </JourneyDialog>
+        </UiEmptyContent>
       </UiEmpty>
     </main>
   </PageRoot>

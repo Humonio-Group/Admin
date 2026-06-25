@@ -525,6 +525,14 @@
           },
           "num-teams": "Maximum de participants par équipe"
         }
+      },
+
+      "journeys": {
+        "empty": {
+          "title": "C'est vide par ici...",
+          "description": "Vous n'avez créé aucune distribution pour ce programme pour le moment.",
+          "action": "Créer une distribution"
+        }
       }
     },
     "journeys": {
