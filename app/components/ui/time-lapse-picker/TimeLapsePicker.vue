@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "vue";
 import { fromDate, getLocalTimeZone, today } from "@internationalized/date";
 import { Calculator, CalendarIcon, ClockIcon } from "lucide-vue-next";
 import { RangeCalendarRoot, useDateFormatter } from "reka-ui";
-import { createYear, createYearRange, toDate } from "reka-ui/date";
+import { createYearRange, toDate } from "reka-ui/date";
 import { useField } from "vee-validate";
 import { computed, ref } from "vue";
 import { cn } from "~/lib/utils";
@@ -24,17 +24,17 @@ import { NativeSelect, NativeSelectOption } from "~/components/ui/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { Separator } from "~/components/ui/separator";
 
+const { locale } = useI18n();
+
 interface Props {
   startName: string;
   endName: string;
-  locale?: string;
   withTime?: boolean;
   withRecalculation?: { start: number; end: number };
   class?: HTMLAttributes["class"];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  locale: "fr",
   withTime: false,
 });
 const emit = defineEmits<{
@@ -172,6 +172,7 @@ function emitRecalculation(type: "start" | "end") {
             <RangeCalendarRoot
               v-slot="{ grid, weekDays }"
               v-model:placeholder="startPlaceholder"
+              :locale="locale"
               :model-value="rangeValue"
               @update:model-value="handleRangeUpdate"
             >
@@ -275,13 +276,6 @@ function emitRecalculation(type: "start" | "end") {
               >
             </div>
 
-            <p
-              v-if="startError"
-              class="text-xs text-destructive px-1 mt-1"
-            >
-              {{ startError }}
-            </p>
-
             <footer
               v-if="withRecalculation !== undefined"
               class="mt-2 flex"
@@ -310,6 +304,7 @@ function emitRecalculation(type: "start" | "end") {
             <RangeCalendarRoot
               v-slot="{ grid, weekDays }"
               v-model:placeholder="endPlaceholder"
+              :locale="locale"
               :model-value="rangeValue"
               @update:model-value="handleRangeUpdate"
             >
@@ -412,13 +407,6 @@ function emitRecalculation(type: "start" | "end") {
                 @change="handleEndTimeChange"
               >
             </div>
-
-            <p
-              v-if="endError"
-              class="text-xs text-destructive px-1 mt-1"
-            >
-              {{ endError }}
-            </p>
 
             <footer
               v-if="withRecalculation !== undefined"

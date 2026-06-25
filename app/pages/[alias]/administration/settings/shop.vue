@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Folder } from "@lucide/vue";
 import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramCard from "~/components/administration/settings/shop/ProgramCard.vue";
 import AddProgramDialog from "~/components/administration/settings/shop/AddProgramDialog.vue";
@@ -39,7 +40,7 @@ async function toggleState(state: boolean) {
         <UiTooltip v-if="storeSettings.active">
           <UiTooltipTrigger as-child>
             <UiButton @click="toggleState(false)">
-              {{ $t("labels.state.enabled", 2) }}
+              {{ $t("labels.state.enabled.f") }}
             </UiButton>
           </UiTooltipTrigger>
           <UiTooltipContent side="bottom">
@@ -52,7 +53,7 @@ async function toggleState(state: boolean) {
               variant="secondary"
               @click="toggleState(true)"
             >
-              {{ $t("labels.state.disabled", 2) }}
+              {{ $t("labels.state.disabled.f") }}
             </UiButton>
           </UiTooltipTrigger>
           <UiTooltipContent side="bottom">
@@ -83,13 +84,29 @@ async function toggleState(state: boolean) {
           </div>
         </header>
 
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4">
+        <div
+          v-if="storeActivePrograms.length"
+          class="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4"
+        >
           <ProgramCard
             v-for="program in storeActivePrograms"
             :key="`selected-${program.id}`"
             :program
           />
         </div>
+        <UiEmpty v-else>
+          <UiEmptyHeader>
+            <UiEmptyMedia variant="icon">
+              <Folder />
+            </UiEmptyMedia>
+            <UiEmptyTitle>{{ $t("settings.shop.empty.title") }}</UiEmptyTitle>
+            <UiEmptyDescription>{{ $t("settings.shop.empty.description") }}</UiEmptyDescription>
+          </UiEmptyHeader>
+
+          <UiEmptyContent>
+            <AddProgramDialog />
+          </UiEmptyContent>
+        </UiEmpty>
       </section>
     </main>
   </PageRoot>

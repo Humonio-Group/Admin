@@ -18,8 +18,10 @@ export function useProgramProvider() {
     try {
       const response = await useApi().get("/programs", { version: 2, endpointVersion: 1, vanilla: true }, {
         query: {
-          limit: -1,
-          offset: 0,
+          "limit": -1,
+          "offset": 0,
+          "active": 1,
+          "fields[programs]": "name",
         },
       });
 

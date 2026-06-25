@@ -3,14 +3,14 @@ import type { Journey } from "~/types/entities/journey";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { z } from "zod";
-import type { Program } from "~/types/entities/program";
+import type { Program, SelectedProgram } from "~/types/entities/program";
 import FlagIcon from "~/components/icons/FlagIcon.vue";
 import StageConfig from "~/components/deployment/journeys/journey-dialog/fields/StageConfig.vue";
 import { stageSchema, type Stage, type Content } from "~/types/entities/config/journey";
 
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 
-const props = defineProps<{ selectedProgram?: Program; journey?: Journey; trigger?: boolean }>();
+const props = defineProps<{ selectedProgram?: Program | SelectedProgram; journey?: Journey; trigger?: boolean }>();
 
 const { loadingPrograms, loadingProgram, programs, program, hasEditableStages, list: loadPrograms, entity: loadProgram } = useProgramProvider();
 const { loadingFacilitators, facilitators, list: loadFacilitators } = useFacilitatorsProvider();
@@ -26,6 +26,11 @@ const store = useJourneyStore();
 const { loading } = storeToRefs(store);
 
 const open = defineModel<boolean>("open", { default: false });
+const availableTabs = computed(() => [
+  "info",
+  ...(hasEditableStages.value ? ["stages"] : []),
+  "settings",
+]);
 const tab = ref<"info" | "stages" | "settings">("info");
 
 const form = useForm({
@@ -35,8 +40,8 @@ const form = useForm({
     // info
     name: z.string().min(1),
     mainFacilitator: z.coerce.number().optional(),
-    startDate: z.date(),
-    endDate: z.date(),
+    startDate: z.date({ message: t("deployment.journeys.dialog.fields.time-lapse.error") }),
+    endDate: z.date({ message: t("deployment.journeys.dialog.fields.time-lapse.error") }),
 
     // stages
     stages: z.array(stageSchema),
@@ -201,6 +206,12 @@ function rebaseTimings(reference: Date) {
     }
   });
 }
+function navigateToNextTab() {
+  const currentIndex = availableTabs.value.indexOf(tab.value);
+  if (currentIndex === availableTabs.value.length - 1) return;
+
+  tab.value = availableTabs.value[currentIndex + 1];
+}
 </script>
 
 <template>
@@ -267,17 +278,12 @@ function rebaseTimings(reference: Date) {
 
           <UiTabs v-model="tab">
             <UiTabsList>
-              <UiTabsTrigger value="info">
-                {{ $t("deployment.journeys.dialog.navigation.info") }}
-              </UiTabsTrigger>
               <UiTabsTrigger
-                v-if="hasEditableStages"
-                value="stages"
+                v-for="_tab in availableTabs"
+                :key="_tab"
+                :value="_tab"
               >
-                {{ $t("deployment.journeys.dialog.navigation.stages") }}
-              </UiTabsTrigger>
-              <UiTabsTrigger value="settings">
-                {{ $t("deployment.journeys.dialog.navigation.settings") }}
+                {{ $t(`deployment.journeys.dialog.navigation.${_tab}`) }}
               </UiTabsTrigger>
             </UiTabsList>
 
@@ -338,7 +344,7 @@ function rebaseTimings(reference: Date) {
               <UiFormField name="startDate">
                 <UiFormField name="endDate">
                   <UiFormItem>
-                    <UiFormLabel>{{ $t("deployment.journeys.dialog.fields.time-lapse") }}</UiFormLabel>
+                    <UiFormLabel>{{ $t("deployment.journeys.dialog.fields.time-lapse.label") }}</UiFormLabel>
                     <UiFormControl>
                       <UiTimeLapsePicker
                         start-name="startDate"
@@ -349,12 +355,13 @@ function rebaseTimings(reference: Date) {
                         @recalculate="rebaseTimings($event.value)"
                       />
                     </UiFormControl>
+                    <UiFormMessage />
                   </UiFormItem>
                 </UiFormField>
               </UiFormField>
             </UiTabsContent>
             <UiTabsContent
-              v-if="hasEditableStages"
+              v-if="availableTabs.includes('stages')"
               value="stages"
               class="grid gap-3 auto-rows-min pt-4"
             >
@@ -538,11 +545,19 @@ function rebaseTimings(reference: Date) {
           </UiDialogClose>
 
           <UiButton
+            v-if="tab === 'settings'"
             type="submit"
             :disabled="loading.create || loading.save"
           >
             {{ $t("btn.save") }}
             <UiSpinner v-if="loading.create || loading.save" />
+          </UiButton>
+          <UiButton
+            v-else
+            type="button"
+            @click="navigateToNextTab"
+          >
+            {{ $t("btn.navigate.next") }}
           </UiButton>
         </UiDialogFooter>
       </form>

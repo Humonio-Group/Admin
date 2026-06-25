@@ -110,8 +110,14 @@ const triggerLabel = computed(() => {
             @update-search="search = $event"
           />
           <CommandList>
-            <div v-if="loading || !options.length" class="py-6 text-center text-sm text-muted-foreground">
-              <LoaderCircleIcon v-if="loading" class="size-4 animate-spin mx-auto" />
+            <div
+              v-if="loading || !options.length"
+              class="py-6 text-center text-sm text-muted-foreground"
+            >
+              <LoaderCircleIcon
+                v-if="loading"
+                class="size-4 animate-spin mx-auto"
+              />
               <span v-else>{{ emptyText }}</span>
             </div>
             <CommandGroup v-else>

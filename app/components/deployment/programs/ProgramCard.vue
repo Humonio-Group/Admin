@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Users, UserStar, Star, Flag, Clock } from "lucide-vue-next";
 import type { ProgramCardProps } from "~/components/deployment/programs/index";
-import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
 
 const { locale } = useI18n();
@@ -46,7 +45,7 @@ const participants = computed(() => props.program.stats.participants ?? 0);
         {{ program.name[locale] || program.name[program.defaultLanguage.code]! }}
       </UiCardTitle>
       <UiCardDescription>
-        <MarkdownRenderer
+        <UiEditorRenderer
           class="line-clamp-1 overflow-hidden"
           :content="program.description[locale] || program.name[program.defaultLanguage.code]!"
         />

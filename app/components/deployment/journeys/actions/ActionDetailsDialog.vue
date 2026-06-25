@@ -4,13 +4,10 @@ import type { ActionDetailsDialogProps } from "~/components/deployment/journeys/
 import ActionBadgeStatus from "~/components/deployment/journeys/actions/ActionBadgeStatus.vue";
 import { formatDate } from "date-fns";
 import * as locales from "date-fns/locale";
-import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 
 const { locale } = useI18n();
 
 defineProps<ActionDetailsDialogProps>();
-
-const { isMarkdown } = useContentDetector();
 
 const open = defineModel<boolean>("open", { default: false });
 </script>
@@ -55,10 +52,7 @@ const open = defineModel<boolean>("open", { default: false });
       </UiDialogHeader>
 
       <div class="grid gap-4">
-        <MarkdownRenderer
-          :content="action.description.original"
-          :use-markdown="isMarkdown(action.description.original)"
-        />
+        <UiEditorRenderer :content="action.description.original" />
 
         <UiSeparator />
 

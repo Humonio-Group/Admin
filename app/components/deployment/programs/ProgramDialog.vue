@@ -66,6 +66,7 @@ watch(() => form.values.languages,
       const fields = ["name", "description"] as const;
       for (const field of fields) {
         const current = { ...form.values.translations?.[field] };
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete current[lang];
 
         form.setFieldValue(`translations.${field}`, current);
@@ -221,7 +222,7 @@ function resetForm() {
                 <UiFormItem>
                   <UiFormLabel>{{ $t("deployment.programs.dialog.fields.description") }}</UiFormLabel>
                   <UiFormControl>
-                    <UiMarkdownEditor v-bind="componentField" />
+                    <UiEditor v-bind="componentField" />
                   </UiFormControl>
                 </UiFormItem>
               </UiFormField>

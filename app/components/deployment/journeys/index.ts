@@ -43,13 +43,14 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
       const link = h(NuxtLinkLocale, { class: "truncate", to: `/${company.value?.alias}/deployment/programs/${row.original.relatedProgram?.id}` }, () => row.original.relatedProgram?.name[locale.value] || row.original.relatedProgram?.name[row.original.relatedProgram?.defaultLanguage?.code]);
       const button = h(Button, { asChild: true, variant: "link", class: "text-foreground! px-0! overflow-hidden" }, link);
 
-      return h("div", { class: "max-w-xs overflow-hidden" }, button);
+      return h("div", { class: "relative z-1 max-w-xs overflow-hidden" }, button);
     },
   };
 
   return [
     {
       id: "info",
+      header: () => headerKey("title"),
       cell: ({ row }) => {
         const title = h("p", { class: "font-medium truncate" }, row.original.name);
 
@@ -88,7 +89,7 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
         const moreFallback = h(AvatarFallback, { class: "text-xs font-medium text-muted-foreground" }, `+${length - users.length}`);
         const more = h(Avatar, { class: "-ml-2 outline-background outline-3" }, moreFallback);
 
-        return h("div", { class: "flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
+        return h("div", { class: "relative z-1 flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
       },
     },
     {
@@ -108,14 +109,14 @@ export const columns = (showProgram: boolean = false): Listed<ColumnDef<Journey>
         const moreFallback = h(AvatarFallback, { class: "text-xs font-medium text-muted-foreground" }, `+${length - users.length}`);
         const more = h(Avatar, { class: "-ml-2 outline-background outline-3" }, moreFallback);
 
-        return h("div", { class: "flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
+        return h("div", { class: "relative z-1 flex items-center" }, [...users, ...(length > 3 ? [more] : [])]);
       },
     },
     {
       id: "actions",
       cell: ({ row }) => {
         const actions = h(JourneyActions, { journey: row.original });
-        return h("div", { class: "flex justify-end" }, actions);
+        return h("div", { class: "relative z-1 flex justify-end" }, actions);
       },
     },
   ];

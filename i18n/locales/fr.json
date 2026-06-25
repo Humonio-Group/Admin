@@ -112,6 +112,12 @@
       "title": "Détacher l'espace de travail",
       "description": "Détacher un espace de travail est une action irréversible. Êtes-vous sûr de vouloir continuer ?",
       "action": "Détacher"
+    },
+    "send-journey-mails": {
+      "title": "Envoyer des emails",
+      "errors": {
+        "targets": "Au moins 1 destinataire est requis."
+      }
     }
   },
   "primitives": {
@@ -121,11 +127,15 @@
   },
   "default": "Défaut",
   "labels": {
+    "wip": "Fonctionnalité à venir...",
     "translations": "Traductions",
     "search": "Rechercher",
     "optional": "Facultatif",
+    "duration": "Durée",
     "all": "Tous | Toutes",
     "languages": {
+      "default": "Langue | Langues",
+      "by-default": "Langue par défaut",
       "french": "Français"
     },
     "state": {
@@ -270,6 +280,9 @@
       "branding": {
         "saved": "Paramètres de marque enregistrés."
       },
+      "invitation": {
+        "saved": "Les paramètres de la page d'invitation ont été enregistrés"
+      },
       "shop": {
         "saved": "Paramètres de la boutique en ligne enregistrés.",
         "saved-price": "Nouveau prix enregistré."
@@ -380,8 +393,12 @@
         "shared": "L'email a été envoyé. | Les emails ont étés envoyés à {count} destinataires."
       },
       "create": {
-        "success": "",
+        "success": "La distribution a été créée.",
         "error": "Erreur lors de la création "
+      },
+      "send-email": {
+        "success": "L'email a été envoyé au destinataire. | L'email a été envoyé à {count} destinataires.",
+        "error": "Une erreur est survenue lors de l'envoi de l'email."
       }
     },
     "programs": {
@@ -508,6 +525,14 @@
           },
           "num-teams": "Maximum de participants par équipe"
         }
+      },
+
+      "journeys": {
+        "empty": {
+          "title": "C'est vide par ici...",
+          "description": "Vous n'avez créé aucune distribution pour ce programme pour le moment.",
+          "action": "Créer une distribution"
+        }
       }
     },
     "journeys": {
@@ -528,7 +553,10 @@
 
           "name": "Nom",
           "main-facilitator": "Facilitateur principal",
-          "time-lapse": "Étendue",
+          "time-lapse": {
+            "label": "Période",
+            "error": "La période est invalide."
+          },
 
           "stages": {
             "contents": {
@@ -561,6 +589,7 @@
       },
       "table": {
         "headers": {
+          "title": "Titre",
           "info": "Informations",
           "facilitators": "Facilitateurs",
           "participants": "Participants",
@@ -599,6 +628,10 @@
         "details-dialog": {
           "deadline": "Date buttoir",
           "task-list": "Liste de tâches"
+        },
+        "empty": {
+          "title": "C'est vide par ici...",
+          "description": "Les participants n'ont pas encore créé d'actions."
         }
       },
       "navigation": {
@@ -685,6 +718,15 @@
             "action": "Voir les graphiques automatiques"
           }
         }
+      }
+    },
+    "actions": {
+      "title": "Actions",
+      "filters": {
+        "all": "Toutes",
+        "done": "Terminée",
+        "in-progress": "En cours",
+        "late": "En retard"
       }
     }
   },
@@ -981,6 +1023,10 @@
           "description": "Ajouter un programme à votre boutique en ligne pour configurer son prix.",
           "placeholder": "Sélectionner un programme"
         }
+      },
+      "empty": {
+        "title": "La boutique est vide",
+        "description": "Vous n'avez ajouté aucun programme à votre catalogue."
       }
     },
     "sso": {
@@ -1098,5 +1144,9 @@
       "warning": "Vous pouvez consulter notre {documentation}.",
       "documentation": "documentation"
     }
+  },
+
+  "content-library": {
+    "title": "Bibliothèque de contenus"
   }
 }

@@ -4,14 +4,14 @@ import type {
   Journey,
   JourneyEvent, JourneySimulation, JourneyStage,
   JourneyTeam,
-  JourneyTeamMember,
+  JourneyTeamMember, SelectedJourney,
 } from "~/types/entities/journey";
 import type { Listed } from "~/types/primitives/objects";
 import { toast } from "vue-sonner";
 import {
   buildContentGraph,
   buildJourneyEntity, buildJourneyEvent,
-  buildJourneyStageContentEntity, buildJourneyStageEntity, buildScore, buildSimulation,
+  buildJourneyStageContentEntity, buildJourneyStageEntity, buildNotificationTemplate, buildScore, buildSimulation,
   buildTeamEntity,
   buildTeamMemberEntity, buildTeamMemberGroup,
   extendToSelectedJourney,
@@ -21,6 +21,7 @@ import { buildActionEntity } from "~/lib/entities/lifecycle/action";
 import type { UserRole } from "~/types/entities/user";
 import type { ApiResponse, ApiResponseData } from "~/types/primitives/api";
 import type { Content, Stage } from "~/types/entities/config/journey";
+import { fromCode } from "~/types/misc/language";
 
 export const useJourneyStore = defineStore("journeys", {
   state: (): JourneyState => ({ ...defaults }),
@@ -30,6 +31,7 @@ export const useJourneyStore = defineStore("journeys", {
     logger: () => useLogger("[JOURNEY]"),
 
     company: () => storeToRefs(useCompanyStore()).company.value,
+    user: () => storeToRefs(useUserStore()).user.value,
     perPage: () => PER_PAGE,
 
     hasFirstLoaded: state => state.totalEntities >= 0,
@@ -538,8 +540,9 @@ export const useJourneyStore = defineStore("journeys", {
           },
         });
 
-        const { data, included } = response;
-        this.selectedJourney.actions = data.map((action: any) => buildActionEntity(action, included));
+        const { data, included, meta } = response;
+        this.selectedJourney.actions.totalEntities = meta.total;
+        this.selectedJourney.actions.list = data.map((action: any) => buildActionEntity(action, included));
       }
       catch {
         toast.error(this.translate("toasts.error.default", { code: 500 }));
@@ -1369,6 +1372,106 @@ export const useJourneyStore = defineStore("journeys", {
       finally {
         this.loading.results.graphs = false;
       }
+    },
+
+    async loadNotificationsTemplates(journey: SelectedJourney) {
+      this.loading.templates = true;
+
+      try {
+        const response = await this.api.get("/notification_types", { version: 2, endpointVersion: 1, vanilla: true }, {
+          query: {
+            "program": journey.relatedProgram?.id,
+            "limit": -1,
+            "fields[notificationTypes]": "contentLibrary",
+          },
+        });
+
+        this.templates = response.data.map((notification: any) => buildNotificationTemplate(notification));
+      }
+      catch (e) {
+        console.error("error", e);
+      }
+      finally {
+        this.loading.templates = false;
+      }
+    },
+    async sendEmails(journey: Journey | SelectedJourney, payload: {
+      subject: string;
+      body: string;
+      targets: number[];
+    }, template?: number) {
+      if (!this.company || !this.user) return;
+
+      let state = true;
+
+      this.loading.sendEmails = true;
+
+      try {
+        await this.api.post("/notification_center", { version: 2, endpointVersion: 1 }, {
+          body: {
+            data: {
+              type: EntityType.NOTIFICATION_CENTER,
+              attributes: {
+                email: {
+                  title: payload.subject,
+                  text: payload.body,
+                },
+                mode: 2,
+              },
+              relationships: {
+                journey: {
+                  data: {
+                    type: EntityType.JOURNEY,
+                    id: journey.id,
+                  },
+                },
+                language: {
+                  data: {
+                    type: EntityType.LANGUAGE,
+                    id: fromCode(this.user.settings.language),
+                  },
+                },
+                notificationType: {
+                  data: {
+                    type: EntityType.NOTIFICATION_TYPE,
+                    id: template || 1,
+                  },
+                },
+                program: {
+                  data: {
+                    type: EntityType.PROGRAM,
+                    id: journey.relatedProgram?.id,
+                  },
+                },
+                recipients: {
+                  data: payload.targets.map(target => ({
+                    type: EntityType.USER,
+                    id: target,
+                  })),
+                },
+                sender: {
+                  data: {
+                    type: EntityType.USER,
+                    id: this.user.id,
+                  },
+                },
+              },
+            },
+            key: useRuntimeConfig().public.api.key,
+          },
+        });
+
+        toast.success(this.translate("toasts.journeys.send-email.success", payload.targets.length === 1 ? 1 : 2, { named: { count: payload.targets.length } }));
+      }
+      catch {
+        state = false;
+        toast.error(this.translate("toasts.journeys.send-email.error"));
+      }
+      finally {
+        this.loading.sendEmails = false;
+      }
+
+      return state;
     },
   },
 });

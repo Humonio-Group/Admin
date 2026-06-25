@@ -4,6 +4,7 @@ import PageRoot from "~/components/composing/PageRoot.vue";
 import ProgramCard from "~/components/deployment/programs/ProgramCard.vue";
 import type { Nullable } from "~/types/primitives/objects";
 import ProgramDialog from "~/components/deployment/programs/ProgramDialog.vue";
+import PaginationProvider from "~/components/primitives/PaginationProvider.vue";
 
 const store = useProgramStore();
 const { programs, tags, hasFirstLoaded, loading: _loading, totalEntities, perPage } = storeToRefs(store);
@@ -62,6 +63,7 @@ const { activePage } = usePagination(async (page) => {
   await store.loadPrograms(tagId.value ?? undefined, search.value || undefined, !showArchived.value, page);
   shouldShowLoader.value = false;
 });
+provide("activePage", activePage);
 
 store.loadTags();
 </script>
@@ -159,32 +161,10 @@ store.loadTags();
       </main>
 
       <footer v-if="totalEntities > perPage">
-        <UiPagination
-          v-model:page="activePage"
+        <PaginationProvider
           :total="totalEntities"
-          :items-per-page="perPage"
-          :sibling-count="2"
-        >
-          <UiPaginationContent v-slot="{ items }">
-            <UiPaginationPrevious />
-
-            <template
-              v-for="item in items"
-              :key="item.type === 'page' ? item.value : item.type"
-            >
-              <UiPaginationItem
-                v-if="item.type === 'page'"
-                :value="item.value"
-                :is-active="item.value === activePage"
-              >
-                {{ item.value }}
-              </UiPaginationItem>
-              <UiPaginationEllipsis v-else />
-            </template>
-
-            <UiPaginationNext />
-          </UiPaginationContent>
-        </UiPagination>
+          :per-page="perPage"
+        />
       </footer>
     </template>
     <UiEmpty v-else>

@@ -1,5 +1,5 @@
 import type { Listed, Nullable } from "~/types/primitives/objects";
-import type { Journey, SelectedJourney } from "~/types/entities/journey";
+import type { Journey, NotificationTemplate, SelectedJourney } from "~/types/entities/journey";
 import type { Group } from "~/types/entities/group";
 
 export const PER_PAGE = 20;
@@ -8,12 +8,17 @@ export interface JourneyState {
   journeys: Listed<Journey>;
   totalEntities: number;
   selectedJourney: Nullable<SelectedJourney>;
+  templates: Listed<NotificationTemplate>;
   groups: Listed<Group>;
   loading: {
     items: boolean;
     specimen: boolean;
     groups: boolean;
     updatingTeamMembers: Listed<number>;
+
+    sendEmails: boolean;
+
+    templates: boolean;
 
     create: boolean;
     save: boolean;
@@ -55,12 +60,17 @@ export const defaults: JourneyState = {
   journeys: [],
   totalEntities: -1,
   selectedJourney: null,
+  templates: [],
   groups: [],
   loading: {
     items: false,
     specimen: false,
     groups: false,
     updatingTeamMembers: [],
+
+    sendEmails: false,
+
+    templates: false,
 
     create: false,
     save: false,

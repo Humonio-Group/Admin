@@ -7,6 +7,9 @@ export enum EntityType {
 
   LANGUAGE = "languages",
 
+  NOTIFICATION_CENTER = "notificationCenter",
+  NOTIFICATION_TYPE = "notificationTypes",
+
   PROGRAM = "programs",
   PROGRAM_STAGE = "programStages",
 

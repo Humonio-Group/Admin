@@ -1,4 +1,4 @@
-import type { User } from "~/types/entities/user";
+import { type User, UserRole } from "~/types/entities/user";
 import { EntityType } from "~/types/entities";
 import { availableLocales, fromId } from "~/types/misc/language";
 
@@ -36,4 +36,17 @@ export function buildUserEntity(data: any, included?: any, lang?: number): User 
       lastConnection: new Date(data.attributes.dates.lastConnection),
     },
   };
+}
+
+export function computeRole(role: string): UserRole {
+  switch (role) {
+    case "admin": return UserRole.ADMIN;
+    case "analyst": return UserRole.ANALYST;
+    case "facilitator": return UserRole.FACILITATOR;
+    case "coach": return UserRole.COACH;
+    case "support": return UserRole.SUPPORT;
+    case "manager": return UserRole.MANAGER;
+    case "creator": case "coordinator": return UserRole.CREATOR;
+    default: return UserRole.PARTICIPANT;
+  }
 }

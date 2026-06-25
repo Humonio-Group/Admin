@@ -909,6 +909,8 @@ export const useCompanyStore = defineStore("company", {
       if (!this.company || !this.invitationPageSettings) return;
       this.loading.saving.invitation = true;
 
+      let state = true;
+
       try {
         const response = await this.api.put(`/companies/${this.company.id}`, { version: 2, endpointVersion: 1 }, {
           query: {
@@ -937,13 +939,18 @@ export const useCompanyStore = defineStore("company", {
           },
         });
         this.invitationPageSettings = buildInvitationPageSettings(response.data, response.included);
+
+        toast.success(this.translate("toasts.settings.invitation.saved"));
       }
       catch {
         toast.error(this.translate("toasts.error.default"));
+        state = false;
       }
       finally {
         this.loading.saving.invitation = false;
       }
+
+      return state;
     },
     async uploadBanner(blob: Blob) {
       if (!this.company || !this.invitationPageSettings) return;

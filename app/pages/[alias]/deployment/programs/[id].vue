@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
-import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import ProgramActions from "~/components/deployment/programs/ProgramActions.vue";
+import FlagIcon from "~/components/icons/FlagIcon.vue";
+import { Wrench } from "lucide-vue-next";
 
 const { t, locale } = useI18n();
 
@@ -9,6 +10,12 @@ const store = useProgramStore();
 const { company } = storeToRefs(useCompanyStore());
 const { selectedProgram: program, loading: _loading } = storeToRefs(store);
 const loading = computed(() => _loading.value.specimen);
+
+const builderPath = () => useRuntimeConfig().public.urls.builder
+  .replaceAll("{alias}", company.value?.alias ?? "")
+  .replaceAll("{programId}", `${program.value?.id}`)
+  .replaceAll("{key}", company.value?.key ?? "")
+;
 
 const { isStuck, observed } = useSticky();
 
@@ -54,21 +61,84 @@ watch(programId, async (val) => {
           <h1 class="text-3xl font-bold">
             {{ program.name[locale] || program.name[program.defaultLanguage.code]! }}
           </h1>
-          <MarkdownRenderer
+          <UiEditorRenderer
             :content="program.description[locale] || program.name[program.defaultLanguage.code]!"
             class="*:text-base! line-clamp-4"
           />
 
-          <div class="mt-auto">
-            auto
+          <div class="mt-auto flex items-start gap-4">
+            <div class="grid gap-1.5">
+              <p class="text-sm text-muted-foreground">
+                {{ $t("labels.languages.default", program.languages.length > 1 ? 2 : 1) }}
+              </p>
+              <div class="flex items-center gap-1">
+                <UiTooltip
+                  v-for="language in program.languages"
+                  :key="language.id"
+                >
+                  <UiTooltipTrigger>
+                    <FlagIcon
+                      :country-code="language.code === 'en' ? 'gb' : language.code"
+                      class="text-lg rounded-xs"
+                    />
+                  </UiTooltipTrigger>
+                  <UiTooltipContent>
+                    <p>{{ language.nativeName }}</p>
+                  </UiTooltipContent>
+                </UiTooltip>
+              </div>
+            </div>
+
+            <div
+              v-if="program.languages.length > 1"
+              class="grid gap-1.5"
+            >
+              <p class="text-sm text-muted-foreground">
+                {{ $t("labels.languages.by-default") }}
+              </p>
+              <div class="flex items-center gap-1">
+                <UiTooltip>
+                  <UiTooltipTrigger>
+                    <FlagIcon
+                      :country-code="program.defaultLanguage.code === 'en' ? 'gb' : program.defaultLanguage.code"
+                      class="text-lg rounded-xs"
+                    />
+                  </UiTooltipTrigger>
+                  <UiTooltipContent>
+                    <p>{{ program.defaultLanguage.nativeName }}</p>
+                  </UiTooltipContent>
+                </UiTooltip>
+              </div>
+            </div>
+
+            <div class="grid gap-1.5">
+              <p class="text-sm text-muted-foreground">
+                {{ $t("labels.duration") }}
+              </p>
+              <p class="font-medium">
+                {{ $t("labels.time.days", program.duration, { named: { count: program.duration } }) }}
+              </p>
+            </div>
           </div>
         </div>
 
-        <ProgramActions
-          class="self-start"
-          :program
-          :show-program-shortcuts="false"
-        />
+        <div class="flex items-center self-start gap-2">
+          <UiButton as-child>
+            <NuxtLink
+              :to="builderPath()"
+              external
+              target="_blank"
+            >
+              <Wrench />
+              {{ $t("deployment.programs.card.actions.build") }}
+            </NuxtLink>
+          </UiButton>
+          <ProgramActions
+            class="self-start"
+            :program
+            :show-program-shortcuts="false"
+          />
+        </div>
       </header>
 
       <div class="rounded-3xl border isolate">

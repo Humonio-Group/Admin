@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import PageRoot from "~/components/composing/PageRoot.vue";
 import { ArrowRight } from "lucide-vue-next";
-import MarkdownRenderer from "~/components/primitives/MarkdownRenderer.vue";
 import JourneyActions from "~/components/deployment/journeys/JourneyActions.vue";
 import { formatDate } from "date-fns";
 import * as locales from "date-fns/locale";
@@ -64,9 +63,9 @@ watch(journeyId, async (val) => {
           <h1 class="text-3xl font-bold">
             {{ journey.name }}
           </h1>
-          <MarkdownRenderer
+          <UiEditorRenderer
             v-if="journey.relatedProgram?.description?.length"
-            :content="journey.relatedProgram.description"
+            :content="journey.relatedProgram.description[locale] || journey.relatedProgram.description[journey.relatedProgram.defaultLanguage.code] || ''"
             class="*:text-base! line-clamp-4"
           />
 

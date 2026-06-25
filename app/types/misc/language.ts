@@ -24,3 +24,7 @@ export type AvailableLocale = typeof availableLocales[number]["code"];
 export function fromId(id: number): AvailableLocale | undefined {
   return availableLocales.find(l => l.id === id)?.code;
 }
+
+export function fromCode(code: string): number | undefined {
+  return availableLocales.find(l => l.code === code)?.id;
+}
